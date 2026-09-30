@@ -392,21 +392,31 @@ export const SECTION_LINKS: Record<string, ResourceLink[]> = {
       href: "https://dreamstonehr.com.au/blog/resource/building-high-performing-teams/",
       source: ours,
     },
+    {
+      title: "Employee Goal Setting Template",
+      href: "https://dreamstonehr.com.au/blog/resource/employee-goal-setting-template/",
+      source: ours,
+    },
   ],
   training: [
     {
-      title: "Probation Review Checklist",
-      href: "https://dreamstonehr.com.au/blog/resource/probation-review-checklist-employers/",
+      title: "Training Needs Analysis Template",
+      href: "https://dreamstonehr.com.au/blog/resource/training-needs-analysis-template/",
       source: ours,
     },
     {
-      title: "Probation",
-      href: "https://www.fairwork.gov.au/starting-employment/probation",
-      source: fairWork,
+      title: "Creating a culture of continuous learning",
+      href: "https://dreamstonehr.com.au/blog/creating-culture-continuous-learning-business-owners/",
+      source: ours,
     },
     {
       title: "Employee Goal Setting Template",
       href: "https://dreamstonehr.com.au/blog/resource/employee-goal-setting-template/",
+      source: ours,
+    },
+    {
+      title: "Probation Review Checklist",
+      href: "https://dreamstonehr.com.au/blog/resource/probation-review-checklist-employers/",
       source: ours,
     },
   ],
@@ -417,14 +427,19 @@ export const SECTION_LINKS: Record<string, ResourceLink[]> = {
       source: ours,
     },
     {
-      title: "Making exit interviews count",
-      href: "https://dreamstonehr.com.au/blog/making-exit-interviews-count/",
+      title: "10 practical tips to improve workplace culture",
+      href: "https://dreamstonehr.com.au/blog/resource/improve-your-workplace-culture/",
       source: ours,
     },
     {
-      title: "Consultation and cooperation in the workplace",
-      href: "https://www.fairwork.gov.au/tools-and-resources/best-practice-guides/consultation-and-cooperation-in-the-workplace",
-      source: fairWork,
+      title: "What is workplace culture",
+      href: "https://dreamstonehr.com.au/blog/resource/what-is-workplace-culture/",
+      source: ours,
+    },
+    {
+      title: "The hidden cost of ignoring employee burnout",
+      href: "https://dreamstonehr.com.au/blog/burnout-workplace-culture/",
+      source: ours,
     },
   ],
   records: [
@@ -636,6 +651,18 @@ export const QUESTION_LINKS: Record<string, ResourceLink[]> = {
       source: ours,
     },
   ],
+  "train-after": [
+    {
+      title: "Training Needs Analysis Template",
+      href: "https://dreamstonehr.com.au/blog/resource/training-needs-analysis-template/",
+      source: ours,
+    },
+    {
+      title: "Creating a culture of continuous learning",
+      href: "https://dreamstonehr.com.au/blog/creating-culture-continuous-learning-business-owners/",
+      source: ours,
+    },
+  ],
   "train-probation": [
     {
       title: "Probation Review Checklist",
@@ -664,8 +691,23 @@ export const QUESTION_LINKS: Record<string, ResourceLink[]> = {
   ],
   "culture-wellbeing": [
     {
+      title: "10 practical tips to improve workplace culture",
+      href: "https://dreamstonehr.com.au/blog/resource/improve-your-workplace-culture/",
+      source: ours,
+    },
+    {
       title: "Workplace Culture Challenge",
       href: "https://dreamstonehr.com.au/blog/resource/workplace-culture-challenge/",
+      source: ours,
+    },
+    {
+      title: "The hidden cost of ignoring employee burnout",
+      href: "https://dreamstonehr.com.au/blog/burnout-workplace-culture/",
+      source: ours,
+    },
+    {
+      title: "Navigating workplace mental health",
+      href: "https://dreamstonehr.com.au/blog/navigating-workplace-mental-health/",
       source: ours,
     },
   ],

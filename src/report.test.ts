@@ -155,6 +155,24 @@ describe("report", () => {
     }
     const safetyReport = sectionReport(scoreSection(safety, safetyAnswers), profile)
     expect(safetyReport.resources[0]?.href).toBe("https://www.worksafe.vic.gov.au/")
+
+    const training = sections.find((item) => item.id === "training")!
+    const trainingAnswers: Record<string, string> = {}
+    for (const question of training.questions) {
+      trainingAnswers[question.id] = question.choices.find((item) => item.kind === "gap")?.id ?? "no"
+    }
+    const trainingReport = sectionReport(scoreSection(training, trainingAnswers), profile)
+    expect(trainingReport.resources.some((link) => link.href.includes("training-needs-analysis-template"))).toBe(true)
+
+    const culture = sections.find((item) => item.id === "culture")!
+    const cultureAnswers: Record<string, string> = {}
+    for (const question of culture.questions) {
+      cultureAnswers[question.id] = question.choices.find((item) => item.kind === "solid")?.id ?? "yes"
+    }
+    cultureAnswers["culture-wellbeing"] = "no"
+    const cultureReport = sectionReport(scoreSection(culture, cultureAnswers), profile)
+    expect(cultureReport.resources.some((link) => link.href.includes("improve-your-workplace-culture"))).toBe(true)
+    expect(cultureReport.resources.some((link) => link.href.includes("burnout-workplace-culture"))).toBe(true)
   })
 
   it("has a low, medium and high result, and at least one link, for every area", () => {
