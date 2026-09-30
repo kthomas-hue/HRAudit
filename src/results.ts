@@ -112,10 +112,10 @@ export const SECTION_COPY: Record<string, Record<Exclude<Band, "not-applicable">
   },
   policies: {
     low: {
-      reading:
-        "There is no current set of rules people can find. In a dispute you will be explaining what you meant, rather than showing what the person was given.",
-      impact:
-        "A short, dated set — conduct, leave, safety, and how to raise a concern — is more useful than a handbook nobody opens.",
+        reading:
+          "There is no current set of rules people can find. A policy is not compulsory in itself, but without one you are explaining what you meant, rather than showing what the person was given.",
+        impact:
+          "Start with a short set: a code of conduct, bullying and harassment, how a grievance is raised, and the leave people actually take, including personal, annual, parental, and family and domestic violence leave.",
       keep: [],
     },
     medium: {
@@ -354,17 +354,32 @@ export const SECTION_LINKS: Record<string, ResourceLink[]> = {
   ],
   policies: [
     {
-      title: "Best practice guides for workplace rules",
-      href: "https://www.fairwork.gov.au/tools-and-resources/best-practice-guides",
-      source: fairWork,
+      title: "Respectful workplaces: conduct, bullying and harassment",
+      href: "https://dreamstonehr.com.au/blog/resource/respectful-workplaces-what-every-employer-needs-to-understand/",
+      source: ours,
     },
     {
       title: "Summary of the National Employment Standards",
       href: "https://dreamstonehr.com.au/blog/resource/summary-of-the-national-employment-standards/",
       source: ours,
     },
+    {
+      title: "Paid family and domestic violence leave",
+      href: "https://www.fairwork.gov.au/leave/family-and-domestic-violence-leave",
+      source: fairWork,
+    },
+    {
+      title: "Best practice guides for workplace rules",
+      href: "https://www.fairwork.gov.au/tools-and-resources/best-practice-guides",
+      source: fairWork,
+    },
   ],
   safety: [
+    {
+      title: "Your guide to a safer workplace",
+      href: "https://dreamstonehr.com.au/blog/resource/your-guide-to-a-safer-workplace/",
+      source: ours,
+    },
     {
       title: "Emergency plans",
       href: "https://www.safeworkaustralia.gov.au/safety-topic/managing-health-and-safety/emergency-plans-and-procedures",
@@ -395,6 +410,11 @@ export const SECTION_LINKS: Record<string, ResourceLink[]> = {
     {
       title: "Employee Goal Setting Template",
       href: "https://dreamstonehr.com.au/blog/resource/employee-goal-setting-template/",
+      source: ours,
+    },
+    {
+      title: "Performance Review Template",
+      href: "https://dreamstonehr.com.au/blog/resource/performance-review-template/",
       source: ours,
     },
   ],
@@ -599,8 +619,18 @@ export const QUESTION_LINKS: Record<string, ResourceLink[]> = {
   ],
   "policies-set": [
     {
-      title: "Best practice guides",
-      href: "https://www.fairwork.gov.au/tools-and-resources/best-practice-guides",
+      title: "Respectful workplaces: conduct, bullying and harassment",
+      href: "https://dreamstonehr.com.au/blog/resource/respectful-workplaces-what-every-employer-needs-to-understand/",
+      source: ours,
+    },
+    {
+      title: "Summary of the National Employment Standards",
+      href: "https://dreamstonehr.com.au/blog/resource/summary-of-the-national-employment-standards/",
+      source: ours,
+    },
+    {
+      title: "Paid family and domestic violence leave",
+      href: "https://www.fairwork.gov.au/leave/family-and-domestic-violence-leave",
       source: fairWork,
     },
   ],
@@ -626,6 +656,11 @@ export const QUESTION_LINKS: Record<string, ResourceLink[]> = {
     },
   ],
   "perf-reviews": [
+    {
+      title: "Performance Review Template",
+      href: "https://dreamstonehr.com.au/blog/resource/performance-review-template/",
+      source: ours,
+    },
     {
       title: "Building High Performing Teams",
       href: "https://dreamstonehr.com.au/blog/resource/building-high-performing-teams/",

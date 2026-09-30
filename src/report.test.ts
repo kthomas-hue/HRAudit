@@ -155,6 +155,16 @@ describe("report", () => {
     }
     const safetyReport = sectionReport(scoreSection(safety, safetyAnswers), profile)
     expect(safetyReport.resources[0]?.href).toBe("https://www.worksafe.vic.gov.au/")
+    expect(safetyReport.resources.some((link) => link.href.includes("your-guide-to-a-safer-workplace"))).toBe(true)
+
+    const policies = sections.find((item) => item.id === "policies")!
+    const policyAnswers: Record<string, string> = {}
+    for (const question of policies.questions) {
+      policyAnswers[question.id] = question.choices.find((item) => item.kind === "gap")?.id ?? "no"
+    }
+    const policyReport = sectionReport(scoreSection(policies, policyAnswers), profile)
+    expect(policyReport.resources.some((link) => link.href.includes("respectful-workplaces"))).toBe(true)
+    expect(policyReport.impact).toContain("code of conduct")
 
     const training = sections.find((item) => item.id === "training")!
     const trainingAnswers: Record<string, string> = {}
