@@ -174,6 +174,23 @@ describe("report", () => {
     const trainingReport = sectionReport(scoreSection(training, trainingAnswers), profile)
     expect(trainingReport.resources.some((link) => link.href.includes("training-needs-analysis-template"))).toBe(true)
 
+    const pay = sections.find((item) => item.id === "pay")!
+    const payAnswers: Record<string, string> = {}
+    for (const question of pay.questions) {
+      payAnswers[question.id] = question.choices.find((item) => item.kind === "solid")?.id ?? "yes"
+    }
+    payAnswers["pay-salary"] = "no"
+    const payReport = sectionReport(scoreSection(pay, payAnswers), profile)
+    expect(payReport.resources.some((link) => link.href.includes("annualised-salary"))).toBe(true)
+
+    const onboarding = sections.find((item) => item.id === "onboarding")!
+    const onboardAnswers: Record<string, string> = {}
+    for (const question of onboarding.questions) {
+      onboardAnswers[question.id] = question.choices.find((item) => item.kind === "gap")?.id ?? "no"
+    }
+    const onboardReport = sectionReport(scoreSection(onboarding, onboardAnswers), profile)
+    expect(onboardReport.resources.some((link) => link.href.includes("employee-onboarding-toolkit"))).toBe(true)
+
     const culture = sections.find((item) => item.id === "culture")!
     const cultureAnswers: Record<string, string> = {}
     for (const question of culture.questions) {

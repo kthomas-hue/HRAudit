@@ -313,6 +313,11 @@ export const SECTION_LINKS: Record<string, ResourceLink[]> = {
       source: ours,
     },
     {
+      title: "Annualised salaries: what to check and record",
+      href: "https://dreamstonehr.com.au/blog/annualised-salary/",
+      source: ours,
+    },
+    {
       title: "Types of employees",
       href: "https://www.fairwork.gov.au/starting-employment/types-of-employees",
       source: fairWork,
@@ -336,6 +341,11 @@ export const SECTION_LINKS: Record<string, ResourceLink[]> = {
     },
   ],
   onboarding: [
+    {
+      title: "Employee Onboarding Toolkit",
+      href: "https://dreamstonehr.com.au/blog/resource/employee-onboarding-toolkit/",
+      source: ours,
+    },
     {
       title: "Probation Review Checklist",
       href: "https://dreamstonehr.com.au/blog/resource/probation-review-checklist-employers/",
@@ -532,6 +542,11 @@ export const QUESTION_LINKS: Record<string, ResourceLink[]> = {
   ],
   "pay-salary": [
     {
+      title: "Annualised salaries: what to check and record",
+      href: "https://dreamstonehr.com.au/blog/annualised-salary/",
+      source: ours,
+    },
+    {
       title: "Annualised wage arrangements",
       href: "https://www.fairwork.gov.au/pay-and-wages/awards/annualised-wage-arrangements",
       source: fairWork,
@@ -546,6 +561,11 @@ export const QUESTION_LINKS: Record<string, ResourceLink[]> = {
     {
       title: "Payday Super",
       href: "https://www.ato.gov.au/paydaysuper",
+      source: ato,
+    },
+    {
+      title: "Tax withheld calculator",
+      href: "https://www.ato.gov.au/calculators-and-tools/tax-withheld-calculator/",
       source: ato,
     },
   ],
@@ -597,6 +617,11 @@ export const QUESTION_LINKS: Record<string, ResourceLink[]> = {
     },
   ],
   "onboard-start": [
+    {
+      title: "Employee Onboarding Toolkit",
+      href: "https://dreamstonehr.com.au/blog/resource/employee-onboarding-toolkit/",
+      source: ours,
+    },
     {
       title: "Starting employment",
       href: "https://www.fairwork.gov.au/starting-employment",
@@ -668,6 +693,11 @@ export const QUESTION_LINKS: Record<string, ResourceLink[]> = {
     },
   ],
   "perf-pip": [
+    {
+      title: "Performance improvement plan template",
+      href: "https://dreamstonehr.com.au/blog/resource/performance-improvement-plan-pip-template/",
+      source: ours,
+    },
     {
       title: "Managing Poor Performance",
       href: "https://dreamstonehr.com.au/blog/resource/managing-poor-performance/",
