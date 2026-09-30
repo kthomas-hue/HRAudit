@@ -218,10 +218,10 @@ h1.ask:focus { outline: none; }
   border-radius: 999px;
   padding: 4px 10px;
 }
-.tag.exposed { color: var(--exposed); background: #f8e8ea; }
-.tag.uneven { color: var(--uneven); background: #f6ecd9; }
+.tag.low, .tag.exposed { color: var(--exposed); background: #f8e8ea; }
+.tag.medium, .tag.uneven { color: var(--uneven); background: #f6ecd9; }
 .tag.holding { color: var(--holding); background: #e5f2f8; }
-.tag.sound { color: var(--sound); background: #e5f4ee; }
+.tag.high, .tag.sound { color: var(--sound); background: #e5f4ee; }
 .sample p { margin-top: 14px; color: var(--muted); font-size: 0.92rem; }
 
 .panel {
@@ -372,10 +372,10 @@ input:focus, select:focus { border-color: var(--teal); box-shadow: 0 0 0 4px rgb
   line-height: 1;
 }
 .score-pill span { color: var(--muted); font-size: 0.85rem; }
-.band-sound { color: var(--sound); }
+.band-high, .band-sound { color: var(--sound); }
 .band-holding { color: var(--holding); }
-.band-uneven { color: var(--uneven); }
-.band-exposed { color: var(--exposed); }
+.band-medium, .band-uneven { color: var(--uneven); }
+.band-low, .band-exposed { color: var(--exposed); }
 .band-not-applicable { color: var(--muted); }
 
 .card {
@@ -405,10 +405,15 @@ input:focus, select:focus { border-color: var(--teal); box-shadow: 0 0 0 4px rgb
   margin: 10px 0 8px;
 }
 .meter span { display: block; height: 100%; border-radius: inherit; }
-.meter.sound span { background: var(--sound); width: var(--w); }
+.meter.high span, .meter.sound span { background: var(--sound); }
 .meter.holding span { background: var(--holding); }
-.meter.uneven span { background: var(--uneven); }
-.meter.exposed span { background: var(--exposed); }
+.meter.medium span, .meter.uneven span { background: var(--uneven); }
+.meter.low span, .meter.exposed span { background: var(--exposed); }
+.resources { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; }
+.resources li { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
+.resources a { font-weight: 600; }
+.resources span { color: var(--muted); font-size: 0.88rem; }
+.card h3 { margin-top: 16px; }
 .section-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
 .action {
   margin-top: 10px;
@@ -472,4 +477,10 @@ input:focus, select:focus { border-color: var(--teal); box-shadow: 0 0 0 4px rgb
   .report { width: 100%; }
   .card, .score-pill, .sample { box-shadow: none; }
   a { text-decoration: none; }
+  .resources a::after {
+    content: " (" attr(href) ")";
+    font-weight: 400;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
 }

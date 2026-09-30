@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react"
 import type { Profile } from "../content"
 import type { Answers } from "../model"
 import { bandLabel } from "../model"
-import { buildReport, sectionNarrative } from "../report"
+import { buildReport } from "../report"
 
 type Props = {
   profile: Profile
@@ -38,10 +38,11 @@ export function ReportStep({ profile, answers, example = false, onEdit, onRestar
           headcount: profile.headcount,
           award: profile.award,
           overall: report.overall,
-          sections: report.sections.map((score) => ({
-            id: score.section.id,
-            title: score.section.title,
-            percent: score.percent,
+          sections: report.sections.map((item) => ({
+            id: item.score.section.id,
+            title: item.score.section.title,
+            percent: item.score.percent,
+            band: item.score.band,
           })),
           priorities: report.priorities.map((item) => ({
             section: item.sectionTitle,
@@ -94,9 +95,10 @@ export function ReportStep({ profile, answers, example = false, onEdit, onRestar
         <h2>How to read this</h2>
         <p>{report.lede}</p>
         <p>
-          The number compares sections. It is not a mark, a compliance finding, or legal advice.
-          “Not sure” counts as a gap, because an unknown obligation is still an obligation. Questions
-          that do not apply are left out of the score.
+          Each area below is written for the band your answers landed in. 70 or above is in good
+          shape, 50 to 69 is partly in place, and under 50 needs attention. The number is not a
+          mark, a compliance finding, or legal advice. “Not sure” counts as a gap. Questions that
+          do not apply are left out of the score.
         </p>
       </section>
 
@@ -121,26 +123,52 @@ export function ReportStep({ profile, answers, example = false, onEdit, onRestar
         )}
       </section>
 
-      {report.sections.map((score) => (
-        <section className="card" key={score.section.id}>
+      {report.sections.map((item) => (
+        <section className="card" key={item.score.section.id}>
           <div className="section-head">
-            <h2>{score.section.title}</h2>
-            <strong className={`band-${score.band}`}>
-              {score.percent === null ? "—" : `${score.percent}`} · {bandLabel(score.band)}
+            <h2>{item.score.section.title}</h2>
+            <strong className={`band-${item.score.band}`}>
+              {item.score.percent === null ? "—" : `${item.score.percent}`} · {bandLabel(item.score.band)}
             </strong>
           </div>
-          {score.percent !== null && (
-            <div className={`meter ${score.band}`} aria-hidden="true">
-              <span style={{ width: `${score.percent}%` }} />
+          {item.score.percent !== null && (
+            <div className={`meter ${item.score.band}`} aria-hidden="true">
+              <span style={{ width: `${item.score.percent}%` }} />
             </div>
           )}
-          <p>{sectionNarrative(score, profile)}</p>
-          {score.weak.map((item) => (
-            <p className="action" key={item.questionId}>
-              {item.action}
-            </p>
-          ))}
-          {score.weak.length === 0 && score.band === "sound" && <p className="action">{score.section.keep}</p>}
+          <p>{item.reading}</p>
+          {item.actions.length > 0 && (
+            <>
+              <h3>What to do</h3>
+              {item.actions.map((action) => (
+                <p className="action" key={action.text}>
+                  {action.unsure ? "You were not sure, so start here. " : ""}
+                  {action.text}
+                </p>
+              ))}
+            </>
+          )}
+          {item.impact && (
+            <>
+              <h3>What changes</h3>
+              <p>{item.impact}</p>
+            </>
+          )}
+          {item.resources.length > 0 && (
+            <>
+              <h3>Where to look</h3>
+              <ul className="resources">
+                {item.resources.map((link) => (
+                  <li key={link.href}>
+                    <a href={link.href} target="_blank" rel="noreferrer">
+                      {link.title}
+                    </a>
+                    <span>{link.source}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </section>
       ))}
 

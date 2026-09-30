@@ -50,19 +50,19 @@ export function Welcome({ canResume, onStart, onResume, onExample }: Props) {
         <ol>
           <li>
             <span>Employment contracts</span>
-            <em className="tag exposed">Start here</em>
+            <em className="tag low">Needs attention</em>
           </li>
           <li>
             <span>Pay and entitlements</span>
-            <em className="tag uneven">Needs a look</em>
+            <em className="tag medium">Partly in place</em>
           </li>
           <li>
             <span>Psychosocial risk and positive duty</span>
-            <em className="tag exposed">Start here</em>
+            <em className="tag low">Needs attention</em>
           </li>
           <li>
             <span>Culture and engagement</span>
-            <em className="tag sound">Sound on this screen</em>
+            <em className="tag high">In good shape</em>
           </li>
         </ol>
         <p>An example layout, not a result. Yours is built only from your answers.</p>
