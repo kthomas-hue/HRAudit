@@ -20,7 +20,7 @@ export function Welcome({ canResume, onStart, onResume, onExample }: Props) {
           a courtroom.
         </p>
         <ul className="promise">
-          <li>Eight areas of Australian workplace practice, from contracts and awards to safety and records.</li>
+          <li>The same twelve areas as our current health check, from pay and contracts through to safety and psychosocial risk.</li>
           <li>A clear order of what to fix yourself this month.</li>
           <li>Notes for your state and the size of your team, so the advice is not generic.</li>
         </ul>
@@ -49,19 +49,19 @@ export function Welcome({ canResume, onStart, onResume, onExample }: Props) {
         <h2>A report you can use on Monday.</h2>
         <ol>
           <li>
-            <span>Award coverage</span>
+            <span>Employment contracts</span>
             <em className="tag exposed">Start here</em>
           </li>
           <li>
-            <span>Payroll compliance</span>
+            <span>Pay and entitlements</span>
             <em className="tag uneven">Needs a look</em>
           </li>
           <li>
-            <span>Employment contracts</span>
-            <em className="tag holding">In place, with gaps</em>
+            <span>Psychosocial risk and positive duty</span>
+            <em className="tag exposed">Start here</em>
           </li>
           <li>
-            <span>Safety and psychological safety</span>
+            <span>Culture and engagement</span>
             <em className="tag sound">Sound on this screen</em>
           </li>
         </ol>

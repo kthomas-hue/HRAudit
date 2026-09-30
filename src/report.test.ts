@@ -65,7 +65,7 @@ describe("scoring", () => {
 
   it("weights payroll and awards more heavily than a perfect lighter section", () => {
     const answers = answerAll("yes")
-    const payroll = sections.find((item) => item.id === "payroll")!
+    const payroll = sections.find((item) => item.id === "pay")!
     for (const question of payroll.questions) {
       const weakest = question.choices.find((item) => item.kind === "gap")
       answers[question.id] = weakest?.id ?? question.choices[0].id

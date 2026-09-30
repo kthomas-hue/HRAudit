@@ -50,7 +50,7 @@ function sectionReading(score: SectionScore, awardNote: boolean): string {
       ? ` You marked ${unknown === 1 ? "one item" : `${unknown} items`} as not sure. Those are treated as gaps until you can point to the document or the person who knows.`
       : ""
   const award =
-    awardNote && section.id === "awards"
+    awardNote && section.id === "pay"
       ? " You also said you were not sure what covers the team. Mapping the award or agreement is the first job in this section. Paying above the base rate does not, by itself, turn an award off."
       : ""
 

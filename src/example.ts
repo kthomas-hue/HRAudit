@@ -1,4 +1,4 @@
-import { questions, type Profile } from "./content"
+import { questions, type ChoiceKind, type Profile } from "./content"
 import type { ReviewState } from "./model"
 
 const exampleProfile: Profile = {
@@ -8,22 +8,31 @@ const exampleProfile: Profile = {
   award: "unsure",
 }
 
-function pick(index: number): string {
-  const question = questions[index]
-  if (index < 4 || (index >= 8 && index < 12)) {
-    return question.choices[Math.min(2, question.choices.length - 1)].id
-  }
-  if (index < 8) {
-    return question.choices.find((choice) => choice.kind === "unsure")?.id ?? question.choices[0].id
-  }
-  return question.choices[0].id
+const pattern: Record<string, ChoiceKind[]> = {
+  pay: ["partial", "partial", "partial", "partial"],
+  contracts: ["gap", "gap", "gap"],
+  recruitment: ["partial", "gap", "partial"],
+  onboarding: ["gap", "partial", "gap"],
+  policies: ["partial", "partial", "partial"],
+  safety: ["partial", "gap", "partial"],
+  performance: ["partial", "solid", "partial"],
+  training: ["gap", "partial", "gap"],
+  culture: ["solid", "partial", "solid"],
+  records: ["partial", "solid", "partial"],
+  exits: ["partial", "partial", "gap"],
+  psychosocial: ["gap", "gap", "gap"],
 }
 
 export function exampleState(): ReviewState {
+  const seen = new Map<string, number>()
   const answers: Record<string, string> = {}
-  questions.forEach((question, index) => {
-    answers[question.id] = pick(index)
-  })
+  for (const question of questions) {
+    const index = seen.get(question.sectionId) ?? 0
+    seen.set(question.sectionId, index + 1)
+    const kind = pattern[question.sectionId]?.[index] ?? "solid"
+    const choice = question.choices.find((item) => item.kind === kind) ?? question.choices[0]
+    answers[question.id] = choice.id
+  }
   return {
     step: { name: "report" },
     profile: exampleProfile,
