@@ -38,25 +38,38 @@ export function ReportStep({ profile, answers, example = false, onEdit, onRestar
           headcount: profile.headcount,
           award: profile.award,
           overall: report.overall,
+          band: report.band,
+          headline: report.headline,
+          lede: report.lede,
+          dateLabel: report.dateLabel,
+          notes: report.notes,
           sections: report.sections.map((item) => ({
-            id: item.score.section.id,
             title: item.score.section.title,
             percent: item.score.percent,
             band: item.score.band,
+            reading: item.reading,
+            actions: item.actions.map((action) => action.text),
+            impact: item.impact,
+            resources: item.resources.map((link) => ({ title: link.title, href: link.href })),
           })),
           priorities: report.priorities.map((item) => ({
             section: item.sectionTitle,
-            prompt: item.prompt,
+            action: item.action,
           })),
         }),
       })
-      const body = (await response.json()) as { error?: string }
+      const body = (await response.json()) as { error?: string; delivered?: boolean }
       if (!response.ok) {
         setStatus("error")
-        setMessage(body.error ?? "We could not save that. Your report is still on this page.")
+        setMessage(body.error ?? "We could not send that. Your report is still on this page.")
         return
       }
       setStatus("saved")
+      setMessage(
+        body.delivered
+          ? `The report is on its way to ${email}. HR Support has been told this review is finished.`
+          : "The report is on this page. Email is not connected yet, so a copy has not been sent. Print it or save it as a PDF.",
+      )
     } catch {
       setStatus("error")
       setMessage("We could not save that. Print or save as PDF — the report is already here.")
@@ -215,8 +228,8 @@ export function ReportStep({ profile, answers, example = false, onEdit, onRestar
           </p>
           {!example && (
             <p>
-              If you would like DreamStoneHR to hold this summary so a copy can be sent to you, leave
-              your details. They are used for this review only — not a newsletter.
+              The report above is yours. Leave your email and this copy is sent to you. HR Support is
+              notified that a review was finished. Your details are used for this review only.
             </p>
           )}
           <div className="actions">
@@ -268,11 +281,11 @@ export function ReportStep({ profile, answers, example = false, onEdit, onRestar
           </label>
           {status === "saved" ? (
             <p className="success" role="status">
-              Saved with this review. You can still print the report on this page.
+              {message}
             </p>
           ) : (
             <button className="btn secondary" type="submit" disabled={status === "saving"}>
-              {status === "saving" ? "Saving…" : "Keep my details with this report"}
+              {status === "saving" ? "Sending…" : "Email me this report"}
             </button>
           )}
           {status === "error" && (
