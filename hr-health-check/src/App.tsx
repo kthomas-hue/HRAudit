@@ -17,6 +17,7 @@ function App() {
     setAnswer,
     complete,
     reset,
+    resume,
   } = useAssessmentState()
 
   if (!hydrated) {
@@ -41,13 +42,9 @@ function App() {
         {state.step === 'landing' && (
           <Landing
             hasProgress={hasSavedWork}
+            hasResults={!!state.completedAt}
             onStart={() => setStep('contact')}
-            onResume={() => {
-              if (state.completedAt) setStep('results')
-              else if (Object.keys(state.answers).length > 0) setStep('assessment')
-              else if (state.contact.email) setStep('assessment')
-              else setStep('contact')
-            }}
+            onResume={resume}
             onReset={() => reset()}
           />
         )}

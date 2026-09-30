@@ -55,7 +55,12 @@ export function useAssessmentState() {
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
-    setState(load())
+    const saved = load()
+    // Always greet on landing so resume / start-fresh is an intentional choice
+    setState({
+      ...saved,
+      step: 'landing',
+    })
     setHydrated(true)
   }, [])
 
@@ -94,6 +99,15 @@ export function useAssessmentState() {
     setState(defaultState)
   }, [])
 
+  const resume = useCallback(() => {
+    setState((s) => {
+      if (s.completedAt) return { ...s, step: 'results' }
+      if (Object.keys(s.answers).length > 0) return { ...s, step: 'assessment' }
+      if (s.contact.email || s.contact.firstName) return { ...s, step: 'assessment' }
+      return { ...s, step: 'contact' }
+    })
+  }, [])
+
   return {
     state,
     hydrated,
@@ -104,5 +118,6 @@ export function useAssessmentState() {
     setAnswer,
     complete,
     reset,
+    resume,
   }
 }

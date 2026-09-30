@@ -405,7 +405,11 @@ main {
   position: relative;
   max-width: var(--max);
   margin: 0 auto;
-  padding: 2rem 0 1rem;
+  padding: 1.25rem 0 2rem;
+  min-height: min(78vh, 720px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .landing__logo {
@@ -663,6 +667,10 @@ main {
   font-weight: 600;
   color: var(--ink-soft);
   margin-bottom: 0.55rem;
+}
+
+.progress-bar__meta span:last-child {
+  color: var(--purple);
 }
 
 .progress-bar__track {

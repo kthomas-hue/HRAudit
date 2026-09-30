@@ -3,11 +3,12 @@ import { Logo } from './Logo'
 interface LandingProps {
   onStart: () => void
   hasProgress: boolean
+  hasResults?: boolean
   onResume: () => void
   onReset: () => void
 }
 
-export function Landing({ onStart, hasProgress, onResume, onReset }: LandingProps) {
+export function Landing({ onStart, hasProgress, hasResults = false, onResume, onReset }: LandingProps) {
   return (
     <section className="landing">
       <div className="landing__hero">
@@ -33,7 +34,7 @@ export function Landing({ onStart, hasProgress, onResume, onReset }: LandingProp
             {hasProgress ? (
               <>
                 <button type="button" className="btn btn--lime" onClick={onResume}>
-                  Continue where you left off
+                  {hasResults ? 'View your results' : 'Continue where you left off'}
                   <span className="btn__arrow" aria-hidden>
                     →
                   </span>
