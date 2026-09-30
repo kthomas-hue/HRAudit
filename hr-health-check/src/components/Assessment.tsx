@@ -1,138 +1,251 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { categories, feedbackQuestion, getQuestionsForCategory } from '../data/questions'
-import type { Answers } from '../data/scoring'
-import { Progress } from './Progress'
+import { categories, feedbackQuestion, getQuestionsForCategory, questions, type Question } from '../data/questions'
+import type { Answers, AnswerValue } from '../data/scoring'
 import { QuestionCard } from './QuestionCard'
 
 interface AssessmentProps {
   categoryIndex: number
+  questionIndex: number
   answers: Answers
   onAnswer: (id: string, value: Answers[string]) => void
-  onCategoryChange: (index: number) => void
+  onPositionChange: (categoryIndex: number, questionIndex: number) => void
   onComplete: () => void
   onBackToContact: () => void
 }
 
-function isAnswered(value: Answers[string], questionType: string, required: boolean): boolean {
-  if (!required) return true
-  if (questionType === 'multi') return Array.isArray(value) // empty array is a valid "none" selection
+function isAnswered(q: Question, value: Answers[string]): boolean {
+  if (q.type === 'text' || q.required === false) return true
+  if (q.type === 'multi') return value !== undefined && Array.isArray(value)
   if (value === null || value === undefined || value === '') return false
   return true
 }
 
 export function Assessment({
   categoryIndex,
+  questionIndex,
   answers,
   onAnswer,
-  onCategoryChange,
+  onPositionChange,
   onComplete,
   onBackToContact,
 }: AssessmentProps) {
   const category = categories[categoryIndex]
   const stepQuestions = useMemo(() => getQuestionsForCategory(category.id), [category.id])
-  const isLast = categoryIndex === categories.length - 1
-  const [showErrors, setShowErrors] = useState(false)
-  const topRef = useRef<HTMLElement>(null)
+  const isIntro = questionIndex < 0
+  const isLastCategory = categoryIndex === categories.length - 1
+  const showingFeedback = isLastCategory && questionIndex >= stepQuestions.length
+  const currentQuestion = showingFeedback
+    ? feedbackQuestion
+    : isIntro
+      ? null
+      : stepQuestions[questionIndex]
 
-  const unanswered = stepQuestions.filter((q) => {
-    const required = q.required !== false && q.type !== 'text'
-    const value = answers[q.id]
-    // Multi-select: treat missing as unanswered until user interacts; empty array is valid
-    if (q.type === 'multi' && required && value === undefined) return true
-    return !isAnswered(value ?? (q.type === 'multi' ? [] : null), q.type, required)
-  })
+  const answeredSoFar = questions.filter((q) => {
+    const v = answers[q.id]
+    if (q.type === 'multi') return Array.isArray(v)
+    return v !== null && v !== undefined && v !== ''
+  }).length
+  const overallPct = Math.round((answeredSoFar / questions.length) * 100)
 
-  const answeredCount = stepQuestions.length - unanswered.length
+  const [shake, setShake] = useState(false)
+  const stageRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    setShowErrors(false)
-    topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }, [categoryIndex])
+    stageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [categoryIndex, questionIndex])
+
+  const canContinue = (() => {
+    if (isIntro) return true
+    if (showingFeedback) return true
+    if (!currentQuestion) return false
+    if (currentQuestion.type === 'multi' || currentQuestion.type === 'text') return true
+    return isAnswered(currentQuestion, answers[currentQuestion.id])
+  })()
 
   const goNext = () => {
-    if (unanswered.length) {
-      setShowErrors(true)
-      const first = unanswered[0]
-      document.getElementById(`q-${first.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    if (!canContinue) {
+      setShake(true)
+      window.setTimeout(() => setShake(false), 420)
       return
     }
-    if (isLast) {
-      // include optional feedback — always allow
+
+    if (currentQuestion?.type === 'multi' && answers[currentQuestion.id] === undefined) {
+      onAnswer(currentQuestion.id, [])
+    }
+
+    if (isIntro) {
+      onPositionChange(categoryIndex, 0)
+      return
+    }
+
+    if (showingFeedback) {
       onComplete()
       return
     }
-    onCategoryChange(categoryIndex + 1)
+
+    if (questionIndex < stepQuestions.length - 1) {
+      onPositionChange(categoryIndex, questionIndex + 1)
+      return
+    }
+
+    // end of category
+    if (isLastCategory) {
+      onPositionChange(categoryIndex, stepQuestions.length) // feedback
+      return
+    }
+
+    onPositionChange(categoryIndex + 1, -1)
   }
 
   const goPrev = () => {
-    if (categoryIndex === 0) {
-      onBackToContact()
+    if (isIntro) {
+      if (categoryIndex === 0) {
+        onBackToContact()
+        return
+      }
+      const prevCat = categories[categoryIndex - 1]
+      const prevQs = getQuestionsForCategory(prevCat.id)
+      onPositionChange(categoryIndex - 1, prevQs.length - 1)
       return
     }
-    onCategoryChange(categoryIndex - 1)
+
+    if (showingFeedback) {
+      onPositionChange(categoryIndex, stepQuestions.length - 1)
+      return
+    }
+
+    if (questionIndex === 0) {
+      onPositionChange(categoryIndex, -1)
+      return
+    }
+
+    onPositionChange(categoryIndex, questionIndex - 1)
+  }
+
+  const handleAnswer = (value: Answers[string]) => {
+    if (!currentQuestion) return
+    onAnswer(currentQuestion.id, value)
+
+    // Auto-advance for decisive single-choice interactions
+    if (
+      currentQuestion.type === 'yesno' ||
+      currentQuestion.type === 'single' ||
+      currentQuestion.type === 'scale'
+    ) {
+      window.setTimeout(() => {
+        if (questionIndex < stepQuestions.length - 1) {
+          onPositionChange(categoryIndex, questionIndex + 1)
+        } else if (isLastCategory) {
+          onPositionChange(categoryIndex, stepQuestions.length)
+        } else {
+          onPositionChange(categoryIndex + 1, -1)
+        }
+      }, 420)
+    }
   }
 
   return (
-    <section className="assessment" ref={topRef}>
-      <div className="assessment__banner">
-        <div className="assessment__banner-inner">
-          <p className="eyebrow eyebrow--light">HR Health Check</p>
-          <h1>{category.name}</h1>
-          <p>{category.description}</p>
+    <section className="wizard" ref={stageRef}>
+      <div className="wizard__top">
+        <div className="wizard__progress" aria-label={`Assessment ${overallPct}% complete`}>
+          <div className="wizard__progress-fill" style={{ width: `${overallPct}%` }} />
         </div>
-        <div className="assessment__banner-mark" aria-hidden />
+        <div className="wizard__meta">
+          <span className="wizard__chapter">
+            {categoryIndex + 1} / {categories.length} · {category.shortName}
+          </span>
+          <span className="wizard__pct">{overallPct}%</span>
+        </div>
       </div>
 
-      <div className="assessment__body">
-        <Progress
-          categoryIndex={categoryIndex}
-          answeredInStep={answeredCount}
-          totalInStep={stepQuestions.length}
-        />
-
+      <div className="wizard__stage">
         <AnimatePresence mode="wait">
-          <motion.div
-            key={category.id}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className="assessment__questions"
-          >
-            {stepQuestions.map((q, i) => (
-              <QuestionCard
-                key={q.id}
-                question={q}
-                index={i}
-                answer={answers[q.id] ?? null}
-                onChange={(v) => onAnswer(q.id, v)}
-                showError={showErrors}
-              />
-            ))}
+          {isIntro ? (
+            <motion.div
+              key={`intro-${category.id}`}
+              className="wizard__intro"
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <p className="eyebrow">Chapter {categoryIndex + 1}</p>
+              <h1>
+                <span className="highlight-lime">{category.name}</span>
+              </h1>
+              <p className="lead">{category.description}</p>
+              <p className="wizard__count">{stepQuestions.length} questions in this chapter</p>
+              <button type="button" className="btn btn--lime" onClick={goNext}>
+                Continue
+                <span className="btn__arrow" aria-hidden>
+                  ↗
+                </span>
+              </button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key={currentQuestion?.id ?? 'q'}
+              className={`wizard__question ${shake ? 'is-shake' : ''}`}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {currentQuestion && (
+                <QuestionCard
+                  question={currentQuestion}
+                  index={showingFeedback ? stepQuestions.length : questionIndex}
+                  answer={
+                    (answers[currentQuestion.id] as AnswerValue | undefined) ??
+                    (currentQuestion.type === 'multi' ? [] : null)
+                  }
+                  onChange={handleAnswer}
+                  showError={shake && !canContinue}
+                  focused
+                />
+              )}
 
-            {isLast && (
-              <QuestionCard
-                question={feedbackQuestion}
-                index={stepQuestions.length}
-                answer={answers[feedbackQuestion.id] ?? ''}
-                onChange={(v) => onAnswer(feedbackQuestion.id, v)}
-              />
-            )}
-          </motion.div>
+              {(currentQuestion?.type === 'multi' ||
+                currentQuestion?.type === 'text' ||
+                showingFeedback) && (
+                <div className="wizard__actions">
+                  <button type="button" className="btn btn--ghost" onClick={goPrev}>
+                    Back
+                  </button>
+                  <button type="button" className="btn btn--lime" onClick={goNext}>
+                    {showingFeedback ? 'See my results' : 'Continue'}
+                    <span className="btn__arrow" aria-hidden>
+                      ↗
+                    </span>
+                  </button>
+                </div>
+              )}
+
+              {currentQuestion &&
+                (currentQuestion.type === 'yesno' ||
+                  currentQuestion.type === 'single' ||
+                  currentQuestion.type === 'scale') && (
+                  <div className="wizard__actions wizard__actions--subtle">
+                    <button type="button" className="text-link" onClick={goPrev}>
+                      ← Back
+                    </button>
+                    <span className="wizard__hint">Select an answer to continue</span>
+                  </div>
+                )}
+            </motion.div>
+          )}
         </AnimatePresence>
+      </div>
 
-        <div className="assessment__nav">
-          <button type="button" className="btn btn--ghost" onClick={goPrev}>
-            ← Previous
-          </button>
-          <button type="button" className="btn btn--lime" onClick={goNext}>
-            {isLast ? 'Submit my answers' : 'Next section'}
-            <span className="btn__arrow" aria-hidden>
-              →
-            </span>
-          </button>
-        </div>
+      <div className="wizard__rail" aria-hidden>
+        {categories.map((c, i) => (
+          <span
+            key={c.id}
+            className={`wizard__rail-dot ${i < categoryIndex ? 'is-done' : ''} ${i === categoryIndex ? 'is-current' : ''}`}
+            style={{ ['--dot' as string]: c.accent }}
+          />
+        ))}
       </div>
     </section>
   )

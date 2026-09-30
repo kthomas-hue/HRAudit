@@ -11,7 +11,7 @@ function App() {
     state,
     hydrated,
     setStep,
-    setCategoryIndex,
+    setPosition,
     setContact,
     setPrivacyAccepted,
     setAnswer,
@@ -57,6 +57,7 @@ function App() {
             onBack={() => setStep('landing')}
             onSubmit={(contact) => {
               setContact(contact)
+              setPosition(0, -1)
               setStep('assessment')
             }}
           />
@@ -65,9 +66,10 @@ function App() {
         {state.step === 'assessment' && (
           <Assessment
             categoryIndex={state.categoryIndex}
+            questionIndex={state.questionIndex}
             answers={state.answers}
             onAnswer={setAnswer}
-            onCategoryChange={setCategoryIndex}
+            onPositionChange={setPosition}
             onComplete={complete}
             onBackToContact={() => setStep('contact')}
           />
@@ -78,7 +80,7 @@ function App() {
         )}
       </main>
 
-      <SiteFooter />
+      {state.step !== 'assessment' && <SiteFooter />}
     </div>
   )
 }

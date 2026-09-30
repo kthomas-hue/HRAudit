@@ -1,44 +1,88 @@
-import { chromium, devices } from 'playwright'
+import { chromium } from 'playwright'
 import path from 'node:path'
 import fs from 'node:fs'
 
-const BASE = 'http://localhost:4174'
+const BASE = 'http://localhost:4173'
 const OUT = '/opt/cursor/artifacts'
 fs.mkdirSync(OUT, { recursive: true })
 
-async function answerCurrentSection(page) {
-  // Scale pips
-  const scales = page.locator('.scale-input')
-  const scaleCount = await scales.count()
-  for (let i = 0; i < scaleCount; i++) {
-    const pips = scales.nth(i).locator('.scale-input__pip')
-    const n = await pips.count()
-    await pips.nth(Math.min(6, n - 1)).click()
+async function currentQuestionId(page) {
+  const el = page.locator('.question-card.is-focused')
+  if (!(await el.count())) return null
+  return el.getAttribute('id')
+}
+
+async function waitForQuestionChange(page, prevId) {
+  await page.waitForFunction(
+    (id) => {
+      const el = document.querySelector('.question-card.is-focused')
+      if (!el) return !!document.querySelector('.wizard__intro') || !!document.body.innerText.includes('Your results are in')
+      return el.id !== id
+    },
+    prevId,
+    { timeout: 8000 },
+  ).catch(() => {})
+}
+
+async function answerCurrentQuestion(page) {
+  if (await page.locator('text=Your results are in').count()) return 'done'
+  if (await page.locator('.wizard__intro').count()) {
+    await page.getByRole('button', { name: /^Continue$/i }).click()
+    await page.waitForSelector('.question-card.is-focused', { timeout: 5000 })
+    return 'intro'
   }
 
-  // Yes/No — pick Yes
-  const yesnos = page.locator('.yesno')
-  const ynCount = await yesnos.count()
-  for (let i = 0; i < ynCount; i++) {
-    await yesnos.nth(i).locator('.yesno__btn').first().click()
+  const prevId = await currentQuestionId(page)
+
+  if (await page.getByRole('button', { name: /See my results/i }).count()) {
+    await page.getByRole('button', { name: /See my results/i }).click()
+    return 'submit'
   }
 
-  // Single choice — pick first option
-  const singles = page.locator('.choice-list:not(.is-multi)')
-  const sCount = await singles.count()
-  for (let i = 0; i < sCount; i++) {
-    await singles.nth(i).locator('.choice-list__item').first().click()
+  const scale = page.locator('.scale-input__pip')
+  if (await scale.count()) {
+    await scale.nth(6).click({ force: true })
+    await waitForQuestionChange(page, prevId)
+    return 'scale'
   }
 
-  // Multi — pick first two if present
-  const multis = page.locator('.choice-list.is-multi')
-  const mCount = await multis.count()
-  for (let i = 0; i < mCount; i++) {
-    const items = multis.nth(i).locator('.choice-list__item')
-    const ic = await items.count()
-    if (ic > 0) await items.nth(0).click()
-    if (ic > 1) await items.nth(1).click()
+  const yes = page.locator('.yesno__btn').first()
+  if (await yes.count()) {
+    await yes.click({ force: true })
+    await waitForQuestionChange(page, prevId)
+    return 'yesno'
   }
+
+  const single = page.locator('.choice-list:not(.is-multi) .choice-list__item').first()
+  if (await single.count()) {
+    await single.click({ force: true })
+    await waitForQuestionChange(page, prevId)
+    return 'single'
+  }
+
+  const multi = page.locator('.choice-list.is-multi .choice-list__item')
+  if (await multi.count()) {
+    await multi.nth(0).click({ force: true })
+    await page.getByRole('button', { name: /^Continue$/i }).click()
+    await waitForQuestionChange(page, prevId)
+    return 'multi'
+  }
+
+  const text = page.locator('textarea.text-area')
+  if (await text.count()) {
+    await text.fill('Helpful, calm experience — contracts stood out.')
+    await page.getByRole('button', { name: /See my results|Continue/i }).click()
+    await page.waitForTimeout(400)
+    return 'text'
+  }
+
+  // Fallback continue
+  const cont = page.getByRole('button', { name: /^Continue$/i })
+  if (await cont.count()) {
+    await cont.click()
+    await page.waitForTimeout(250)
+  }
+  return 'unknown'
 }
 
 async function run() {
@@ -49,20 +93,15 @@ async function run() {
   })
   const page = await context.newPage()
 
-  // Clear storage
   await page.goto(BASE)
   await page.evaluate(() => localStorage.clear())
   await page.reload()
   await page.waitForSelector('text=HR Health Check')
+  await page.screenshot({ path: path.join(OUT, 'v2_landing.png'), fullPage: false })
 
-  await page.screenshot({ path: path.join(OUT, 'ux-01-landing.png'), fullPage: false })
-
-  // Validation on contact
   await page.getByRole('button', { name: /Begin your HR Health Check/i }).click()
-  await page.waitForSelector('text=Tell us who you are')
-  await page.getByRole('button', { name: /Start the assessment/i }).click()
-  await page.waitForSelector('.field-error')
-  await page.screenshot({ path: path.join(OUT, 'ux-02-contact-validation.png') })
+  await page.waitForSelector('text=personalise')
+  await page.screenshot({ path: path.join(OUT, 'v2_contact.png') })
 
   await page.getByLabel('First name').fill('Alex')
   await page.getByLabel('Last name').fill('Morgan')
@@ -72,63 +111,35 @@ async function run() {
   await page.locator('.checkbox-field input').check()
   await page.getByRole('button', { name: /Start the assessment/i }).click()
 
-  await page.waitForSelector('text=Pay & Entitlements')
-  await page.screenshot({ path: path.join(OUT, 'ux-03-assessment-section1.png') })
+  await page.waitForSelector('text=Chapter 1')
+  await page.screenshot({ path: path.join(OUT, 'v2_chapter_intro.png') })
+  await page.getByRole('button', { name: /^Continue$/i }).click()
+  await page.waitForSelector('.question-card.is-focused')
+  await page.screenshot({ path: path.join(OUT, 'v2_question.png') })
 
-  // Test incomplete next
-  await page.getByRole('button', { name: /Next section/i }).click()
-  await page.waitForSelector('.question-card.has-error, .field-error')
-  await page.screenshot({ path: path.join(OUT, 'ux-04-validation-incomplete.png') })
-
-  // Complete all 12 sections
-  for (let section = 0; section < 12; section++) {
-    await answerCurrentSection(page)
-    if (section === 11) {
-      const feedback = page.locator('textarea.text-area')
-      if (await feedback.count()) {
-        await feedback.fill('Helpful check — made us rethink our contracts.')
-      }
-      await page.screenshot({ path: path.join(OUT, 'ux-05-final-section.png') })
-      await page.getByRole('button', { name: /Submit my answers/i }).click()
-    } else {
-      await page.getByRole('button', { name: /Next section/i }).click()
-      await page.waitForTimeout(350)
-    }
+  for (let i = 0; i < 130; i++) {
+    if (await page.locator('text=Your results are in').count()) break
+    const kind = await answerCurrentQuestion(page)
+    if (kind === 'done') break
   }
 
-  await page.waitForSelector('text=Your results are in')
-  await page.screenshot({ path: path.join(OUT, 'ux-06-results-hero.png') })
-  await page.locator('.results__body').scrollIntoViewIfNeeded()
-  await page.screenshot({ path: path.join(OUT, 'ux-07-results-scorecard.png'), fullPage: false })
+  await page.waitForSelector('text=Your results are in', { timeout: 15000 })
+  await page.screenshot({ path: path.join(OUT, 'v2_results.png') })
 
-  // Open responses
-  await page.locator('details.responses summary').click()
-  await page.waitForTimeout(200)
-
-  // Mobile viewport check
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto(BASE)
-  await page.waitForSelector('.landing__actions')
-  await page.waitForTimeout(400)
-  const bodyText = await page.locator('body').innerText()
-  console.log('LANDING_SNIPPET', bodyText.slice(0, 500))
-  await page.screenshot({ path: path.join(OUT, 'ux-08-mobile-resume.png') })
-  const resumeBtn = page.getByRole('button', { name: /View your results|Continue where you left off/i })
-  if (await resumeBtn.count()) {
-    await resumeBtn.click()
-    await page.waitForSelector('text=Your results are in')
-    await page.screenshot({ path: path.join(OUT, 'ux-09-mobile-results.png') })
-  } else {
-    console.log('NO_RESUME_BUTTON')
-    await page.screenshot({ path: path.join(OUT, 'ux-09-mobile-no-resume.png') })
-  }
+  await page.waitForSelector('text=View your results')
+  await page.screenshot({ path: path.join(OUT, 'v2_mobile_landing.png') })
+  await page.getByRole('button', { name: /View your results/i }).click()
+  await page.waitForSelector('text=Your results are in')
+  await page.screenshot({ path: path.join(OUT, 'v2_mobile_results.png') })
 
   const videoPath = await page.video()?.path()
   await context.close()
   await browser.close()
 
   if (videoPath) {
-    const dest = path.join(OUT, 'hr-health-check-walkthrough.webm')
+    const dest = path.join(OUT, 'hr_health_check_first_class.webm')
     fs.renameSync(videoPath, dest)
     console.log('VIDEO', dest)
   }

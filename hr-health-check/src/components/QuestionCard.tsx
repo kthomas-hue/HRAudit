@@ -10,22 +10,36 @@ interface QuestionCardProps {
   answer: AnswerValue
   onChange: (value: AnswerValue) => void
   showError?: boolean
+  focused?: boolean
 }
 
-export function QuestionCard({ question, index, answer, onChange, showError }: QuestionCardProps) {
+export function QuestionCard({
+  question,
+  index,
+  answer,
+  onChange,
+  showError,
+  focused = false,
+}: QuestionCardProps) {
   const unanswered =
     answer === null ||
     answer === undefined ||
     answer === '' ||
-    (Array.isArray(answer) && answer.length === 0)
+    (question.type === 'multi' && answer === undefined)
 
   return (
-    <article className={`question-card ${showError && unanswered ? 'has-error' : ''}`} id={`q-${question.id}`}>
+    <article
+      className={`question-card ${focused ? 'is-focused' : ''} ${showError && unanswered ? 'has-error' : ''}`}
+      id={`q-${question.id}`}
+    >
       <header className="question-card__head">
         <span className="question-card__num">{String(index + 1).padStart(2, '0')}</span>
         <div>
-          <h3>{question.prompt}</h3>
+          <h2 className="question-card__title">{question.prompt}</h2>
           {question.helpText && <p className="question-card__help">{question.helpText}</p>}
+          {question.type === 'multi' && (
+            <p className="question-card__hint">Select all that apply — or continue if none do.</p>
+          )}
         </div>
       </header>
 
@@ -65,14 +79,14 @@ export function QuestionCard({ question, index, answer, onChange, showError }: Q
             options={question.options}
             value={Array.isArray(answer) ? answer : []}
             multiple
-            onChange={onChange}
+            onChange={(v) => onChange(v)}
           />
         )}
 
         {question.type === 'text' && (
           <textarea
             className="text-area"
-            rows={4}
+            rows={5}
             placeholder={question.placeholder}
             value={typeof answer === 'string' ? answer : ''}
             onChange={(e) => onChange(e.target.value)}
@@ -80,9 +94,9 @@ export function QuestionCard({ question, index, answer, onChange, showError }: Q
         )}
       </div>
 
-      {showError && unanswered && question.required !== false && question.type !== 'text' && (
+      {showError && unanswered && question.type !== 'text' && question.type !== 'multi' && (
         <p className="field-error" role="alert">
-          Please answer this question to continue.
+          Please choose an answer to continue.
         </p>
       )}
     </article>

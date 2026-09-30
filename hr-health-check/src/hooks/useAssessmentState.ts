@@ -14,13 +14,14 @@ export type Step = 'landing' | 'contact' | 'assessment' | 'results'
 export interface PersistedState {
   step: Step
   categoryIndex: number
+  questionIndex: number
   contact: ContactInfo
   answers: Answers
   privacyAccepted: boolean
   completedAt?: string
 }
 
-const STORAGE_KEY = 'dreamstone-hr-health-check-v1'
+const STORAGE_KEY = 'dreamstone-hr-health-check-v2'
 
 const emptyContact: ContactInfo = {
   firstName: '',
@@ -33,6 +34,7 @@ const emptyContact: ContactInfo = {
 const defaultState: PersistedState = {
   step: 'landing',
   categoryIndex: 0,
+  questionIndex: -1,
   contact: emptyContact,
   answers: {},
   privacyAccepted: false,
@@ -56,7 +58,6 @@ export function useAssessmentState() {
 
   useEffect(() => {
     const saved = load()
-    // Always greet on landing so resume / start-fresh is an intentional choice
     setState({
       ...saved,
       step: 'landing',
@@ -70,10 +71,9 @@ export function useAssessmentState() {
   }, [state, hydrated])
 
   const setStep = useCallback((step: Step) => setState((s) => ({ ...s, step })), [])
-  const setCategoryIndex = useCallback(
-    (categoryIndex: number) => setState((s) => ({ ...s, categoryIndex })),
-    [],
-  )
+  const setPosition = useCallback((categoryIndex: number, questionIndex: number) => {
+    setState((s) => ({ ...s, categoryIndex, questionIndex }))
+  }, [])
   const setContact = useCallback(
     (contact: ContactInfo) => setState((s) => ({ ...s, contact })),
     [],
@@ -112,7 +112,7 @@ export function useAssessmentState() {
     state,
     hydrated,
     setStep,
-    setCategoryIndex,
+    setPosition,
     setContact,
     setPrivacyAccepted,
     setAnswer,

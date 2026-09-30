@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { ContactInfo } from '../hooks/useAssessmentState'
+import { Logo } from './Logo'
 
 interface ContactFormProps {
   initial: ContactInfo
@@ -50,14 +51,18 @@ export function ContactForm({
 
   return (
     <section className="panel contact-panel">
+      <div className="contact-panel__brand">
+        <Logo size="sm" />
+      </div>
       <button type="button" className="text-link" onClick={onBack}>
         ← Back
       </button>
       <p className="eyebrow">Almost ready</p>
-      <h1>Tell us who you are</h1>
+      <h1>
+        Let’s personalise <span className="highlight-lime">your report</span>
+      </h1>
       <p className="lead">
-        We’ll use these details to personalise your report. Please use the email connected with your HR Health
-        Check.
+        We’ll use these details for your scorecard. Please use the email connected with your HR Health Check.
       </p>
 
       <form className="contact-form" onSubmit={handleSubmit} noValidate>
@@ -140,7 +145,7 @@ export function ContactForm({
           <button type="submit" className="btn btn--lime">
             Start the assessment
             <span className="btn__arrow" aria-hidden>
-              →
+              ↗
             </span>
           </button>
         </div>
