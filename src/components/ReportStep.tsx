@@ -7,11 +7,12 @@ import { buildReport, sectionNarrative } from "../report"
 type Props = {
   profile: Profile
   answers: Answers
+  example?: boolean
   onEdit: () => void
   onRestart: () => void
 }
 
-export function ReportStep({ profile, answers, onEdit, onRestart }: Props) {
+export function ReportStep({ profile, answers, example = false, onEdit, onRestart }: Props) {
   const report = buildReport(profile, answers)
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -21,6 +22,7 @@ export function ReportStep({ profile, answers, onEdit, onRestart }: Props) {
 
   async function save(event: FormEvent) {
     event.preventDefault()
+    if (status === "saving" || status === "saved") return
     setStatus("saving")
     setMessage("")
     try {
@@ -76,6 +78,11 @@ export function ReportStep({ profile, answers, onEdit, onRestart }: Props) {
           </p>
           <h1>{report.businessName}</h1>
           <p className="lede">{report.headline}</p>
+          {example && (
+            <p className="example-banner">
+              Example only. These answers belong to a fictional Victorian workshop, not your business.
+            </p>
+          )}
         </div>
         <div className={`score-pill band-${report.band}`}>
           <strong>{report.overall === null ? "—" : report.overall}</strong>
@@ -178,22 +185,38 @@ export function ReportStep({ profile, answers, onEdit, onRestart }: Props) {
             Print it, or save it as a PDF, and share it with the person who runs payroll. That does
             not require your email.
           </p>
-          <p>
-            If you would like DreamStoneHR to hold this summary so a copy can be sent to you, leave
-            your details. They are used for this review only — not a newsletter.
-          </p>
+          {!example && (
+            <p>
+              If you would like DreamStoneHR to hold this summary so a copy can be sent to you, leave
+              your details. They are used for this review only — not a newsletter.
+            </p>
+          )}
           <div className="actions">
             <button className="btn" type="button" onClick={() => window.print()}>
               Print or save as PDF
             </button>
-            <button className="btn secondary" type="button" onClick={onEdit}>
-              Edit answers
-            </button>
-            <button className="btn ghost" type="button" onClick={onRestart}>
-              Start again
-            </button>
+            {example ? (
+              <button className="btn secondary" type="button" onClick={onRestart}>
+                Start with your business
+              </button>
+            ) : (
+              <>
+                <button className="btn secondary" type="button" onClick={onEdit}>
+                  Edit answers
+                </button>
+                <button className="btn ghost" type="button" onClick={onRestart}>
+                  Start again
+                </button>
+              </>
+            )}
           </div>
         </div>
+        {example ? (
+          <p>
+            When you do your own review, you can leave your details here if you want a copy kept on
+            file. You never have to. Printing is enough.
+          </p>
+        ) : (
         <form onSubmit={save}>
           <label className="field">
             <span>Your name</span>
@@ -230,6 +253,7 @@ export function ReportStep({ profile, answers, onEdit, onRestart }: Props) {
             </p>
           )}
         </form>
+        )}
       </section>
     </article>
   )

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { questions, type Profile } from "./content"
+import { exampleState } from "./example"
 import { clearState, firstUnanswered, initialState, isComplete, loadState, saveState, type Answers, type ReviewState, type Step } from "./model"
 import { ContextStep } from "./components/ContextStep"
 import { Mark } from "./components/Mark"
@@ -26,11 +27,6 @@ export function App() {
     }))
   }
 
-  function restart() {
-    clearState()
-    setState(initialState)
-  }
-
   function startFresh() {
     clearState()
     setState({ ...initialState, step: { name: "context" } })
@@ -46,7 +42,7 @@ export function App() {
     else go({ name: "question", index: missing })
   }
 
-  const hasProgress = Boolean(state.profile) || Object.keys(state.answers).length > 0
+  const hasProgress = !state.example && (Boolean(state.profile) || Object.keys(state.answers).length > 0)
   const onReport = state.step.name === "report"
 
   return (
@@ -57,7 +53,12 @@ export function App() {
       </header>
       <main className="stage">
         {state.step.name === "welcome" && (
-          <Welcome canResume={hasProgress} onStart={startFresh} onResume={resume} />
+          <Welcome
+            canResume={hasProgress}
+            onStart={startFresh}
+            onResume={resume}
+            onExample={() => setState(exampleState())}
+          />
         )}
         {state.step.name === "context" && (
           <ContextStep
@@ -104,8 +105,9 @@ export function App() {
           <ReportStep
             profile={state.profile}
             answers={state.answers as Answers}
+            example={state.example}
             onEdit={() => go({ name: "review" })}
-            onRestart={restart}
+            onRestart={startFresh}
           />
         )}
       </main>

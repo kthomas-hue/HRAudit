@@ -2,9 +2,10 @@ type Props = {
   canResume: boolean
   onStart: () => void
   onResume: () => void
+  onExample: () => void
 }
 
-export function Welcome({ canResume, onStart, onResume }: Props) {
+export function Welcome({ canResume, onStart, onResume, onExample }: Props) {
   return (
     <section className="welcome">
       <div>
@@ -30,6 +31,11 @@ export function Welcome({ canResume, onStart, onResume }: Props) {
           {canResume && (
             <button className="btn secondary" type="button" onClick={onStart}>
               Start again
+            </button>
+          )}
+          {!canResume && (
+            <button className="btn secondary" type="button" onClick={onExample}>
+              See an example report
             </button>
           )}
         </div>

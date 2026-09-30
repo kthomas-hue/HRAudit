@@ -149,6 +149,7 @@ export type ReviewState = {
   step: Step
   profile: Profile | null
   answers: Answers
+  example?: boolean
 }
 
 export const initialState: ReviewState = {

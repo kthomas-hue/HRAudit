@@ -347,6 +347,14 @@ input:focus, select:focus { border-color: var(--teal); box-shadow: 0 0 0 4px rgb
   align-items: end;
   margin-bottom: 22px;
 }
+.example-banner {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #f6ecd9;
+  color: var(--uneven);
+  font-weight: 600;
+}
 .score-pill {
   min-width: 148px;
   background: var(--paper);
