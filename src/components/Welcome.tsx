@@ -15,7 +15,7 @@ export function Welcome({ canResume, onStart, onResume, onExample }: Props) {
         </p>
         <h1>A straight look at your HR foundations.</h1>
         <p className="lede">
-          Ten minutes on how your business employs, pays and looks after people. You leave with a
+          About twelve minutes on how your business employs, pays and looks after people. You leave with a
           report that ranks the risks and gives you actions to start on — written for an owner, not
           a courtroom.
         </p>
@@ -40,7 +40,7 @@ export function Welcome({ canResume, onStart, onResume, onExample }: Props) {
           )}
         </div>
         <p className="fine">
-          About 10 minutes. Answers stay in this browser until you finish. General information, not
+          About 12 minutes. Answers stay in this browser until you finish. General information, not
           legal advice.
         </p>
       </div>
