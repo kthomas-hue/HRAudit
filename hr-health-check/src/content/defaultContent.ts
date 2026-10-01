@@ -30,7 +30,10 @@ function enrichQuestions(raw: Question[]): Question[] {
   return raw.map((q) => {
     if (q.type !== 'scale' || !q.scale) return q
     const fallback =
-      q.id.includes('recruit') || q.id.includes('policies-followed') || q.id.includes('culture')
+      q.id.includes('recruit') ||
+      q.id.includes('policies-followed') ||
+      q.id.includes('culture') ||
+      q.id.includes('ai-capability')
         ? PRACTICE_STEPS
         : q.id.includes('confident') ||
             q.id.includes('classification') ||
@@ -38,7 +41,8 @@ function enrichQuestions(raw: Question[]): Question[] {
             q.id.includes('plsl') ||
             q.id.includes('records') ||
             q.id.includes('exits') ||
-            q.id.includes('whs-claim')
+            q.id.includes('whs-claim') ||
+            q.id.includes('ai-people')
           ? CONFIDENCE_STEPS
           : FAMILIARITY_STEPS
     return {
@@ -269,14 +273,83 @@ const baseGuidance: Record<string, CategoryGuidance> = {
       ext('psy-r3', 'Psychosocial hazards — Safe Work', 'https://www.safeworkaustralia.gov.au/safety-topic/managing-health-and-safety/mental-health', 'Managing psychosocial risks at work.'),
     ],
   },
+  ai: {
+    categoryId: 'ai',
+    stakes:
+      'AI is showing up in hiring, writing, rostering and everyday admin — whether you planned for it or not.',
+    riskIfWeak:
+      'Privacy leaks, unfair or unexplained people decisions, inconsistent tool use, and wasted time chasing shiny tools with no clear outcome.',
+    nextMove:
+      'Write a one-page AI-at-work note: approved uses, what’s off-limits with people data, and who owns the call when AI touches hiring or performance.',
+    partnerAngle:
+      'Practical AI guardrails for people work — clarity and risk management without needing an enterprise AI program.',
+    reportDetail:
+      'Most businesses are early on AI — and that is fine. The risk is not “not using AI”; it is quiet, unmanaged use of AI with employee or candidate data, or people decisions that nobody can explain.\n\nBorrow the useful framing from AI readiness thinking (purpose, governance, tools, people, skills) — then keep it practical for your size. You do not need a large HR AI strategy. You do need clarity on where AI helps people work, what must stay human, and how privacy is protected across industries and team sizes.',
+    actions: [
+      {
+        id: 'ai-1',
+        title: 'Map where AI already shows up',
+        detail:
+          'Ask managers and admin staff which AI tools they use for ads, emails, screening, rostering or notes — then list approved vs off-limits uses.',
+        timeframe: 'This week',
+      },
+      {
+        id: 'ai-2',
+        title: 'Set a one-page AI-at-work guide',
+        detail:
+          'Cover confidentiality (no pasting personal data into public tools), when a human must review AI output, and how to escalate concerns.',
+        timeframe: '30 days',
+      },
+      {
+        id: 'ai-3',
+        title: 'Pick one useful use case',
+        detail:
+          'Choose one low-risk, high-value use (e.g. drafting job ads from a PD) with a named owner and a simple quality check — before expanding.',
+        timeframe: '30 days',
+      },
+      {
+        id: 'ai-4',
+        title: 'Build light AI fluency for hiring managers',
+        detail:
+          'Short briefing: how to prompt, how to spot bias or errors, and when AI must not decide alone on hiring or performance.',
+        timeframe: '90 days',
+      },
+    ],
+    resources: [
+      ext(
+        'ai-r1',
+        'OAIC — Privacy and AI',
+        'https://www.oaic.gov.au/privacy/privacy-guidance-for-organisations-and-government-agencies',
+        'Australian privacy guidance relevant when AI tools handle personal information.',
+      ),
+      ext(
+        'ai-r2',
+        'Fair Work — Hiring employees',
+        'https://www.fairwork.gov.au/hiring',
+        'Keep AI-assisted hiring aligned with fair recruitment obligations.',
+      ),
+      ext(
+        'ai-r3',
+        'DreamStoneHR blogs',
+        'https://dreamstonehr.com.au/blogs/',
+        'Practical commentary for leaders navigating people and workplace change.',
+      ),
+      ds(
+        'ai-ds1',
+        'DreamStoneHR Recruitment Toolkit',
+        'recruitment-toolkit',
+        'Structured hiring process — useful when AI assists drafting ads or interview questions.',
+      ),
+    ],
+  },
 }
 
 const defaultSettings: SiteSettings = {
   productName: 'HR Health Check',
-  tagline: 'A leadership self-audit for owners, GMs & CEOs',
-  landingHeadline: 'Know where your HR is exposed',
+  tagline: 'A leadership self-audit for business leaders, founders & owners',
+  landingHeadline: 'Know where your people foundations are exposed',
   landingLead:
-    'This is a structured self-audit — not a quick quiz. In about 20 minutes you’ll pressure-test your people foundations and walk away with a leadership report, timed action plan, and resources worth acting on.',
+    'Built for growing businesses of every shape — retail, trade, professional services, hospitality, healthcare, tech and more. In about 20 minutes you’ll pressure-test pay, contracts, safety, culture, AI at work and the rest of your people foundations, then walk away with a leadership report, timed action plan, and resources worth acting on.',
   reportTitle: 'Your leadership report',
   contactEmail: 'info@dreamstonehr.com.au',
   contactPhone: '(02) 8320 9320',
@@ -288,7 +361,7 @@ const defaultSettings: SiteSettings = {
 
 export function createDefaultContentPack(): ContentPack {
   return {
-    version: 2,
+    version: 3,
     updatedAt: new Date().toISOString(),
     settings: defaultSettings,
     categories: structuredClone(categories),

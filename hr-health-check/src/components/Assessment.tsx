@@ -44,7 +44,7 @@ export function Assessment({
   const showingFeedback = isLastCategory && questionIndex >= stepQuestions.length
   const feedbackQuestion: Question = {
     id: 'feedback',
-    categoryId: category?.id ?? 'psychosocial',
+    categoryId: category?.id ?? 'ai',
     type: 'text',
     required: false,
     prompt: content.feedbackPrompt,

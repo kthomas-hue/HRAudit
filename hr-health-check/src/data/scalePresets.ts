@@ -90,6 +90,20 @@ const OVERRIDES: Record<string, string[]> = {
     '9 — Very confident — written comparisons kept on file.',
     '10 — We review annually and are confident employees are better off overall.',
   ],
+  'ai-clarity': [
+    '1 — No shared view. People use whatever tools they find.',
+    '2 — I’ve noticed some AI use, but we haven’t discussed it as a business.',
+    '3 — Limited clarity — a few people experiment with no common rules.',
+    '4 — We’ve talked once or twice; nothing is agreed.',
+    '5 — Basic awareness of where AI shows up, with big gaps.',
+    '6 — Most people know the main approved uses, informally.',
+    '7 — Clear enough for day-to-day work; edge cases still fuzzy.',
+    '8 — Documented view of where AI is used in people work.',
+    '9 — Strong shared clarity — approved uses and off-limits are understood.',
+    '10 — Fully clear. Approved uses, owners, and review habits are in place.',
+  ],
+  'ai-people-decisions': CONFIDENCE_STEPS,
+  'ai-capability': PRACTICE_STEPS,
 }
 
 export function scaleWithSteps(

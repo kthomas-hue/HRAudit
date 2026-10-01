@@ -76,8 +76,8 @@ export function Landing({ onStart, hasProgress, hasResults = false, onResume, on
             <li>
               <strong>A clear risk map</strong>
               <span>
-                Where Fair Work, contracts, safety, performance and culture are actually exposed — ranked so you
-                know what to tackle first
+                Where pay, contracts, safety, performance, culture and AI at work are actually exposed — ranked so
+                you know what to tackle first
               </span>
             </li>
             <li>
@@ -93,7 +93,10 @@ export function Landing({ onStart, hasProgress, hasResults = false, onResume, on
           </ul>
           <div className="landing__panel-foot">
             <Logo variant="mark" size="sm" />
-            <p>Built for leaders who want a real handle on their HR — not a tick-and-flick quiz.</p>
+            <p>
+              Built for business leaders, founders and owners who want a real handle on their people foundations —
+              not a tick-and-flick quiz.
+            </p>
           </div>
         </aside>
       </div>
@@ -104,8 +107,9 @@ export function Landing({ onStart, hasProgress, hasResults = false, onResume, on
             You’re in the <span className="highlight-magenta">right place</span>
           </h2>
           <p>
-            DreamStoneHR partners with growing businesses to build practical, people-first solutions that drive
-            performance. This Health Check is a self-audit that surfaces gaps early — before they become costly.
+            DreamStoneHR partners with businesses of every size and sector to build practical, people-first
+            foundations. This Health Check works whether you run a small team or multiple sites — and surfaces gaps
+            early, before they become costly.
           </p>
         </div>
       </div>

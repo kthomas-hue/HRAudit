@@ -64,8 +64,9 @@ export function ContactForm({
         So we can build <span className="highlight-lime">your report</span>
       </h1>
       <p className="lead">
-        This Health Check is a leadership self-audit. We’ll personalise your PDF report and action plan with these
-        details — take it seriously and answer as things are today, not as you wish they were.
+        This Health Check is a leadership self-audit for business leaders, founders and owners — across industries
+        and team sizes. We’ll personalise your PDF report and action plan with these details — answer as things are
+        today, not as you wish they were.
       </p>
 
       <form className="contact-form" onSubmit={handleSubmit} noValidate>
