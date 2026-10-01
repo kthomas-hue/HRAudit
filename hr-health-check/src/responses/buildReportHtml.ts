@@ -61,7 +61,7 @@ export function buildReportHtml(options: {
         </header>
         <p class="stakes">${esc(g?.stakes ?? '')}</p>
         ${g?.reportDetail ? `<p>${esc(g.reportDetail)}</p>` : ''}
-        <p><strong>If left alone:</strong> ${esc(g?.riskIfWeak ?? '')}</p>
+        <p><strong>Exposure if left alone:</strong> ${esc(g?.riskIfWeak ?? '')}</p>
         <p><strong>Do next:</strong> ${esc(g?.nextMove ?? '')}</p>
         <div class="cols">
           <div>
@@ -156,9 +156,10 @@ export function buildReportHtml(options: {
       </tbody>
     </table>
 
-    <h2 style="margin-top:1.75rem">Top priorities</h2>
+    <h2 style="margin-top:1.75rem">Focus first</h2>
+    <p style="color:var(--muted)">Highest exposure and lowest response confidence — your starting points.</p>
     <ol>
-      ${results.priorities.map((p) => `<li><strong>${esc(p.name)}</strong> — ${p.score}% · ${esc(guidance[p.categoryId]?.nextMove ?? '')}</li>`).join('')}
+      ${results.priorities.map((p) => `<li><strong>${esc(p.name)}</strong> — ${p.score}% confidence · ${esc(guidance[p.categoryId]?.nextMove ?? '')}</li>`).join('')}
     </ol>
 
     <h2 style="margin-top:1.75rem">Detailed action plan</h2>

@@ -236,32 +236,45 @@ function downloadFullReportPdf(options: {
   }
   y += 4
 
-  // Top 3
+  // Focus first (high exposure / low confidence)
   y = ensureSpace(doc, y, 40, footer)
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(13)
-  doc.text('Your top 3 moves', margin, y)
-  y += 6
+  doc.text('Focus first', margin, y)
+  y += 5
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8.5)
+  doc.setTextColor(...COLOURS.soft)
+  y = wrap(
+    doc,
+    'Start where exposure is highest and response confidence is lowest — up to three starting points.',
+    margin,
+    y,
+    maxW,
+    4,
+  )
+  y += 3
   results.priorities.forEach((p, i) => {
     const g = guidance[p.categoryId]
     const risk = riskLevelForScore(p.score)
-    y = ensureSpace(doc, y, 26, footer)
+    y = ensureSpace(doc, y, 28, footer)
     doc.setFillColor(...COLOURS.paper)
-    doc.roundedRect(margin, y, maxW, 22, 2.5, 2.5, 'F')
+    doc.roundedRect(margin, y, maxW, 24, 2.5, 2.5, 'F')
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(10)
     doc.setTextColor(...COLOURS.purple)
     doc.text(`0${i + 1}`, margin + 3, y + 6)
     doc.setTextColor(...COLOURS.ink)
-    doc.text(`${p.name} · ${p.score}%`, margin + 12, y + 6)
+    doc.text(`${p.name} · ${p.score}% confidence`, margin + 12, y + 6)
     doc.setTextColor(...riskColour(risk))
     doc.setFontSize(8)
     doc.text(riskLabel(risk), pageW - margin - 3, y + 6, { align: 'right' })
     doc.setTextColor(...COLOURS.soft)
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(8.5)
-    wrap(doc, `Do next: ${g?.nextMove ?? ''}`, margin + 3, y + 12, maxW - 6, 4)
-    y += 26
+    wrap(doc, `Exposure: ${g?.riskIfWeak ?? ''}`, margin + 3, y + 11, maxW - 6, 3.6)
+    wrap(doc, `Do next: ${g?.nextMove ?? ''}`, margin + 3, y + 17.5, maxW - 6, 3.6)
+    y += 28
   })
   y += 4
 
@@ -298,7 +311,7 @@ function downloadFullReportPdf(options: {
     if (g?.riskIfWeak) {
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(9)
-      doc.text('If left alone', margin, y)
+      doc.text('Exposure if left alone', margin, y)
       y += 4
       doc.setFont('helvetica', 'normal')
       y = wrap(doc, g.riskIfWeak, margin, y, maxW, 4.3)

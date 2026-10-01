@@ -53,5 +53,5 @@ export interface ContentPack {
   guidance: Record<string, CategoryGuidance>
 }
 
-export const CONTENT_STORAGE_KEY = 'dreamstone-hr-content-pack-v3'
+export const CONTENT_STORAGE_KEY = 'dreamstone-hr-content-pack-v4'
 export const ADMIN_SESSION_KEY = 'dreamstone-hr-admin-session'

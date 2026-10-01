@@ -33,6 +33,7 @@ interface LeaderAction {
   accent: string
   risk: RiskLevel
   riskLabel: string
+  stakes: string
   riskIfWeak: string
   nextMove: string
   partnerAngle: string
@@ -68,6 +69,7 @@ function buildLeaderActions(
       accent: c.accent,
       risk,
       riskLabel: riskLabel(risk),
+      stakes: g.stakes,
       riskIfWeak: g.riskIfWeak,
       nextMove: g.nextMove,
       partnerAngle: g.partnerAngle,
@@ -279,8 +281,11 @@ export function Results({ contact, answers, completedAt, onRestart }: ResultsPro
 
         <section className="brief-block brief-block--priorities">
           <div className="brief-block__head">
-            <h3>Your top 3 moves</h3>
-            <p>Start here. These are the areas most likely to create risk or drag performance.</p>
+            <h3>Focus first</h3>
+            <p>
+              Shortlist where exposure is highest and your response confidence is lowest — then act on up to three
+              starting points. Click through for timed actions and resources.
+            </p>
           </div>
           <div className="action-grid">
             {actions.map((a, i) => (
@@ -295,10 +300,13 @@ export function Results({ contact, answers, completedAt, onRestart }: ResultsPro
                   </button>
                 </h4>
                 <p className="action-card__score" style={{ color: a.accent }}>
-                  {a.score}%
+                  {a.score}% · response confidence
                 </p>
                 <p className="action-card__risk">
-                  <strong>If left alone:</strong> {a.riskIfWeak}
+                  <strong>Exposure if left alone:</strong> {a.riskIfWeak}
+                </p>
+                <p className="action-card__stakes">
+                  <strong>Why it matters:</strong> {a.stakes}
                 </p>
                 <p className="action-card__move">
                   <strong>Do next:</strong> {a.nextMove}

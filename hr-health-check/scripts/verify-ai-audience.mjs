@@ -40,7 +40,7 @@ async function main() {
   await page.goto(BASE)
   await page.waitForTimeout(500)
   await page.evaluate(() => {
-    const packRaw = localStorage.getItem('dreamstone-hr-content-pack-v3')
+    const packRaw = localStorage.getItem('dreamstone-hr-content-pack-v4')
     if (!packRaw) throw new Error('content pack v3 missing')
     const pack = JSON.parse(packRaw)
     const answers = {}
@@ -82,6 +82,8 @@ async function main() {
   const hasAiCategory = /AI at Work/i.test(results)
   log.push(`results-ai-category: ${hasAiCategory}`)
   log.push(`results-no-gm-ceo: ${!/\bGMs?\b|\bCEOs?\b/i.test(results)}`)
+  log.push(`results-focus-first: ${/Focus first/i.test(results) && /response confidence|Exposure if left alone/i.test(results)}`)
+  log.push(`results-human-ai: ${/human judgment|Human–AI|Human-AI|named owner/i.test(results)}`)
 
   // Jump to AI detail if scorecard link exists
   const aiJump = page.locator('button, a', { hasText: /AI/i }).first()
@@ -113,7 +115,10 @@ async function main() {
   await page.waitForSelector('text=acceptable AI use')
   const qText = await page.locator('.admin-list').innerText()
   log.push(
-    `admin-ai-questions: ${/acceptable AI use|privacy and confidentiality|How clear is your business about where AI/i.test(qText)}`,
+    `admin-ai-questions: ${/acceptable AI use|human judgment|named person accountable|How clear is your business about where AI/i.test(qText)}`,
+  )
+  log.push(
+    `admin-ai-question-count: ${qText.split('\n').filter((l) => /^\d+\./.test(l.trim())).length >= 8}`,
   )
   await page.screenshot({ path: `${OUT}/audience-admin-ai-questions.png` })
 

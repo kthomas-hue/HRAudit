@@ -124,13 +124,13 @@ export const categoryGuidance: Record<string, CategoryGuidance> = {
   ai: {
     categoryId: 'ai',
     stakes:
-      'AI is showing up in hiring, writing, rostering and everyday admin — whether you planned for it or not.',
+      'AI is changing how hiring, admin and people decisions get done — quiet use without clear ownership creates both risk and wasted effort.',
     riskIfWeak:
-      'Privacy leaks, unfair or unexplained people decisions, inconsistent tool use, and wasted time chasing shiny tools with no clear outcome.',
+      'Privacy leaks, unexplained people decisions, blurred human accountability, and tools that run ahead of how the work is actually designed.',
     nextMove:
-      'Write a one-page AI-at-work note: approved uses, what’s off-limits with people data, and who owns the call when AI touches hiring or performance.',
+      'Name who owns AI-at-work decisions, write where humans must stay in the loop, and pick one low-risk use case with a quality check.',
     partnerAngle:
-      'Practical AI guardrails for people work — clarity and risk management without needing an enterprise AI program.',
+      'Practical Human–AI guardrails for people work — clarity on judgment, ownership and privacy without needing an enterprise AI program.',
   },
 }
 

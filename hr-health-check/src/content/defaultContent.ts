@@ -276,15 +276,15 @@ const baseGuidance: Record<string, CategoryGuidance> = {
   ai: {
     categoryId: 'ai',
     stakes:
-      'AI is showing up in hiring, writing, rostering and everyday admin — whether you planned for it or not.',
+      'AI is changing how hiring, admin and people decisions get done — quiet use without clear ownership creates both risk and wasted effort.',
     riskIfWeak:
-      'Privacy leaks, unfair or unexplained people decisions, inconsistent tool use, and wasted time chasing shiny tools with no clear outcome.',
+      'Privacy leaks, unexplained people decisions, blurred human accountability, and tools that run ahead of how the work is actually designed.',
     nextMove:
-      'Write a one-page AI-at-work note: approved uses, what’s off-limits with people data, and who owns the call when AI touches hiring or performance.',
+      'Name who owns AI-at-work decisions, write where humans must stay in the loop, and pick one low-risk use case with a quality check.',
     partnerAngle:
-      'Practical AI guardrails for people work — clarity and risk management without needing an enterprise AI program.',
+      'Practical Human–AI guardrails for people work — clarity on judgment, ownership and privacy without needing an enterprise AI program.',
     reportDetail:
-      'Most businesses are early on AI — and that is fine. The risk is not “not using AI”; it is quiet, unmanaged use of AI with employee or candidate data, or people decisions that nobody can explain.\n\nBorrow the useful framing from AI readiness thinking (purpose, governance, tools, people, skills) — then keep it practical for your size. You do not need a large HR AI strategy. You do need clarity on where AI helps people work, what must stay human, and how privacy is protected across industries and team sizes.',
+      'Most businesses are early on AI — and that is fine. The real gaps are usually work design and ownership: where AI already shows up, what must stay human, who is accountable, and whether privacy holds when tools touch employee or candidate data.\n\nPressure-test this section the same way you would any people risk: how exposed is the business if AI is unmanaged, and how confident are you in your current approach? You do not need a large HR AI strategy. You do need clear boundaries, a named owner, and one useful use case before you scale.',
     actions: [
       {
         id: 'ai-1',
@@ -295,20 +295,34 @@ const baseGuidance: Record<string, CategoryGuidance> = {
       },
       {
         id: 'ai-2',
+        title: 'Draw the human / AI line',
+        detail:
+          'Write down decisions that must stay human (e.g. hire/fire, pay, formal warnings) versus work AI may draft or suggest with a human check.',
+        timeframe: 'This week',
+      },
+      {
+        id: 'ai-3',
+        title: 'Name an AI-at-work owner',
+        detail:
+          'One accountable person (often the owner or a trusted manager) owns approved tools, privacy expectations, and escalation when AI touches people decisions.',
+        timeframe: 'This week',
+      },
+      {
+        id: 'ai-4',
         title: 'Set a one-page AI-at-work guide',
         detail:
           'Cover confidentiality (no pasting personal data into public tools), when a human must review AI output, and how to escalate concerns.',
         timeframe: '30 days',
       },
       {
-        id: 'ai-3',
+        id: 'ai-5',
         title: 'Pick one useful use case',
         detail:
           'Choose one low-risk, high-value use (e.g. drafting job ads from a PD) with a named owner and a simple quality check — before expanding.',
         timeframe: '30 days',
       },
       {
-        id: 'ai-4',
+        id: 'ai-6',
         title: 'Build light AI fluency for hiring managers',
         detail:
           'Short briefing: how to prompt, how to spot bias or errors, and when AI must not decide alone on hiring or performance.',
@@ -361,7 +375,7 @@ const defaultSettings: SiteSettings = {
 
 export function createDefaultContentPack(): ContentPack {
   return {
-    version: 3,
+    version: 4,
     updatedAt: new Date().toISOString(),
     settings: defaultSettings,
     categories: structuredClone(categories),

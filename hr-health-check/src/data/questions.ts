@@ -1084,6 +1084,46 @@ export const questions: Question[] = [
       maxLabel: 'Ready — people know when to use AI and when to verify',
     },
   },
+  {
+    id: 'ai-human-judgment',
+    categoryId: 'ai',
+    type: 'single',
+    prompt:
+      'Have you agreed where human judgment must stay in the loop — versus where AI can draft, suggest or automate — for people-related work?',
+    helpText:
+      'Think hiring shortlists, performance notes, rostering, and anything that affects pay or progression. Clear boundaries matter more than fancy tools.',
+    options: [
+      {
+        id: 'a',
+        label: 'No — we haven’t talked about where humans must decide',
+        score: 15,
+      },
+      {
+        id: 'b',
+        label: 'Informally — a few of us have a view, but it isn’t shared',
+        score: 45,
+      },
+      {
+        id: 'c',
+        label: 'Partly — some rules exist (e.g. no AI-only hiring decisions), but gaps remain',
+        score: 70,
+      },
+      {
+        id: 'd',
+        label: 'Yes — we can name what AI may do and what must stay human / accountable',
+        score: 100,
+      },
+    ],
+  },
+  {
+    id: 'ai-work-owner',
+    categoryId: 'ai',
+    type: 'yesno',
+    prompt:
+      'Is there a named person accountable for how AI is used in people-related work (even if that is you as owner or founder)?',
+    yesScore: 100,
+    noScore: 20,
+  },
 ]
 
 export const feedbackQuestion: Question = {

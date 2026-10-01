@@ -1426,6 +1426,7 @@ main {
 }
 
 .action-card__risk,
+.action-card__stakes,
 .action-card__move {
   margin: 0;
   font-size: 0.9rem;
