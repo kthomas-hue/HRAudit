@@ -59,10 +59,11 @@ export function ContactForm({
       </button>
       <p className="eyebrow">Almost ready</p>
       <h1>
-        Let’s personalise <span className="highlight-lime">your report</span>
+        So we can build <span className="highlight-lime">your brief</span>
       </h1>
       <p className="lead">
-        We’ll use these details for your scorecard. Please use the email connected with your HR Health Check.
+        We’ll personalise your leadership brief with these details. Use the email connected with your HR Health
+        Check.
       </p>
 
       <form className="contact-form" onSubmit={handleSubmit} noValidate>

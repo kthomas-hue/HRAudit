@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { categories, feedbackQuestion, getQuestionsForCategory, questions, type Question } from '../data/questions'
+import { categoryGuidance } from '../data/guidance'
 import type { Answers, AnswerValue } from '../data/scoring'
 import { QuestionCard } from './QuestionCard'
 
@@ -175,6 +176,9 @@ export function Assessment({
                 <span className="highlight-lime">{category.name}</span>
               </h1>
               <p className="lead">{category.description}</p>
+              {categoryGuidance[category.id] && (
+                <p className="wizard__stakes">{categoryGuidance[category.id].stakes}</p>
+              )}
               <p className="wizard__count">{stepQuestions.length} questions in this chapter</p>
               <button type="button" className="btn btn--lime" onClick={goNext}>
                 Continue

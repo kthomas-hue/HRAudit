@@ -96,12 +96,12 @@ async function run() {
   await page.goto(BASE)
   await page.evaluate(() => localStorage.clear())
   await page.reload()
-  await page.waitForSelector('text=HR Health Check')
-  await page.screenshot({ path: path.join(OUT, 'v2_landing.png'), fullPage: false })
+  await page.waitForSelector('text=Know where your HR is')
+  await page.screenshot({ path: path.join(OUT, 'v3_landing.png'), fullPage: false })
 
-  await page.getByRole('button', { name: /Begin your HR Health Check/i }).click()
-  await page.waitForSelector('text=personalise')
-  await page.screenshot({ path: path.join(OUT, 'v2_contact.png') })
+  await page.getByRole('button', { name: /Start the Health Check|Begin your HR Health Check/i }).click()
+  await page.waitForSelector('text=your brief')
+  await page.screenshot({ path: path.join(OUT, 'v3_contact.png') })
 
   await page.getByLabel('First name').fill('Alex')
   await page.getByLabel('Last name').fill('Morgan')
@@ -112,10 +112,10 @@ async function run() {
   await page.getByRole('button', { name: /Start the assessment/i }).click()
 
   await page.waitForSelector('text=Chapter 1')
-  await page.screenshot({ path: path.join(OUT, 'v2_chapter_intro.png') })
+  await page.screenshot({ path: path.join(OUT, 'v3_chapter_intro.png') })
   await page.getByRole('button', { name: /^Continue$/i }).click()
   await page.waitForSelector('.question-card.is-focused')
-  await page.screenshot({ path: path.join(OUT, 'v2_question.png') })
+  await page.screenshot({ path: path.join(OUT, 'v3_question.png') })
 
   for (let i = 0; i < 130; i++) {
     if (await page.locator('text=Your results are in').count()) break
@@ -123,23 +123,25 @@ async function run() {
     if (kind === 'done') break
   }
 
-  await page.waitForSelector('text=Your results are in', { timeout: 15000 })
-  await page.screenshot({ path: path.join(OUT, 'v2_results.png') })
+  await page.waitForSelector('text=Your leadership brief', { timeout: 15000 })
+  await page.screenshot({ path: path.join(OUT, 'v3_results.png') })
+  await page.locator('.action-grid').scrollIntoViewIfNeeded()
+  await page.screenshot({ path: path.join(OUT, 'v3_results_actions.png') })
 
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto(BASE)
-  await page.waitForSelector('text=View your results')
-  await page.screenshot({ path: path.join(OUT, 'v2_mobile_landing.png') })
-  await page.getByRole('button', { name: /View your results/i }).click()
-  await page.waitForSelector('text=Your results are in')
-  await page.screenshot({ path: path.join(OUT, 'v2_mobile_results.png') })
+  await page.waitForSelector('text=View your leadership brief')
+  await page.screenshot({ path: path.join(OUT, 'v3_mobile_landing.png') })
+  await page.getByRole('button', { name: /View your leadership brief/i }).click()
+  await page.waitForSelector('text=Your leadership brief')
+  await page.screenshot({ path: path.join(OUT, 'v3_mobile_results.png') })
 
   const videoPath = await page.video()?.path()
   await context.close()
   await browser.close()
 
   if (videoPath) {
-    const dest = path.join(OUT, 'hr_health_check_first_class.webm')
+    const dest = path.join(OUT, 'hr_health_check_leader_brief.webm')
     fs.renameSync(videoPath, dest)
     console.log('VIDEO', dest)
   }
