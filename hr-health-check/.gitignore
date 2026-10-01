@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local submission store (created at runtime)
+data/*
+!data/.gitkeep
+

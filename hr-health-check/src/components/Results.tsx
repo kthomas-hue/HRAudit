@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useContent } from '../content/ContentProvider'
 import type { ActionItem, CategoryGuidance, ResourceLink } from '../content/types'
 import {
@@ -13,11 +13,16 @@ import {
   type RiskLevel,
 } from '../data/scoring'
 import type { ContactInfo } from '../hooks/useAssessmentState'
+import { buildReportHtml, reportFilename } from '../responses/buildReportHtml'
+import { downloadPdfReport } from '../responses/buildPdf'
+import { downloadBlob, saveSubmission } from '../responses/store'
+import { RESPONSE_SAVED_FLAG_KEY, snapshotFromResults, type ClientSubmission } from '../responses/types'
 import { Logo } from './Logo'
 
 interface ResultsProps {
   contact: ContactInfo
   answers: Answers
+  completedAt?: string
   onRestart: () => void
 }
 
@@ -28,6 +33,7 @@ interface LeaderAction {
   accent: string
   risk: RiskLevel
   riskLabel: string
+  stakes: string
   riskIfWeak: string
   nextMove: string
   partnerAngle: string
@@ -63,6 +69,7 @@ function buildLeaderActions(
       accent: c.accent,
       risk,
       riskLabel: riskLabel(risk),
+      stakes: g.stakes,
       riskIfWeak: g.riskIfWeak,
       nextMove: g.nextMove,
       partnerAngle: g.partnerAngle,
@@ -78,9 +85,18 @@ function phoneToTel(phone: string) {
   return digits.startsWith('+') ? digits : digits.replace(/^0/, '+61')
 }
 
-export function Results({ contact, answers, onRestart }: ResultsProps) {
+function makeSubmissionId(contact: ContactInfo, completedAt: string) {
+  const base = `${contact.email}|${completedAt}|${contact.company}`.toLowerCase()
+  let hash = 0
+  for (let i = 0; i < base.length; i++) hash = (hash * 31 + base.charCodeAt(i)) >>> 0
+  return `sub-${hash.toString(36)}`
+}
+
+export function Results({ contact, answers, completedAt, onRestart }: ResultsProps) {
   const { content } = useContent()
   const { settings, categories, questions, guidance } = content
+  const [savedId, setSavedId] = useState<string | null>(null)
+  const saveAttempted = useRef(false)
 
   const results = useMemo(
     () => computeResults(answers, categories, questions),
@@ -93,6 +109,7 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
   )
   const topRisk = results.priorities[0]?.name
   const narrative = overallNarrative(results.overall, topRisk)
+  const finishedAt = completedAt || new Date().toISOString()
 
   const allCategoryBriefs = useMemo(
     () =>
@@ -105,6 +122,30 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
         }),
     [results.categories, guidance],
   )
+
+  useEffect(() => {
+    if (saveAttempted.current) return
+    if (!contact.email) return
+    saveAttempted.current = true
+    const id = makeSubmissionId(contact, finishedAt)
+    const already = sessionStorage.getItem(RESPONSE_SAVED_FLAG_KEY)
+    if (already === id) {
+      setSavedId(id)
+      return
+    }
+    const submission: ClientSubmission = {
+      id,
+      createdAt: finishedAt,
+      contact,
+      answers,
+      snapshot: snapshotFromResults(results, band.label),
+      contentUpdatedAt: content.updatedAt,
+    }
+    void saveSubmission(submission).then(() => {
+      sessionStorage.setItem(RESPONSE_SAVED_FLAG_KEY, id)
+      setSavedId(id)
+    })
+  }, [answers, band.label, contact, content.updatedAt, finishedAt, results])
 
   const mailto = useMemo(() => {
     const lines = [
@@ -129,18 +170,54 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
 
   const timeframeOrder = { 'This week': 0, '30 days': 1, '90 days': 2 } as const
 
+  const downloadReport = () => {
+    downloadPdfReport({
+      kind: 'full',
+      contact,
+      answers,
+      content,
+      completedAt: finishedAt,
+    })
+  }
+
+  const downloadActions = () => {
+    downloadPdfReport({
+      kind: 'actions',
+      contact,
+      answers,
+      content,
+      completedAt: finishedAt,
+    })
+  }
+
+  const downloadHtmlCopy = () => {
+    const html = buildReportHtml({
+      contact,
+      answers,
+      content,
+      completedAt: finishedAt,
+      submissionId: savedId ?? undefined,
+    })
+    downloadBlob(reportFilename(contact, finishedAt), html, 'text/html;charset=utf-8')
+  }
+
+  const jumpToCategory = (categoryId: string) => {
+    const el = document.getElementById(`category-${categoryId}`)
+    el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   return (
     <section className="results">
       <div className="results__hero">
         <div className="results__hero-wash" aria-hidden />
-        <Logo inverted className="results__logo" />
+        <Logo className="results__logo" size="md" />
         <p className="eyebrow eyebrow--light">{settings.reportTitle}</p>
         <h1>
           {contact.firstName ? `${contact.firstName}, here’s the picture` : 'Here’s the picture'}
         </h1>
         <p className="lead lead--light">
-          A detailed leadership brief for {contact.company || 'your business'} — exposures, timed actions, and
-          resources you can use immediately.
+          Your paid leadership report for {contact.company || 'your business'} — exposures, timed actions,
+          DreamStoneHR resources, and what to do next.
         </p>
 
         <div className={`overall-score tone-${band.tone}`}>
@@ -154,13 +231,61 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
             <p>{narrative.body}</p>
           </div>
         </div>
+
+        <div className="results__hero-actions download-pack">
+          <button type="button" className="btn btn--lime" onClick={downloadReport}>
+            Download PDF report
+            <span className="btn__arrow" aria-hidden>
+              ↘
+            </span>
+          </button>
+          <button type="button" className="btn btn--teal" onClick={downloadActions}>
+            Download action plan PDF
+          </button>
+        </div>
       </div>
 
       <div className="results__body">
-        <section className="brief-block">
+        <section className="brief-block brief-block--scorecard" id="scorecard">
           <div className="brief-block__head">
-            <h3>Your top 3 moves</h3>
-            <p>Start here. These are the areas most likely to create risk or drag performance.</p>
+            <h3>Full scorecard</h3>
+            <p>Your map of the whole Health Check. Click any category to jump straight to the detail, actions and resources.</p>
+          </div>
+          <ul className="score-list score-list--jump">
+            {results.categories.map((c) => {
+              const risk = riskLevelForScore(c.score)
+              return (
+                <li key={c.categoryId}>
+                  <button
+                    type="button"
+                    className="score-list__jump"
+                    onClick={() => jumpToCategory(c.categoryId)}
+                  >
+                    <div className="score-list__row">
+                      <span>
+                        {c.name}
+                        <em className={`risk-inline risk-inline--${risk}`}>{riskLabel(risk)}</em>
+                      </span>
+                      <strong style={{ color: c.accent }}>{c.score}%</strong>
+                    </div>
+                    <div className="score-list__bar">
+                      <span style={{ width: `${c.score}%`, background: c.accent }} />
+                    </div>
+                    <span className="score-list__hint">View detail →</span>
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        </section>
+
+        <section className="brief-block brief-block--priorities">
+          <div className="brief-block__head">
+            <h3>Focus first</h3>
+            <p>
+              Shortlist where exposure is highest and your response confidence is lowest — then act on up to three
+              starting points. Click through for timed actions and resources.
+            </p>
           </div>
           <div className="action-grid">
             {actions.map((a, i) => (
@@ -169,12 +294,19 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
                   <span className="action-card__rank">0{i + 1}</span>
                   <span className={`risk-pill risk-pill--${a.risk}`}>{a.riskLabel}</span>
                 </header>
-                <h4>{a.categoryName}</h4>
+                <h4>
+                  <button type="button" className="text-link action-card__link" onClick={() => jumpToCategory(a.categoryId)}>
+                    {a.categoryName}
+                  </button>
+                </h4>
                 <p className="action-card__score" style={{ color: a.accent }}>
-                  {a.score}%
+                  {a.score}% · response confidence
                 </p>
                 <p className="action-card__risk">
-                  <strong>If left alone:</strong> {a.riskIfWeak}
+                  <strong>Exposure if left alone:</strong> {a.riskIfWeak}
+                </p>
+                <p className="action-card__stakes">
+                  <strong>Why it matters:</strong> {a.stakes}
                 </p>
                 <p className="action-card__move">
                   <strong>Do next:</strong> {a.nextMove}
@@ -186,16 +318,19 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
 
         <section className="brief-block report-deep">
           <div className="brief-block__head">
-            <h3>Detailed action plan</h3>
+            <h3>Category detail, actions &amp; resources</h3>
             <p>
-              Category-by-category guidance with timed actions and links to Fair Work, Safe Work, and related
-              resources.
+              Each section includes timed actions, DreamStoneHR resources, and external guidance (Fair Work, Safe
+              Work and more) — plus how we can partner with you to close the gap.
             </p>
           </div>
 
           <div className="report-deep__list">
-            {allCategoryBriefs.map((c) => (
-              <article key={c.categoryId} className="category-report">
+            {allCategoryBriefs.map((c) => {
+              const dreamstoneResources = c.guidance.resources.filter((r) => r.source === 'dreamstone')
+              const externalResources = c.guidance.resources.filter((r) => r.source !== 'dreamstone')
+              return (
+              <article key={c.categoryId} id={`category-${c.categoryId}`} className="category-report">
                 <header className="category-report__head">
                   <div>
                     <p className="category-report__meta">
@@ -242,55 +377,62 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
                         Ask DreamStoneHR for tailored templates and checklists for this area.
                       </p>
                     ) : (
-                      <ul className="resource-list">
-                        {c.guidance.resources.map((r) => (
-                          <li key={r.id}>
-                            <a href={r.url} target="_blank" rel="noreferrer">
-                              {r.label}
-                              <span aria-hidden> ↗</span>
-                            </a>
-                            {r.description && <p>{r.description}</p>}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                    {c.guidance.partnerAngle && (
-                      <p className="category-report__partner">
-                        <strong>DreamStoneHR can help with:</strong> {c.guidance.partnerAngle}
-                      </p>
+                      <>
+                        {dreamstoneResources.length > 0 && (
+                          <div className="resource-group">
+                            <p className="resource-group__label">DreamStoneHR</p>
+                            <ul className="resource-list">
+                              {dreamstoneResources.map((r) => (
+                                <li key={r.id}>
+                                  <a href={r.url} target="_blank" rel="noreferrer">
+                                    {r.label}
+                                    <span aria-hidden> ↗</span>
+                                  </a>
+                                  {r.description && <p>{r.description}</p>}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {externalResources.length > 0 && (
+                          <div className="resource-group">
+                            <p className="resource-group__label">External</p>
+                            <ul className="resource-list">
+                              {externalResources.map((r) => (
+                                <li key={r.id}>
+                                  <a href={r.url} target="_blank" rel="noreferrer">
+                                    {r.label}
+                                    <span aria-hidden> ↗</span>
+                                  </a>
+                                  {r.description && <p>{r.description}</p>}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
+
+                <aside className="category-report__help">
+                  <h5>How DreamStoneHR can help here</h5>
+                  <p>
+                    {c.guidance.partnerAngle
+                      ? `${c.guidance.partnerAngle} We’ll help you turn the actions above into a 30–90 day workplan — with templates your managers will use, and support so it doesn’t stall after the report.`
+                      : 'We’ll help you turn the actions above into a 30–90 day workplan — templates, manager coaching, and compliance checks included.'}
+                  </p>
+                  <a className="text-link" href={mailto}>
+                    Talk to us about {c.name.toLowerCase()} →
+                  </a>
+                </aside>
               </article>
-            ))}
+            )})}
           </div>
         </section>
 
         <div className="results__grid">
-          <div className="results__panel">
-            <h3>Full scorecard</h3>
-            <ul className="score-list">
-              {results.categories.map((c) => {
-                const risk = riskLevelForScore(c.score)
-                return (
-                  <li key={c.categoryId}>
-                    <div className="score-list__row">
-                      <span>
-                        {c.name}
-                        <em className={`risk-inline risk-inline--${risk}`}>{riskLabel(risk)}</em>
-                      </span>
-                      <strong>{c.score}%</strong>
-                    </div>
-                    <div className="score-list__bar">
-                      <span style={{ width: `${c.score}%`, background: c.accent }} />
-                    </div>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-
-          <aside className="results__aside">
+          <aside className="results__aside results__aside--wide">
             {results.strengths.length > 0 && (
               <div className="insight-card insight-card--strength">
                 <h3>Protect what’s working</h3>
@@ -300,7 +442,11 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
                       {c.score}%
                     </span>
                     <div>
-                      <strong>{c.name}</strong>
+                      <strong>
+                        <button type="button" className="text-link" onClick={() => jumpToCategory(c.categoryId)}>
+                          {c.name}
+                        </button>
+                      </strong>
                       <p>{guidance[c.categoryId]?.stakes ?? 'Keep reinforcing these practices.'}</p>
                     </div>
                   </div>
@@ -309,25 +455,36 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
             )}
 
             <div className="insight-card">
-              <h3>How to use this brief</h3>
+              <h3>How to use this report</h3>
               <ol className="brief-steps">
-                <li>Share the top 3 moves with your leadership team this week.</li>
-                <li>Assign an owner and a 30-day checkpoint for each move.</li>
-                <li>Use the resource links for self-serve progress, then bring DreamStoneHR in where exposure or capacity is the blocker.</li>
+                <li>Scan the scorecard, then click into your weakest categories.</li>
+                <li>Download the PDF report for the full narrative, and the action plan PDF to assign owners and due dates.</li>
+                <li>Use DreamStoneHR and external resources in each section — then bring us in where capacity or exposure is the blocker.</li>
               </ol>
+              <div className="download-pack">
+                <button type="button" className="btn btn--ghost" onClick={downloadHtmlCopy}>
+                  Also save HTML copy
+                </button>
+              </div>
             </div>
           </aside>
         </div>
 
         <div className="cta-banner">
           <div>
-            <h2>Ready to close the gaps?</h2>
+            <h2>Partner with DreamStoneHR</h2>
             <p>
-              We’ll help you turn this brief into a practical plan — compliance, capability, and culture —
-              without the fluff.
+              This report shows where you’re exposed. We help you close it — practical systems, manager capability,
+              and compliance that sticks. Book a debrief on your top 3 moves and we’ll map the first 30 days with you.
             </p>
           </div>
           <div className="cta-banner__actions">
+            <button type="button" className="btn btn--ghost" onClick={downloadReport}>
+              Download PDF report
+            </button>
+            <button type="button" className="btn btn--ghost" onClick={downloadActions}>
+              Action plan PDF
+            </button>
             <a className="btn btn--lime" href={mailto}>
               {settings.partnerCtaLabel}
               <span className="btn__arrow" aria-hidden>

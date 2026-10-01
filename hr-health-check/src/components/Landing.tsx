@@ -44,7 +44,7 @@ export function Landing({ onStart, hasProgress, hasResults = false, onResume, on
             {hasProgress ? (
               <>
                 <button type="button" className="btn btn--lime" onClick={onResume}>
-                  {hasResults ? 'View your leadership brief' : 'Continue where you left off'}
+                  {hasResults ? 'View your leadership report' : 'Continue where you left off'}
                   <span className="btn__arrow" aria-hidden>
                     ↗
                   </span>
@@ -63,7 +63,7 @@ export function Landing({ onStart, hasProgress, hasResults = false, onResume, on
             )}
           </div>
           <p className="landing__privacy">
-            Takes 15–20 minutes · Instant brief ·{' '}
+            Takes 15–20 minutes · Instant leadership report ·{' '}
             <a href={settings.privacyUrl} target="_blank" rel="noreferrer">
               Privacy policy
             </a>
@@ -74,21 +74,29 @@ export function Landing({ onStart, hasProgress, hasResults = false, onResume, on
           <p className="landing__panel-tag">What you’ll walk away with</p>
           <ul>
             <li>
-              <strong>Risk clarity</strong>
-              <span>Where Fair Work, contracts, safety, and culture may be exposed</span>
+              <strong>A clear risk map</strong>
+              <span>
+                Where pay, contracts, safety, performance, culture and AI at work are actually exposed — ranked so
+                you know what to tackle first
+              </span>
             </li>
             <li>
-              <strong>A leadership brief</strong>
-              <span>Timed actions, resource links, and what to do next — not just scores</span>
+              <strong>A leadership report worth paying for</strong>
+              <span>
+                Timed actions, DreamStoneHR resources, and external links — a working plan, not a score dump
+              </span>
             </li>
             <li>
-              <strong>A partner path</strong>
-              <span>Clear next conversations with DreamStoneHR</span>
+              <strong>A partner-ready next step</strong>
+              <span>Shareable PDF report and action plan so DreamStoneHR can help you close the gaps fast</span>
             </li>
           </ul>
           <div className="landing__panel-foot">
             <Logo variant="mark" size="sm" />
-            <p>Built for leaders managing roughly 25–100 people.</p>
+            <p>
+              Built for business leaders, founders and owners who want a real handle on their people foundations —
+              not a tick-and-flick quiz.
+            </p>
           </div>
         </aside>
       </div>
@@ -99,8 +107,9 @@ export function Landing({ onStart, hasProgress, hasResults = false, onResume, on
             You’re in the <span className="highlight-magenta">right place</span>
           </h2>
           <p>
-            DreamStoneHR partners with growing businesses to build practical, people-first solutions that drive
-            performance. This Health Check surfaces gaps early — before they become costly.
+            DreamStoneHR partners with businesses of every size and sector to build practical, people-first
+            foundations. This Health Check works whether you run a small team or multiple sites — and surfaces gaps
+            early, before they become costly.
           </p>
         </div>
       </div>

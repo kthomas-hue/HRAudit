@@ -88,7 +88,12 @@ function HealthCheckApp() {
         )}
 
         {state.step === 'results' && (
-          <Results contact={state.contact} answers={state.answers} onRestart={reset} />
+          <Results
+            contact={state.contact}
+            answers={state.answers}
+            completedAt={state.completedAt}
+            onRestart={reset}
+          />
         )}
       </main>
 

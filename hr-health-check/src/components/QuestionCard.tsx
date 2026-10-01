@@ -52,6 +52,7 @@ export function QuestionCard({
             max={question.scale.max}
             minLabel={question.scale.minLabel}
             maxLabel={question.scale.maxLabel}
+            stepLabels={question.scale.stepLabels}
             onChange={onChange}
           />
         )}
