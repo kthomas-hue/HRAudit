@@ -5,6 +5,8 @@ export interface ScaleConfig {
   max: number
   minLabel: string
   maxLabel: string
+  /** Optional per-value descriptions shown so leaders know what each number means */
+  stepLabels?: string[]
 }
 
 export interface ChoiceOption {

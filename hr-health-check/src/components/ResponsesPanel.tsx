@@ -2,16 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useContent } from '../content/ContentProvider'
 import { answerLabel } from '../data/scoring'
 import {
-  buildReportHtml,
-  reportFilename,
-  submissionToReportHtml,
-} from '../responses/buildReportHtml'
-import {
   deleteSubmission,
   downloadBlob,
   exportSubmissionsCsv,
   listSubmissions,
 } from '../responses/store'
+import { downloadPdfReport } from '../responses/buildPdf'
 import type { ClientSubmission } from '../responses/types'
 
 export function ResponsesPanel({ onStatus }: { onStatus: (msg: string) => void }) {
@@ -56,9 +52,14 @@ export function ResponsesPanel({ onStatus }: { onStatus: (msg: string) => void }
   const selected = submissions.find((s) => s.id === selectedId) ?? null
 
   const downloadReport = (s: ClientSubmission) => {
-    const html = submissionToReportHtml(s, content)
-    downloadBlob(reportFilename(s.contact, s.createdAt), html, 'text/html;charset=utf-8')
-    onStatus(`Report downloaded for ${s.contact.company || s.contact.email}.`)
+    downloadPdfReport({
+      kind: 'full',
+      contact: s.contact,
+      answers: s.answers,
+      content,
+      completedAt: s.createdAt,
+    })
+    onStatus(`PDF report downloaded for ${s.contact.company || s.contact.email}.`)
   }
 
   return (
@@ -248,21 +249,46 @@ export function ResponsesPanel({ onStatus }: { onStatus: (msg: string) => void }
                 type="button"
                 className="btn btn--lime"
                 onClick={() => {
-                  const html = buildReportHtml({
+                  downloadPdfReport({
+                    kind: 'full',
                     contact: selected.contact,
                     answers: selected.answers,
                     content,
                     completedAt: selected.createdAt,
-                    submissionId: selected.id,
                   })
-                  const w = window.open('', '_blank')
-                  if (w) {
-                    w.document.write(html)
-                    w.document.close()
-                  }
                 }}
               >
-                Open report in new tab
+                Download PDF report
+              </button>
+              <button
+                type="button"
+                className="btn btn--teal"
+                onClick={() => {
+                  downloadPdfReport({
+                    kind: 'actions',
+                    contact: selected.contact,
+                    answers: selected.answers,
+                    content,
+                    completedAt: selected.createdAt,
+                  })
+                }}
+              >
+                Action plan PDF
+              </button>
+              <button
+                type="button"
+                className="btn btn--ghost"
+                onClick={() => {
+                  downloadPdfReport({
+                    kind: 'resources',
+                    contact: selected.contact,
+                    answers: selected.answers,
+                    content,
+                    completedAt: selected.createdAt,
+                  })
+                }}
+              >
+                Resources PDF
               </button>
             </div>
           ) : (

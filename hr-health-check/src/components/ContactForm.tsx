@@ -61,11 +61,11 @@ export function ContactForm({
       </button>
       <p className="eyebrow">Almost ready</p>
       <h1>
-        So we can build <span className="highlight-lime">your brief</span>
+        So we can build <span className="highlight-lime">your report</span>
       </h1>
       <p className="lead">
-        We’ll personalise your leadership brief with these details. Use the email connected with your HR Health
-        Check.
+        This Health Check is a leadership self-audit. We’ll personalise your PDF report and action plan with these
+        details — take it seriously and answer as things are today, not as you wish they were.
       </p>
 
       <form className="contact-form" onSubmit={handleSubmit} noValidate>

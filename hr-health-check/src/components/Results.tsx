@@ -14,6 +14,7 @@ import {
 } from '../data/scoring'
 import type { ContactInfo } from '../hooks/useAssessmentState'
 import { buildReportHtml, reportFilename } from '../responses/buildReportHtml'
+import { downloadPdfReport } from '../responses/buildPdf'
 import { downloadBlob, saveSubmission } from '../responses/store'
 import { RESPONSE_SAVED_FLAG_KEY, snapshotFromResults, type ClientSubmission } from '../responses/types'
 import { Logo } from './Logo'
@@ -168,6 +169,36 @@ export function Results({ contact, answers, completedAt, onRestart }: ResultsPro
   const timeframeOrder = { 'This week': 0, '30 days': 1, '90 days': 2 } as const
 
   const downloadReport = () => {
+    downloadPdfReport({
+      kind: 'full',
+      contact,
+      answers,
+      content,
+      completedAt: finishedAt,
+    })
+  }
+
+  const downloadActions = () => {
+    downloadPdfReport({
+      kind: 'actions',
+      contact,
+      answers,
+      content,
+      completedAt: finishedAt,
+    })
+  }
+
+  const downloadResources = () => {
+    downloadPdfReport({
+      kind: 'resources',
+      contact,
+      answers,
+      content,
+      completedAt: finishedAt,
+    })
+  }
+
+  const downloadHtmlCopy = () => {
     const html = buildReportHtml({
       contact,
       answers,
@@ -182,14 +213,14 @@ export function Results({ contact, answers, completedAt, onRestart }: ResultsPro
     <section className="results">
       <div className="results__hero">
         <div className="results__hero-wash" aria-hidden />
-        <Logo inverted className="results__logo" />
+        <Logo className="results__logo" size="md" />
         <p className="eyebrow eyebrow--light">{settings.reportTitle}</p>
         <h1>
           {contact.firstName ? `${contact.firstName}, here’s the picture` : 'Here’s the picture'}
         </h1>
         <p className="lead lead--light">
-          A detailed leadership brief for {contact.company || 'your business'} — exposures, timed actions, and
-          resources you can use immediately.
+          Your paid leadership report for {contact.company || 'your business'} — exposures, timed actions,
+          DreamStoneHR resources, and what to do next.
         </p>
 
         <div className={`overall-score tone-${band.tone}`}>
@@ -204,18 +235,24 @@ export function Results({ contact, answers, completedAt, onRestart }: ResultsPro
           </div>
         </div>
 
-        <div className="results__hero-actions">
+        <div className="results__hero-actions download-pack">
           <button type="button" className="btn btn--lime" onClick={downloadReport}>
-            Download your report
+            Download PDF report
             <span className="btn__arrow" aria-hidden>
               ↘
             </span>
+          </button>
+          <button type="button" className="btn btn--teal" onClick={downloadActions}>
+            Download action plan PDF
+          </button>
+          <button type="button" className="btn btn--ghost" onClick={downloadResources}>
+            Download resources PDF
           </button>
         </div>
       </div>
 
       <div className="results__body">
-        <section className="brief-block">
+        <section className="brief-block brief-block--priorities">
           <div className="brief-block__head">
             <h3>Your top 3 moves</h3>
             <p>Start here. These are the areas most likely to create risk or drag performance.</p>
@@ -307,6 +344,9 @@ export function Results({ contact, answers, completedAt, onRestart }: ResultsPro
                               {r.label}
                               <span aria-hidden> ↗</span>
                             </a>
+                            {r.source === 'dreamstone' && (
+                              <span className="resource-list__source">DreamStoneHR</span>
+                            )}
                             {r.description && <p>{r.description}</p>}
                           </li>
                         ))}
@@ -367,15 +407,20 @@ export function Results({ contact, answers, completedAt, onRestart }: ResultsPro
             )}
 
             <div className="insight-card">
-              <h3>How to use this brief</h3>
+              <h3>How to use this report</h3>
               <ol className="brief-steps">
-                <li>Share the top 3 moves with your leadership team this week.</li>
+                <li>Download the PDF report and action plan — share the top 3 moves with your leadership team this week.</li>
                 <li>Assign an owner and a 30-day checkpoint for each move.</li>
                 <li>
-                  Use the resource links for self-serve progress, then bring DreamStoneHR in where exposure or
-                  capacity is the blocker.
+                  Use DreamStoneHR resources and external links for self-serve progress, then bring us in where
+                  exposure or capacity is the blocker.
                 </li>
               </ol>
+              <div className="download-pack">
+                <button type="button" className="btn btn--ghost" onClick={downloadHtmlCopy}>
+                  Also save HTML copy
+                </button>
+              </div>
             </div>
           </aside>
         </div>
@@ -384,13 +429,19 @@ export function Results({ contact, answers, completedAt, onRestart }: ResultsPro
           <div>
             <h2>Ready to close the gaps?</h2>
             <p>
-              We’ll help you turn this brief into a practical plan — compliance, capability, and culture —
-              without the fluff.
+              We’ll help you turn this leadership report into a practical plan — compliance, capability, and
+              culture — without the fluff.
             </p>
           </div>
           <div className="cta-banner__actions">
             <button type="button" className="btn btn--ghost" onClick={downloadReport}>
-              Download report
+              Download PDF report
+            </button>
+            <button type="button" className="btn btn--ghost" onClick={downloadActions}>
+              Action plan PDF
+            </button>
+            <button type="button" className="btn btn--ghost" onClick={downloadResources}>
+              Resources PDF
             </button>
             <a className="btn btn--lime" href={mailto}>
               {settings.partnerCtaLabel}

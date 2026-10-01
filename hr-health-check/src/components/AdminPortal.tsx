@@ -650,7 +650,7 @@ function GuidanceEditor({
   return (
     <div className="admin-editor">
       <label className="field">
-        <span>Stakes (chapter intro)</span>
+                    <span>Stakes (section intro)</span>
         <textarea
           rows={2}
           value={guidance.stakes}
