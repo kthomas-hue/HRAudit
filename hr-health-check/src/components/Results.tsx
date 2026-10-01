@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useContent } from '../content/ContentProvider'
 import type { ActionItem, CategoryGuidance, ResourceLink } from '../content/types'
 import {
@@ -13,11 +13,15 @@ import {
   type RiskLevel,
 } from '../data/scoring'
 import type { ContactInfo } from '../hooks/useAssessmentState'
+import { buildReportHtml, reportFilename } from '../responses/buildReportHtml'
+import { downloadBlob, saveSubmission } from '../responses/store'
+import { RESPONSE_SAVED_FLAG_KEY, snapshotFromResults, type ClientSubmission } from '../responses/types'
 import { Logo } from './Logo'
 
 interface ResultsProps {
   contact: ContactInfo
   answers: Answers
+  completedAt?: string
   onRestart: () => void
 }
 
@@ -78,9 +82,18 @@ function phoneToTel(phone: string) {
   return digits.startsWith('+') ? digits : digits.replace(/^0/, '+61')
 }
 
-export function Results({ contact, answers, onRestart }: ResultsProps) {
+function makeSubmissionId(contact: ContactInfo, completedAt: string) {
+  const base = `${contact.email}|${completedAt}|${contact.company}`.toLowerCase()
+  let hash = 0
+  for (let i = 0; i < base.length; i++) hash = (hash * 31 + base.charCodeAt(i)) >>> 0
+  return `sub-${hash.toString(36)}`
+}
+
+export function Results({ contact, answers, completedAt, onRestart }: ResultsProps) {
   const { content } = useContent()
   const { settings, categories, questions, guidance } = content
+  const [savedId, setSavedId] = useState<string | null>(null)
+  const saveAttempted = useRef(false)
 
   const results = useMemo(
     () => computeResults(answers, categories, questions),
@@ -93,6 +106,7 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
   )
   const topRisk = results.priorities[0]?.name
   const narrative = overallNarrative(results.overall, topRisk)
+  const finishedAt = completedAt || new Date().toISOString()
 
   const allCategoryBriefs = useMemo(
     () =>
@@ -105,6 +119,30 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
         }),
     [results.categories, guidance],
   )
+
+  useEffect(() => {
+    if (saveAttempted.current) return
+    if (!contact.email) return
+    saveAttempted.current = true
+    const id = makeSubmissionId(contact, finishedAt)
+    const already = sessionStorage.getItem(RESPONSE_SAVED_FLAG_KEY)
+    if (already === id) {
+      setSavedId(id)
+      return
+    }
+    const submission: ClientSubmission = {
+      id,
+      createdAt: finishedAt,
+      contact,
+      answers,
+      snapshot: snapshotFromResults(results, band.label),
+      contentUpdatedAt: content.updatedAt,
+    }
+    void saveSubmission(submission).then(() => {
+      sessionStorage.setItem(RESPONSE_SAVED_FLAG_KEY, id)
+      setSavedId(id)
+    })
+  }, [answers, band.label, contact, content.updatedAt, finishedAt, results])
 
   const mailto = useMemo(() => {
     const lines = [
@@ -128,6 +166,17 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
   }, [actions, contact, narrative.headline, results.overall, settings.contactEmail])
 
   const timeframeOrder = { 'This week': 0, '30 days': 1, '90 days': 2 } as const
+
+  const downloadReport = () => {
+    const html = buildReportHtml({
+      contact,
+      answers,
+      content,
+      completedAt: finishedAt,
+      submissionId: savedId ?? undefined,
+    })
+    downloadBlob(reportFilename(contact, finishedAt), html, 'text/html;charset=utf-8')
+  }
 
   return (
     <section className="results">
@@ -153,6 +202,15 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
             <h2>{narrative.headline}</h2>
             <p>{narrative.body}</p>
           </div>
+        </div>
+
+        <div className="results__hero-actions">
+          <button type="button" className="btn btn--lime" onClick={downloadReport}>
+            Download your report
+            <span className="btn__arrow" aria-hidden>
+              ↘
+            </span>
+          </button>
         </div>
       </div>
 
@@ -313,7 +371,10 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
               <ol className="brief-steps">
                 <li>Share the top 3 moves with your leadership team this week.</li>
                 <li>Assign an owner and a 30-day checkpoint for each move.</li>
-                <li>Use the resource links for self-serve progress, then bring DreamStoneHR in where exposure or capacity is the blocker.</li>
+                <li>
+                  Use the resource links for self-serve progress, then bring DreamStoneHR in where exposure or
+                  capacity is the blocker.
+                </li>
               </ol>
             </div>
           </aside>
@@ -328,6 +389,9 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
             </p>
           </div>
           <div className="cta-banner__actions">
+            <button type="button" className="btn btn--ghost" onClick={downloadReport}>
+              Download report
+            </button>
             <a className="btn btn--lime" href={mailto}>
               {settings.partnerCtaLabel}
               <span className="btn__arrow" aria-hidden>

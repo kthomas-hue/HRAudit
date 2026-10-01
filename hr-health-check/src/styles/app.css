@@ -1666,6 +1666,124 @@ main {
   color: var(--muted);
 }
 
+.admin-muted {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.results__hero-actions {
+  position: relative;
+  z-index: 1;
+  margin-top: 1.25rem;
+}
+
+.responses-empty {
+  margin-top: 1rem;
+  padding: 1.25rem;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-sm);
+  background: #fbfaff;
+}
+
+.responses-empty h3 {
+  margin-top: 0;
+}
+
+.responses-list button {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.responses-list button strong {
+  font-size: 0.95rem;
+}
+
+.responses-list button span,
+.responses-list button em {
+  display: block;
+  font-style: normal;
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.response-detail h3 {
+  margin: 0;
+}
+
+.response-detail h4 {
+  margin: 1rem 0 0.5rem;
+  font-size: 1rem;
+}
+
+.response-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+  margin: 0.75rem 0 0;
+}
+
+.response-meta dt {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.response-meta dd {
+  margin: 0.15rem 0 0;
+}
+
+.response-priorities,
+.response-scorecard {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.response-priorities li,
+.response-scorecard li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem 0.55rem;
+  background: #fbfaff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.response-answers {
+  display: grid;
+  gap: 0.65rem;
+  max-height: 320px;
+  overflow: auto;
+  margin-bottom: 1rem;
+  padding-right: 0.25rem;
+}
+
+.response-answers__item {
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.response-answers__item p {
+  margin: 0.25rem 0 0;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+@media (max-width: 860px) {
+  .response-meta {
+    grid-template-columns: 1fr;
+  }
+}
+
 .admin-top {
   display: flex;
   flex-wrap: wrap;
