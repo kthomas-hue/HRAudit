@@ -27,7 +27,7 @@ async function main() {
   await page.goto(BASE)
   await page.waitForTimeout(400)
   await page.evaluate(() => {
-    const pack = JSON.parse(localStorage.getItem('dreamstone-hr-content-pack-v2'))
+    const pack = JSON.parse(localStorage.getItem('dreamstone-hr-content-pack-v3'))
     const answers = {}
     for (const q of pack.questions) {
       if (q.type === 'scale') answers[q.id] = 4
