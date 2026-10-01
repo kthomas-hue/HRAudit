@@ -16,6 +16,7 @@ import {
   type SectionScore,
   type WeakItem,
 } from "./model"
+import { linksFor, SECTION_COPY, type ResourceLink } from "./results"
 
 const STATE_NOTES: Record<StateId, string> = {
   NSW: "In New South Wales, long service leave sits under the Long Service Leave Act 1955. Safety is regulated by SafeWork NSW.",
@@ -28,6 +29,19 @@ const STATE_NOTES: Record<StateId, string> = {
   ACT: "In the Australian Capital Territory, long service leave sits under the Long Service Leave Act 1976, and some industries have portable schemes. Safety is regulated by WorkSafe ACT.",
 }
 
+export type SectionAction = {
+  text: string
+  unsure: boolean
+}
+
+export type SectionReport = {
+  score: SectionScore
+  reading: string
+  actions: SectionAction[]
+  impact: string
+  resources: ResourceLink[]
+}
+
 export type ReportModel = {
   businessName: string
   dateLabel: string
@@ -37,40 +51,52 @@ export type ReportModel = {
   headline: string
   lede: string
   priorities: WeakItem[]
-  sections: SectionScore[]
+  sections: SectionReport[]
   notes: string[]
   unknown: number
   awardNote: string | null
 }
 
-function sectionReading(score: SectionScore, awardNote: boolean): string {
-  const { section, band, unknown } = score
+export function sectionReport(score: SectionScore, profile: Profile): SectionReport {
+  if (score.band === "not-applicable" || score.percent === null) {
+    return {
+      score,
+      reading: `You marked ${score.section.title.toLowerCase()} as not applicable to this business. If that changes, come back to it.`,
+      actions: [],
+      impact: "",
+      resources: [],
+    }
+  }
+
+  const copy = SECTION_COPY[score.section.id][score.band]
   const unsure =
-    unknown > 0
-      ? ` You marked ${unknown === 1 ? "one item" : `${unknown} items`} as not sure. Those are treated as gaps until you can point to the document or the person who knows.`
+    score.unknown > 0
+      ? ` You marked ${score.unknown === 1 ? "one item" : `${score.unknown} items`} as not sure. Those count as gaps until you can point to the document or the person who knows.`
       : ""
   const award =
-    awardNote && section.id === "pay"
-      ? " You also said you were not sure what covers the team. Mapping the award or agreement is the first job in this section. Paying above the base rate does not, by itself, turn an award off."
+    profile.award === "unsure" && score.section.id === "pay"
+      ? " You also said you were not sure what covers the team. Mapping the award or agreement comes before any argument that the rate is high enough."
       : ""
 
-  if (band === "not-applicable") {
-    return `You marked ${section.title.toLowerCase()} as not applicable to this business. If that changes, come back to it.`
-  }
-  if (band === "sound") {
-    return `${section.stakes} On these answers it looks in hand. ${section.keep}${unsure}`
-  }
-  if (band === "holding") {
-    return `${section.stakes} Parts of this are in place. Close the gaps below before they become the version of events in a dispute.${unsure}${award}`
-  }
-  if (band === "uneven") {
-    return `${section.stakes} This needs a proper look. The actions are practical and do not need a project team.${unsure}${award}`
-  }
-  return `${section.stakes} This is a place to start, because it is where underpayment, a complaint or a safety issue tends to begin.${unsure}${award}`
-}
+  const fromAnswers = score.weak.slice(0, 4).map((item) => ({ text: item.action, unsure: item.unsure }))
+  const actions =
+    fromAnswers.length > 0
+      ? score.band === "high"
+        ? [...fromAnswers, ...copy.keep.map((text) => ({ text, unsure: false }))]
+        : fromAnswers
+      : copy.keep.map((text) => ({ text, unsure: false }))
 
-export function sectionNarrative(score: SectionScore, profile: Profile): string {
-  return sectionReading(score, profile.award === "unsure")
+  return {
+    score,
+    reading: `${copy.reading}${unsure}${award}`,
+    actions,
+    impact: copy.impact,
+    resources: linksFor(
+      score.section.id,
+      score.weak.map((item) => item.questionId),
+      profile.state,
+    ),
+  }
 }
 
 function narrative(overall: number | null, scores: SectionScore[], unknown: number): { headline: string; lede: string } {
@@ -91,22 +117,16 @@ function narrative(overall: number | null, scores: SectionScore[], unknown: numb
   if (!low || !high) {
     return { headline: "Your review is ready.", lede: unsure.trim() }
   }
-  if (overall >= 80) {
+  if (overall >= 70) {
     return {
       headline: "The foundations look steady on this screen.",
       lede: `The stronger pattern is in ${high.section.title.toLowerCase()}. Keep that habit, and still close anything marked as a gap. A high result is not a guarantee — this review did not open your contracts or payslips.${unsure}`,
     }
   }
-  if (overall >= 60) {
+  if (overall >= 50) {
     return {
       headline: "A lot is in place. A few areas will cost you if they stay loose.",
       lede: `Start with ${low.section.title.toLowerCase()}. Use ${high.section.title.toLowerCase()} as the pattern to copy: it is the part of the business that is already specific.${unsure}`,
-    }
-  }
-  if (overall >= 40) {
-    return {
-      headline: "The foundation is uneven, and that is fixable.",
-      lede: `Do not rewrite everything this month. Start with ${low.section.title.toLowerCase()}, then the next item in the list below. The order is the point.${unsure}`,
     }
   }
   return {
@@ -166,7 +186,7 @@ export function buildReport(profile: Profile, answers: Record<string, string>, n
     headline: story.headline,
     lede: story.lede,
     priorities: priorities(sectionsScored),
-    sections: sectionsScored,
+    sections: sectionsScored.map((score) => sectionReport(score, profile)),
     notes: contextNotes(profile),
     unknown,
     awardNote: profile.award === "unsure" ? "unsure" : null,

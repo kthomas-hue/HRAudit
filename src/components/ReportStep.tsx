@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react"
 import type { Profile } from "../content"
 import type { Answers } from "../model"
 import { bandLabel } from "../model"
-import { buildReport, sectionNarrative } from "../report"
+import { buildReport } from "../report"
 
 type Props = {
   profile: Profile
@@ -38,24 +38,38 @@ export function ReportStep({ profile, answers, example = false, onEdit, onRestar
           headcount: profile.headcount,
           award: profile.award,
           overall: report.overall,
-          sections: report.sections.map((score) => ({
-            id: score.section.id,
-            title: score.section.title,
-            percent: score.percent,
+          band: report.band,
+          headline: report.headline,
+          lede: report.lede,
+          dateLabel: report.dateLabel,
+          notes: report.notes,
+          sections: report.sections.map((item) => ({
+            title: item.score.section.title,
+            percent: item.score.percent,
+            band: item.score.band,
+            reading: item.reading,
+            actions: item.actions.map((action) => action.text),
+            impact: item.impact,
+            resources: item.resources.map((link) => ({ title: link.title, href: link.href })),
           })),
           priorities: report.priorities.map((item) => ({
             section: item.sectionTitle,
-            prompt: item.prompt,
+            action: item.action,
           })),
         }),
       })
-      const body = (await response.json()) as { error?: string }
+      const body = (await response.json()) as { error?: string; delivered?: boolean }
       if (!response.ok) {
         setStatus("error")
-        setMessage(body.error ?? "We could not save that. Your report is still on this page.")
+        setMessage(body.error ?? "We could not send that. Your report is still on this page.")
         return
       }
       setStatus("saved")
+      setMessage(
+        body.delivered
+          ? `The report is on its way to ${email}. HR Support has been told this review is finished.`
+          : "The report is on this page. Email is not connected yet, so a copy has not been sent. Print it or save it as a PDF.",
+      )
     } catch {
       setStatus("error")
       setMessage("We could not save that. Print or save as PDF — the report is already here.")
@@ -94,9 +108,10 @@ export function ReportStep({ profile, answers, example = false, onEdit, onRestar
         <h2>How to read this</h2>
         <p>{report.lede}</p>
         <p>
-          The number compares sections. It is not a mark, a compliance finding, or legal advice.
-          “Not sure” counts as a gap, because an unknown obligation is still an obligation. Questions
-          that do not apply are left out of the score.
+          Each area below is written for the band your answers landed in. 70 or above is in good
+          shape, 50 to 69 is partly in place, and under 50 needs attention. The number is not a
+          mark, a compliance finding, or legal advice. “Not sure” counts as a gap. Questions that
+          do not apply are left out of the score.
         </p>
       </section>
 
@@ -121,26 +136,52 @@ export function ReportStep({ profile, answers, example = false, onEdit, onRestar
         )}
       </section>
 
-      {report.sections.map((score) => (
-        <section className="card" key={score.section.id}>
+      {report.sections.map((item) => (
+        <section className="card" key={item.score.section.id}>
           <div className="section-head">
-            <h2>{score.section.title}</h2>
-            <strong className={`band-${score.band}`}>
-              {score.percent === null ? "—" : `${score.percent}`} · {bandLabel(score.band)}
+            <h2>{item.score.section.title}</h2>
+            <strong className={`band-${item.score.band}`}>
+              {item.score.percent === null ? "—" : `${item.score.percent}`} · {bandLabel(item.score.band)}
             </strong>
           </div>
-          {score.percent !== null && (
-            <div className={`meter ${score.band}`} aria-hidden="true">
-              <span style={{ width: `${score.percent}%` }} />
+          {item.score.percent !== null && (
+            <div className={`meter ${item.score.band}`} aria-hidden="true">
+              <span style={{ width: `${item.score.percent}%` }} />
             </div>
           )}
-          <p>{sectionNarrative(score, profile)}</p>
-          {score.weak.map((item) => (
-            <p className="action" key={item.questionId}>
-              {item.action}
-            </p>
-          ))}
-          {score.weak.length === 0 && score.band === "sound" && <p className="action">{score.section.keep}</p>}
+          <p>{item.reading}</p>
+          {item.actions.length > 0 && (
+            <>
+              <h3>What to do</h3>
+              {item.actions.map((action) => (
+                <p className="action" key={action.text}>
+                  {action.unsure ? "You were not sure, so start here. " : ""}
+                  {action.text}
+                </p>
+              ))}
+            </>
+          )}
+          {item.impact && (
+            <>
+              <h3>What changes</h3>
+              <p>{item.impact}</p>
+            </>
+          )}
+          {item.resources.length > 0 && (
+            <>
+              <h3>Where to look</h3>
+              <ul className="resources">
+                {item.resources.map((link) => (
+                  <li key={link.href}>
+                    <a href={link.href} target="_blank" rel="noreferrer">
+                      {link.title}
+                    </a>
+                    <span>{link.source}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </section>
       ))}
 
@@ -187,8 +228,8 @@ export function ReportStep({ profile, answers, example = false, onEdit, onRestar
           </p>
           {!example && (
             <p>
-              If you would like DreamStoneHR to hold this summary so a copy can be sent to you, leave
-              your details. They are used for this review only — not a newsletter.
+              The report above is yours. Leave your email and this copy is sent to you. HR Support is
+              notified that a review was finished. Your details are used for this review only.
             </p>
           )}
           <div className="actions">
@@ -240,11 +281,11 @@ export function ReportStep({ profile, answers, example = false, onEdit, onRestar
           </label>
           {status === "saved" ? (
             <p className="success" role="status">
-              Saved with this review. You can still print the report on this page.
+              {message}
             </p>
           ) : (
             <button className="btn secondary" type="submit" disabled={status === "saving"}>
-              {status === "saving" ? "Saving…" : "Keep my details with this report"}
+              {status === "saving" ? "Sending…" : "Email me this report"}
             </button>
           )}
           {status === "error" && (

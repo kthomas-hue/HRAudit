@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest"
 import { questions, sections, type Profile } from "./content"
-import { overallPercent, scoreAll, scoreSection } from "./model"
-import { buildReport, contextNotes } from "./report"
+import { bandFor, overallPercent, scoreAll, scoreSection } from "./model"
+import { buildReport, contextNotes, sectionReport } from "./report"
+import { SECTION_COPY, SECTION_LINKS } from "./results"
 
 const profile: Profile = {
   businessName: "  Harbour & Co  ",
@@ -41,7 +42,7 @@ describe("scoring", () => {
       expect(score.percent).toBeNull()
     } else {
       expect(score.percent).toBe(100)
-      expect(score.band).toBe("sound")
+      expect(score.band).toBe("high")
     }
   })
 
@@ -87,7 +88,7 @@ describe("report", () => {
     expect(report.businessName).toBe("Harbour & Co")
     expect(report.dateLabel).toContain("2026")
     expect(report.overall).toBe(0)
-    expect(report.band).toBe("exposed")
+    expect(report.band).toBe("low")
     expect(report.priorities.length).toBeGreaterThan(0)
     expect(report.priorities.length).toBeLessThanOrEqual(5)
     expect(report.lede).toContain("not sure")
@@ -105,11 +106,113 @@ describe("report", () => {
       answers,
     )
     expect(report.businessName).toBe("Your business")
-    expect(report.band).toBe("sound")
+    expect(report.band).toBe("high")
     expect(report.headline).toContain("steady")
     expect(report.priorities).toHaveLength(0)
     expect(contextNotes({ ...profile, headcount: "15-99", award: "covered" }).join(" ")).toContain(
       "26 August 2024",
     )
+  })
+
+  it("writes a different result for a low score and a high score in the same area", () => {
+    const records = sections.find((item) => item.id === "records")!
+    const lowAnswers: Record<string, string> = {}
+    const highAnswers: Record<string, string> = {}
+    for (const question of records.questions) {
+      lowAnswers[question.id] = question.choices.find((item) => item.kind === "gap")?.id ?? "unsure"
+      highAnswers[question.id] = question.choices.find((item) => item.kind === "solid")?.id ?? "yes"
+    }
+    const low = sectionReport(scoreSection(records, lowAnswers), profile)
+    const high = sectionReport(scoreSection(records, highAnswers), profile)
+    expect(low.score.band).toBe("low")
+    expect(high.score.band).toBe("high")
+    expect(low.reading).not.toBe(high.reading)
+    expect(low.actions.map((item) => item.text).join(" ")).toContain("employee")
+    expect(high.actions.map((item) => item.text).join(" ")).not.toContain("Pick an employee at random")
+    expect(low.resources.some((link) => link.href.includes("fairwork.gov.au") && link.href.includes("record-keeping"))).toBe(
+      true,
+    )
+    expect(low.impact.length).toBeGreaterThan(40)
+  })
+
+  it("follows the weak answer, and points a Victorian safety gap at WorkSafe Victoria", () => {
+    const exits = sections.find((item) => item.id === "exits")!
+    const answers: Record<string, string> = {}
+    for (const question of exits.questions) {
+      answers[question.id] = question.choices.find((item) => item.kind === "solid")?.id ?? "yes"
+    }
+    answers["exits-notice"] = "no"
+    const report = sectionReport(scoreSection(exits, answers), profile)
+    expect(report.score.band).not.toBe("low")
+    expect(report.actions.some((item) => item.text.includes("last-pay checklist"))).toBe(true)
+    expect(report.resources.some((link) => link.href.includes("employee-exit-checklist"))).toBe(true)
+    expect(report.resources.some((link) => link.href.includes("redundancy"))).toBe(false)
+
+    const safety = sections.find((item) => item.id === "safety")!
+    const safetyAnswers: Record<string, string> = {}
+    for (const question of safety.questions) {
+      safetyAnswers[question.id] = question.choices.find((item) => item.kind === "gap")?.id ?? "no"
+    }
+    const safetyReport = sectionReport(scoreSection(safety, safetyAnswers), profile)
+    expect(safetyReport.resources[0]?.href).toBe("https://www.worksafe.vic.gov.au/")
+    expect(safetyReport.resources.some((link) => link.href.includes("your-guide-to-a-safer-workplace"))).toBe(true)
+
+    const policies = sections.find((item) => item.id === "policies")!
+    const policyAnswers: Record<string, string> = {}
+    for (const question of policies.questions) {
+      policyAnswers[question.id] = question.choices.find((item) => item.kind === "gap")?.id ?? "no"
+    }
+    const policyReport = sectionReport(scoreSection(policies, policyAnswers), profile)
+    expect(policyReport.resources.some((link) => link.href.includes("respectful-workplaces"))).toBe(true)
+    expect(policyReport.impact).toContain("code of conduct")
+
+    const training = sections.find((item) => item.id === "training")!
+    const trainingAnswers: Record<string, string> = {}
+    for (const question of training.questions) {
+      trainingAnswers[question.id] = question.choices.find((item) => item.kind === "gap")?.id ?? "no"
+    }
+    const trainingReport = sectionReport(scoreSection(training, trainingAnswers), profile)
+    expect(trainingReport.resources.some((link) => link.href.includes("training-needs-analysis-template"))).toBe(true)
+
+    const pay = sections.find((item) => item.id === "pay")!
+    const payAnswers: Record<string, string> = {}
+    for (const question of pay.questions) {
+      payAnswers[question.id] = question.choices.find((item) => item.kind === "solid")?.id ?? "yes"
+    }
+    payAnswers["pay-salary"] = "no"
+    const payReport = sectionReport(scoreSection(pay, payAnswers), profile)
+    expect(payReport.resources.some((link) => link.href.includes("annualised-salary"))).toBe(true)
+
+    const onboarding = sections.find((item) => item.id === "onboarding")!
+    const onboardAnswers: Record<string, string> = {}
+    for (const question of onboarding.questions) {
+      onboardAnswers[question.id] = question.choices.find((item) => item.kind === "gap")?.id ?? "no"
+    }
+    const onboardReport = sectionReport(scoreSection(onboarding, onboardAnswers), profile)
+    expect(onboardReport.resources.some((link) => link.href.includes("employee-onboarding-toolkit"))).toBe(true)
+
+    const culture = sections.find((item) => item.id === "culture")!
+    const cultureAnswers: Record<string, string> = {}
+    for (const question of culture.questions) {
+      cultureAnswers[question.id] = question.choices.find((item) => item.kind === "solid")?.id ?? "yes"
+    }
+    cultureAnswers["culture-wellbeing"] = "no"
+    const cultureReport = sectionReport(scoreSection(culture, cultureAnswers), profile)
+    expect(cultureReport.resources.some((link) => link.href.includes("improve-your-workplace-culture"))).toBe(true)
+    expect(cultureReport.resources.some((link) => link.href.includes("burnout-workplace-culture"))).toBe(true)
+  })
+
+  it("has a low, medium and high result, and at least one link, for every area", () => {
+    for (const section of sections) {
+      expect(SECTION_COPY[section.id]?.low.reading).toBeTruthy()
+      expect(SECTION_COPY[section.id]?.medium.reading).toBeTruthy()
+      expect(SECTION_COPY[section.id]?.high.reading).toBeTruthy()
+      expect(SECTION_COPY[section.id]?.high.keep.length).toBeGreaterThan(0)
+      expect(SECTION_LINKS[section.id]?.length).toBeGreaterThan(0)
+    }
+    expect(bandFor(49)).toBe("low")
+    expect(bandFor(50)).toBe("medium")
+    expect(bandFor(69)).toBe("medium")
+    expect(bandFor(70)).toBe("high")
   })
 })

@@ -9,7 +9,7 @@ import {
 
 export type Answers = Record<string, string>
 
-export type Band = "sound" | "holding" | "uneven" | "exposed" | "not-applicable"
+export type Band = "high" | "medium" | "low" | "not-applicable"
 
 export type WeakItem = {
   sectionId: string
@@ -32,22 +32,19 @@ export type SectionScore = {
 
 export function bandFor(percent: number | null): Band {
   if (percent === null) return "not-applicable"
-  if (percent >= 80) return "sound"
-  if (percent >= 60) return "holding"
-  if (percent >= 40) return "uneven"
-  return "exposed"
+  if (percent >= 70) return "high"
+  if (percent >= 50) return "medium"
+  return "low"
 }
 
 export function bandLabel(band: Band): string {
   switch (band) {
-    case "sound":
-      return "Sound on this screen"
-    case "holding":
-      return "In place, with gaps"
-    case "uneven":
-      return "Needs a proper look"
-    case "exposed":
-      return "Start here"
+    case "high":
+      return "In good shape"
+    case "medium":
+      return "Partly in place"
+    case "low":
+      return "Needs attention"
     case "not-applicable":
       return "Not applicable"
   }

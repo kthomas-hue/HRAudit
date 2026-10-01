@@ -1,4 +1,5 @@
 node_modules
 dist
 data/leads.jsonl
+data/outbox/
 .DS_Store
