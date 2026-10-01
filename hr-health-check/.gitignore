@@ -24,6 +24,6 @@ dist-ssr
 *.sw?
 
 # Local submission store (created at runtime)
-data/
+data/*
 !data/.gitkeep
 
