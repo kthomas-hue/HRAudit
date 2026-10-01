@@ -146,7 +146,22 @@ export function ResponsesPanel({ onStatus }: { onStatus: (msg: string) => void }
                     className="btn btn--lime"
                     onClick={() => downloadReport(selected)}
                   >
-                    Download report
+                    Download PDF report
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn--teal"
+                    onClick={() => {
+                      downloadPdfReport({
+                        kind: 'actions',
+                        contact: selected.contact,
+                        answers: selected.answers,
+                        content,
+                        completedAt: selected.createdAt,
+                      })
+                    }}
+                  >
+                    Action plan PDF
                   </button>
                   <button
                     type="button"
@@ -274,21 +289,6 @@ export function ResponsesPanel({ onStatus }: { onStatus: (msg: string) => void }
                 }}
               >
                 Action plan PDF
-              </button>
-              <button
-                type="button"
-                className="btn btn--ghost"
-                onClick={() => {
-                  downloadPdfReport({
-                    kind: 'resources',
-                    contact: selected.contact,
-                    answers: selected.answers,
-                    content,
-                    completedAt: selected.createdAt,
-                  })
-                }}
-              >
-                Resources PDF
               </button>
             </div>
           ) : (
