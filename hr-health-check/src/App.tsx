@@ -1,12 +1,16 @@
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { useAssessmentState } from './hooks/useAssessmentState'
 import { Landing } from './components/Landing'
 import { ContactForm } from './components/ContactForm'
 import { Assessment } from './components/Assessment'
 import { Results } from './components/Results'
+import { AdminPortal } from './components/AdminPortal'
 import { SiteFooter, SiteHeader } from './components/SiteChrome'
+import { useContent } from './content/ContentProvider'
 import './styles/app.css'
 
-function App() {
+function HealthCheckApp() {
+  const { content, hydrated: contentHydrated } = useContent()
   const {
     state,
     hydrated,
@@ -20,7 +24,7 @@ function App() {
     resume,
   } = useAssessmentState()
 
-  if (!hydrated) {
+  if (!hydrated || !contentHydrated) {
     return (
       <div className="app-shell app-shell--loading">
         <div className="loader" aria-label="Loading" />
@@ -36,7 +40,14 @@ function App() {
 
   return (
     <div className="app-shell">
-      {state.step !== 'landing' && state.step !== 'results' && <SiteHeader compact />}
+      {state.step !== 'landing' && state.step !== 'results' && (
+        <SiteHeader
+          compact
+          productName={content.settings.productName}
+          phone={content.settings.contactPhone}
+          websiteUrl={content.settings.websiteUrl}
+        />
+      )}
 
       <main>
         {state.step === 'landing' && (
@@ -53,6 +64,7 @@ function App() {
           <ContactForm
             initial={state.contact}
             privacyAccepted={state.privacyAccepted}
+            privacyUrl={content.settings.privacyUrl}
             onPrivacyChange={setPrivacyAccepted}
             onBack={() => setStep('landing')}
             onSubmit={(contact) => {
@@ -80,8 +92,24 @@ function App() {
         )}
       </main>
 
-      {state.step !== 'assessment' && <SiteFooter />}
+      {state.step !== 'assessment' && (
+        <SiteFooter
+          email={content.settings.contactEmail}
+          phone={content.settings.contactPhone}
+          websiteUrl={content.settings.websiteUrl}
+        />
+      )}
     </div>
+  )
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<HealthCheckApp />} />
+      <Route path="/admin" element={<AdminPortal />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }
 

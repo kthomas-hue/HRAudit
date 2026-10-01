@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { categories, feedbackQuestion, getQuestionsForCategory, questions, type Question } from '../data/questions'
-import { categoryGuidance } from '../data/guidance'
+import type { Question } from '../data/questions'
 import type { Answers, AnswerValue } from '../data/scoring'
+import { useContent } from '../content/ContentProvider'
 import { QuestionCard } from './QuestionCard'
 
 interface AssessmentProps {
@@ -31,26 +31,41 @@ export function Assessment({
   onComplete,
   onBackToContact,
 }: AssessmentProps) {
+  const { content } = useContent()
+  const categories = content.categories
+  const allQuestions = content.questions
   const category = categories[categoryIndex]
-  const stepQuestions = useMemo(() => getQuestionsForCategory(category.id), [category.id])
+  const stepQuestions = useMemo(
+    () => allQuestions.filter((q) => q.categoryId === category?.id),
+    [allQuestions, category?.id],
+  )
   const isIntro = questionIndex < 0
   const isLastCategory = categoryIndex === categories.length - 1
   const showingFeedback = isLastCategory && questionIndex >= stepQuestions.length
+  const feedbackQuestion: Question = {
+    id: 'feedback',
+    categoryId: category?.id ?? 'psychosocial',
+    type: 'text',
+    required: false,
+    prompt: content.feedbackPrompt,
+    placeholder: content.feedbackPlaceholder,
+  }
   const currentQuestion = showingFeedback
     ? feedbackQuestion
     : isIntro
       ? null
       : stepQuestions[questionIndex]
 
-  const answeredSoFar = questions.filter((q) => {
+  const answeredSoFar = allQuestions.filter((q) => {
     const v = answers[q.id]
     if (q.type === 'multi') return Array.isArray(v)
     return v !== null && v !== undefined && v !== ''
   }).length
-  const overallPct = Math.round((answeredSoFar / questions.length) * 100)
+  const overallPct = Math.round((answeredSoFar / Math.max(allQuestions.length, 1)) * 100)
 
   const [shake, setShake] = useState(false)
   const stageRef = useRef<HTMLElement>(null)
+  const guidance = category ? content.guidance[category.id] : undefined
 
   useEffect(() => {
     stageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -90,9 +105,8 @@ export function Assessment({
       return
     }
 
-    // end of category
     if (isLastCategory) {
-      onPositionChange(categoryIndex, stepQuestions.length) // feedback
+      onPositionChange(categoryIndex, stepQuestions.length)
       return
     }
 
@@ -106,7 +120,7 @@ export function Assessment({
         return
       }
       const prevCat = categories[categoryIndex - 1]
-      const prevQs = getQuestionsForCategory(prevCat.id)
+      const prevQs = allQuestions.filter((q) => q.categoryId === prevCat.id)
       onPositionChange(categoryIndex - 1, prevQs.length - 1)
       return
     }
@@ -124,11 +138,10 @@ export function Assessment({
     onPositionChange(categoryIndex, questionIndex - 1)
   }
 
-  const handleAnswer = (value: Answers[string]) => {
+  const handleAnswer = (value: AnswerValue) => {
     if (!currentQuestion) return
     onAnswer(currentQuestion.id, value)
 
-    // Auto-advance for decisive single-choice interactions
     if (
       currentQuestion.type === 'yesno' ||
       currentQuestion.type === 'single' ||
@@ -145,6 +158,8 @@ export function Assessment({
       }, 420)
     }
   }
+
+  if (!category) return null
 
   return (
     <section className="wizard" ref={stageRef}>
@@ -176,9 +191,7 @@ export function Assessment({
                 <span className="highlight-lime">{category.name}</span>
               </h1>
               <p className="lead">{category.description}</p>
-              {categoryGuidance[category.id] && (
-                <p className="wizard__stakes">{categoryGuidance[category.id].stakes}</p>
-              )}
+              {guidance?.stakes && <p className="wizard__stakes">{guidance.stakes}</p>}
               <p className="wizard__count">{stepQuestions.length} questions in this chapter</p>
               <button type="button" className="btn btn--lime" onClick={goNext}>
                 Continue

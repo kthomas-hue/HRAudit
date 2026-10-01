@@ -1,3 +1,4 @@
+import { useContent } from '../content/ContentProvider'
 import { Logo } from './Logo'
 
 interface LandingProps {
@@ -9,6 +10,21 @@ interface LandingProps {
 }
 
 export function Landing({ onStart, hasProgress, hasResults = false, onResume, onReset }: LandingProps) {
+  const { content } = useContent()
+  const { settings } = content
+
+  const headline = settings.landingHeadline
+  const highlightMatch = headline.match(/^(.*?)(exposed|risk|ready)(.*)$/i)
+  const headlineNodes = highlightMatch ? (
+    <>
+      {highlightMatch[1]}
+      <span className="highlight-lime">{highlightMatch[2]}</span>
+      {highlightMatch[3]}
+    </>
+  ) : (
+    headline
+  )
+
   return (
     <section className="landing">
       <div className="landing__atmosphere" aria-hidden>
@@ -20,14 +36,9 @@ export function Landing({ onStart, hasProgress, hasResults = false, onResume, on
       <div className="landing__hero">
         <div className="landing__copy">
           <Logo size="lg" className="landing__logo" />
-          <p className="eyebrow">For business owners, GMs &amp; CEOs</p>
-          <h1>
-            Know where your HR is <span className="highlight-lime">exposed</span>
-          </h1>
-          <p className="lead">
-            A practical Health Check for leaders of growing teams. In about 20 minutes you’ll see your biggest
-            people risks — and the next moves worth making.
-          </p>
+          <p className="eyebrow">{settings.tagline}</p>
+          <h1>{headlineNodes}</h1>
+          <p className="lead">{settings.landingLead}</p>
 
           <div className="landing__actions">
             {hasProgress ? (
@@ -53,7 +64,7 @@ export function Landing({ onStart, hasProgress, hasResults = false, onResume, on
           </div>
           <p className="landing__privacy">
             Takes 15–20 minutes · Instant brief ·{' '}
-            <a href="https://www.dreamstonehr.com.au" target="_blank" rel="noreferrer">
+            <a href={settings.privacyUrl} target="_blank" rel="noreferrer">
               Privacy policy
             </a>
           </p>
@@ -68,7 +79,7 @@ export function Landing({ onStart, hasProgress, hasResults = false, onResume, on
             </li>
             <li>
               <strong>A leadership brief</strong>
-              <span>Not just scores — what it means and what to do next</span>
+              <span>Timed actions, resource links, and what to do next — not just scores</span>
             </li>
             <li>
               <strong>A partner path</strong>

@@ -1,13 +1,17 @@
 import { useMemo } from 'react'
-import { questions, feedbackQuestion } from '../data/questions'
-import { answerLabel, bandForScore, computeResults, type Answers } from '../data/scoring'
+import { useContent } from '../content/ContentProvider'
+import type { ActionItem, CategoryGuidance, ResourceLink } from '../content/types'
 import {
-  buildLeaderActions,
-  categoryGuidance,
+  answerLabel,
+  bandForScore,
+  computeResults,
   overallNarrative,
   riskLabel,
   riskLevelForScore,
-} from '../data/guidance'
+  type Answers,
+  type CategoryScore,
+  type RiskLevel,
+} from '../data/scoring'
 import type { ContactInfo } from '../hooks/useAssessmentState'
 import { Logo } from './Logo'
 
@@ -17,12 +21,90 @@ interface ResultsProps {
   onRestart: () => void
 }
 
+interface LeaderAction {
+  categoryId: string
+  categoryName: string
+  score: number
+  accent: string
+  risk: RiskLevel
+  riskLabel: string
+  riskIfWeak: string
+  nextMove: string
+  partnerAngle: string
+  reportDetail: string
+  actions: ActionItem[]
+  resources: ResourceLink[]
+}
+
+function emptyGuidance(categoryId: string): CategoryGuidance {
+  return {
+    categoryId,
+    stakes: 'Keep reinforcing practices in this area.',
+    riskIfWeak: 'Gaps here create avoidable people and compliance risk.',
+    nextMove: 'Review current practice with your leadership team and assign an owner.',
+    partnerAngle: 'DreamStoneHR can help you design a practical plan for this area.',
+    reportDetail: '',
+    actions: [],
+    resources: [],
+  }
+}
+
+function buildLeaderActions(
+  priorities: CategoryScore[],
+  guidance: Record<string, CategoryGuidance>,
+): LeaderAction[] {
+  return priorities.map((c) => {
+    const g = guidance[c.categoryId] ?? emptyGuidance(c.categoryId)
+    const risk = riskLevelForScore(c.score)
+    return {
+      categoryId: c.categoryId,
+      categoryName: c.name,
+      score: c.score,
+      accent: c.accent,
+      risk,
+      riskLabel: riskLabel(risk),
+      riskIfWeak: g.riskIfWeak,
+      nextMove: g.nextMove,
+      partnerAngle: g.partnerAngle,
+      reportDetail: g.reportDetail,
+      actions: g.actions,
+      resources: g.resources,
+    }
+  })
+}
+
+function phoneToTel(phone: string) {
+  const digits = phone.replace(/[^\d+]/g, '')
+  return digits.startsWith('+') ? digits : digits.replace(/^0/, '+61')
+}
+
 export function Results({ contact, answers, onRestart }: ResultsProps) {
-  const results = useMemo(() => computeResults(answers), [answers])
+  const { content } = useContent()
+  const { settings, categories, questions, guidance } = content
+
+  const results = useMemo(
+    () => computeResults(answers, categories, questions),
+    [answers, categories, questions],
+  )
   const band = bandForScore(results.overall)
-  const actions = useMemo(() => buildLeaderActions(results.priorities), [results.priorities])
+  const actions = useMemo(
+    () => buildLeaderActions(results.priorities, guidance),
+    [results.priorities, guidance],
+  )
   const topRisk = results.priorities[0]?.name
   const narrative = overallNarrative(results.overall, topRisk)
+
+  const allCategoryBriefs = useMemo(
+    () =>
+      [...results.categories]
+        .sort((a, b) => a.score - b.score)
+        .map((c) => {
+          const g = guidance[c.categoryId] ?? emptyGuidance(c.categoryId)
+          const risk = riskLevelForScore(c.score)
+          return { ...c, guidance: g, risk, riskLabel: riskLabel(risk) }
+        }),
+    [results.categories, guidance],
+  )
 
   const mailto = useMemo(() => {
     const lines = [
@@ -40,23 +122,25 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
       contact.email,
       contact.phone,
     ]
-    return `mailto:info@dreamstonehr.com.au?subject=${encodeURIComponent(
+    return `mailto:${settings.contactEmail}?subject=${encodeURIComponent(
       `HR Health Check — ${contact.company || contact.firstName || 'results'}`,
     )}&body=${encodeURIComponent(lines.filter(Boolean).join('\n'))}`
-  }, [actions, contact, narrative.headline, results.overall])
+  }, [actions, contact, narrative.headline, results.overall, settings.contactEmail])
+
+  const timeframeOrder = { 'This week': 0, '30 days': 1, '90 days': 2 } as const
 
   return (
     <section className="results">
       <div className="results__hero">
         <div className="results__hero-wash" aria-hidden />
         <Logo inverted className="results__logo" />
-        <p className="eyebrow eyebrow--light">Your leadership brief</p>
+        <p className="eyebrow eyebrow--light">{settings.reportTitle}</p>
         <h1>
           {contact.firstName ? `${contact.firstName}, here’s the picture` : 'Here’s the picture'}
         </h1>
         <p className="lead lead--light">
-          A clear read on {contact.company || 'your'} HR foundations — the exposures that matter, and the next
-          moves worth making.
+          A detailed leadership brief for {contact.company || 'your business'} — exposures, timed actions, and
+          resources you can use immediately.
         </p>
 
         <div className={`overall-score tone-${band.tone}`}>
@@ -100,6 +184,88 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
           </div>
         </section>
 
+        <section className="brief-block report-deep">
+          <div className="brief-block__head">
+            <h3>Detailed action plan</h3>
+            <p>
+              Category-by-category guidance with timed actions and links to Fair Work, Safe Work, and related
+              resources.
+            </p>
+          </div>
+
+          <div className="report-deep__list">
+            {allCategoryBriefs.map((c) => (
+              <article key={c.categoryId} className="category-report">
+                <header className="category-report__head">
+                  <div>
+                    <p className="category-report__meta">
+                      <span className={`risk-pill risk-pill--${c.risk}`}>{c.riskLabel}</span>
+                      <span className="category-report__score" style={{ color: c.accent }}>
+                        {c.score}%
+                      </span>
+                    </p>
+                    <h4>{c.name}</h4>
+                  </div>
+                  <p className="category-report__stakes">{c.guidance.stakes}</p>
+                </header>
+
+                {c.guidance.reportDetail && (
+                  <p className="category-report__detail">{c.guidance.reportDetail}</p>
+                )}
+
+                <div className="category-report__columns">
+                  <div>
+                    <h5>Recommended actions</h5>
+                    {c.guidance.actions.length === 0 ? (
+                      <p className="category-report__empty">
+                        {c.guidance.nextMove || 'Assign an owner and set a 30-day checkpoint.'}
+                      </p>
+                    ) : (
+                      <ol className="action-timeline">
+                        {[...c.guidance.actions]
+                          .sort((a, b) => timeframeOrder[a.timeframe] - timeframeOrder[b.timeframe])
+                          .map((item) => (
+                            <li key={item.id}>
+                              <span className="action-timeline__when">{item.timeframe}</span>
+                              <strong>{item.title}</strong>
+                              <p>{item.detail}</p>
+                            </li>
+                          ))}
+                      </ol>
+                    )}
+                  </div>
+
+                  <div>
+                    <h5>Resources</h5>
+                    {c.guidance.resources.length === 0 ? (
+                      <p className="category-report__empty">
+                        Ask DreamStoneHR for tailored templates and checklists for this area.
+                      </p>
+                    ) : (
+                      <ul className="resource-list">
+                        {c.guidance.resources.map((r) => (
+                          <li key={r.id}>
+                            <a href={r.url} target="_blank" rel="noreferrer">
+                              {r.label}
+                              <span aria-hidden> ↗</span>
+                            </a>
+                            {r.description && <p>{r.description}</p>}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {c.guidance.partnerAngle && (
+                      <p className="category-report__partner">
+                        <strong>DreamStoneHR can help with:</strong> {c.guidance.partnerAngle}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
         <div className="results__grid">
           <div className="results__panel">
             <h3>Full scorecard</h3>
@@ -135,7 +301,7 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
                     </span>
                     <div>
                       <strong>{c.name}</strong>
-                      <p>{categoryGuidance[c.categoryId]?.stakes ?? 'Keep reinforcing these practices.'}</p>
+                      <p>{guidance[c.categoryId]?.stakes ?? 'Keep reinforcing these practices.'}</p>
                     </div>
                   </div>
                 ))}
@@ -147,7 +313,7 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
               <ol className="brief-steps">
                 <li>Share the top 3 moves with your leadership team this week.</li>
                 <li>Assign an owner and a 30-day checkpoint for each move.</li>
-                <li>Bring DreamStoneHR in where exposure or capacity is the blocker.</li>
+                <li>Use the resource links for self-serve progress, then bring DreamStoneHR in where exposure or capacity is the blocker.</li>
               </ol>
             </div>
           </aside>
@@ -163,13 +329,13 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
           </div>
           <div className="cta-banner__actions">
             <a className="btn btn--lime" href={mailto}>
-              Email this brief to DreamStoneHR
+              {settings.partnerCtaLabel}
               <span className="btn__arrow" aria-hidden>
                 ↗
               </span>
             </a>
-            <a className="btn btn--teal" href="tel:+61283209320">
-              Call (02) 8320 9320
+            <a className="btn btn--teal" href={`tel:${phoneToTel(settings.contactPhone)}`}>
+              Call {settings.contactPhone}
             </a>
           </div>
         </div>
@@ -185,11 +351,11 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
                 </p>
               </div>
             ))}
-            {answers[feedbackQuestion.id] && (
+            {answers.feedback && (
               <div className="responses__item">
-                <h4>{feedbackQuestion.prompt}</h4>
+                <h4>{content.feedbackPrompt}</h4>
                 <p>
-                  <strong>Your response:</strong> {String(answers[feedbackQuestion.id])}
+                  <strong>Your response:</strong> {String(answers.feedback)}
                 </p>
               </div>
             )}
@@ -200,7 +366,7 @@ export function Results({ contact, answers, onRestart }: ResultsProps) {
           <button type="button" className="btn btn--ghost" onClick={onRestart}>
             Take the check again
           </button>
-          <a className="text-link" href="https://www.dreamstonehr.com.au" target="_blank" rel="noreferrer">
+          <a className="text-link" href={settings.websiteUrl} target="_blank" rel="noreferrer">
             Visit dreamstonehr.com.au →
           </a>
         </div>

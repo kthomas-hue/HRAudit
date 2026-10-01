@@ -1,27 +1,45 @@
 import { Logo } from './Logo'
 
-export function SiteHeader({ compact = false }: { compact?: boolean }) {
+function phoneToTel(phone: string) {
+  const digits = phone.replace(/[^\d+]/g, '')
+  return digits.startsWith('+') ? digits : digits.replace(/^0/, '+61')
+}
+
+export function SiteHeader({
+  compact = false,
+  productName = 'HR Health Check',
+  phone = '(02) 8320 9320',
+  websiteUrl = 'https://www.dreamstonehr.com.au',
+}: {
+  compact?: boolean
+  productName?: string
+  phone?: string
+  websiteUrl?: string
+}) {
   return (
     <header className={`site-header ${compact ? 'is-compact' : ''}`}>
       <div className="site-header__inner">
-        <a
-          href="https://www.dreamstonehr.com.au"
-          className="site-header__brand"
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a href={websiteUrl} className="site-header__brand" target="_blank" rel="noreferrer">
           <Logo size="sm" />
         </a>
         <div className="site-header__meta">
-          <span>HR Health Check</span>
-          <a href="tel:+61283209320">(02) 8320 9320</a>
+          <span>{productName}</span>
+          <a href={`tel:${phoneToTel(phone)}`}>{phone}</a>
         </div>
       </div>
     </header>
   )
 }
 
-export function SiteFooter() {
+export function SiteFooter({
+  email = 'info@dreamstonehr.com.au',
+  phone = '(02) 8320 9320',
+  websiteUrl = 'https://www.dreamstonehr.com.au',
+}: {
+  email?: string
+  phone?: string
+  websiteUrl?: string
+}) {
   return (
     <footer className="site-footer">
       <div className="site-footer__inner">
@@ -35,9 +53,9 @@ export function SiteFooter() {
             </p>
           </div>
           <div className="site-footer__contact">
-            <a href="tel:+61283209320">(02) 8320 9320</a>
-            <a href="mailto:info@dreamstonehr.com.au">info@dreamstonehr.com.au</a>
-            <a href="https://www.dreamstonehr.com.au" target="_blank" rel="noreferrer">
+            <a href={`tel:${phoneToTel(phone)}`}>{phone}</a>
+            <a href={`mailto:${email}`}>{email}</a>
+            <a href={websiteUrl} target="_blank" rel="noreferrer">
               www.dreamstonehr.com.au
             </a>
           </div>

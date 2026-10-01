@@ -5,6 +5,7 @@ import { Logo } from './Logo'
 interface ContactFormProps {
   initial: ContactInfo
   privacyAccepted: boolean
+  privacyUrl?: string
   onPrivacyChange: (v: boolean) => void
   onSubmit: (contact: ContactInfo) => void
   onBack: () => void
@@ -17,6 +18,7 @@ function isValidEmail(email: string) {
 export function ContactForm({
   initial,
   privacyAccepted,
+  privacyUrl = 'https://www.dreamstonehr.com.au',
   onPrivacyChange,
   onSubmit,
   onBack,
@@ -134,7 +136,7 @@ export function ContactForm({
           />
           <span>
             By requesting your assessment results, you agree to our{' '}
-            <a href="https://www.dreamstonehr.com.au" target="_blank" rel="noreferrer">
+            <a href={privacyUrl} target="_blank" rel="noreferrer">
               privacy policy
             </a>
             .
