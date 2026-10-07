@@ -44,7 +44,7 @@ export function Assessment({
   const showingFeedback = isLastCategory && questionIndex >= stepQuestions.length
   const feedbackQuestion: Question = {
     id: 'feedback',
-    categoryId: category?.id ?? 'psychosocial',
+    categoryId: category?.id ?? 'ai',
     type: 'text',
     required: false,
     prompt: content.feedbackPrompt,
@@ -169,7 +169,7 @@ export function Assessment({
         </div>
         <div className="wizard__meta">
           <span className="wizard__chapter">
-            {categoryIndex + 1} / {categories.length} · {category.shortName}
+            Section {categoryIndex + 1} / {categories.length} · {category.shortName}
           </span>
           <span className="wizard__pct">{overallPct}%</span>
         </div>
@@ -186,13 +186,13 @@ export function Assessment({
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
             >
-              <p className="eyebrow">Chapter {categoryIndex + 1}</p>
+              <p className="eyebrow">Section {categoryIndex + 1} of {categories.length}</p>
               <h1>
                 <span className="highlight-lime">{category.name}</span>
               </h1>
               <p className="lead">{category.description}</p>
               {guidance?.stakes && <p className="wizard__stakes">{guidance.stakes}</p>}
-              <p className="wizard__count">{stepQuestions.length} questions in this chapter</p>
+              <p className="wizard__count">{stepQuestions.length} questions in this section</p>
               <button type="button" className="btn btn--lime" onClick={goNext}>
                 Continue
                 <span className="btn__arrow" aria-hidden>

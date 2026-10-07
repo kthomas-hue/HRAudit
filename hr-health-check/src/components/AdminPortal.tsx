@@ -4,8 +4,9 @@ import { useContent } from '../content/ContentProvider'
 import type { ActionItem, CategoryGuidance, ResourceLink } from '../content/types'
 import type { Category, ChoiceOption, Question, QuestionType } from '../data/questions'
 import { Logo } from './Logo'
+import { ResponsesPanel } from './ResponsesPanel'
 
-type AdminTab = 'settings' | 'categories' | 'questions' | 'report' | 'import'
+type AdminTab = 'responses' | 'settings' | 'categories' | 'questions' | 'report' | 'import'
 
 function uid(prefix: string) {
   return `${prefix}-${Math.random().toString(36).slice(2, 9)}`
@@ -33,7 +34,7 @@ export function AdminPortal() {
 
   const [password, setPassword] = useState('')
   const [loginError, setLoginError] = useState('')
-  const [tab, setTab] = useState<AdminTab>('settings')
+  const [tab, setTab] = useState<AdminTab>('responses')
   const [selectedCategoryId, setSelectedCategoryId] = useState(content.categories[0]?.id ?? '')
   const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null)
   const [importText, setImportText] = useState('')
@@ -64,7 +65,7 @@ export function AdminPortal() {
         <div className="admin-login">
           <Logo size="md" />
           <h1>Content admin</h1>
-          <p>Edit questions, report actions, resources, and settings for the HR Health Check.</p>
+          <p>Edit questions, report content, and review client responses.</p>
           <form
             onSubmit={(e) => {
               e.preventDefault()
@@ -127,6 +128,7 @@ export function AdminPortal() {
       <nav className="admin-tabs">
         {(
           [
+            ['responses', 'Responses'],
             ['settings', 'Settings'],
             ['categories', 'Categories'],
             ['questions', 'Questions'],
@@ -146,6 +148,8 @@ export function AdminPortal() {
       </nav>
 
       {status && <p className="admin-status">{status}</p>}
+
+      {tab === 'responses' && <ResponsesPanel onStatus={setStatus} />}
 
       {tab === 'settings' && (
         <section className="admin-panel">
@@ -646,7 +650,7 @@ function GuidanceEditor({
   return (
     <div className="admin-editor">
       <label className="field">
-        <span>Stakes (chapter intro)</span>
+                    <span>Stakes (section intro)</span>
         <textarea
           rows={2}
           value={guidance.stakes}

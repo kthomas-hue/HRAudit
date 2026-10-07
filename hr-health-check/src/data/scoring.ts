@@ -152,31 +152,31 @@ export function answerLabel(q: Question, answer: AnswerValue): string {
 export function overallNarrative(overall: number, topRiskName?: string): { headline: string; body: string } {
   if (overall < 40) {
     return {
-      headline: 'Significant HR exposure',
+      headline: 'Material people risk sitting in the business',
       body: topRiskName
-        ? `Your foundations need urgent attention — especially ${topRiskName}. Treat this as a leadership priority, not an admin tidy-up.`
-        : 'Your foundations need urgent attention. Treat this as a leadership priority, not an admin tidy-up.',
+        ? `Left alone, gaps like ${topRiskName} become Fair Work exposure, claims, turnover cost, and leadership distraction. This report gives you a clear first-90-day path — not a vague to-do list.`
+        : 'Left alone, these gaps become Fair Work exposure, claims, turnover cost, and leadership distraction. This report gives you a clear first-90-day path — not a vague to-do list.',
     }
   }
   if (overall < 60) {
     return {
-      headline: 'Gaps that will cost you if ignored',
+      headline: 'Avoidable cost and risk if you wait',
       body: topRiskName
-        ? `You have workable pieces in place, but ${topRiskName} and related gaps create avoidable risk. Close the highest exposures first.`
-        : 'You have workable pieces in place, but key gaps create avoidable risk. Close the highest exposures first.',
+        ? `You have pieces working, but ${topRiskName} and related gaps are where underpayments, messy exits, and manager mistakes usually start. Close the highest exposures first — then protect what’s working.`
+        : 'You have pieces working, but the gaps below are where underpayments, messy exits, and manager mistakes usually start. Close the highest exposures first — then protect what’s working.',
     }
   }
   if (overall < 80) {
     return {
-      headline: 'Solid base — sharpen the weak spots',
+      headline: 'Solid base — protect the commercial upside',
       body: topRiskName
-        ? `You’re not starting from zero. Focus the next 30–60 days on ${topRiskName} and the other priority areas below.`
-        : 'You’re not starting from zero. Focus the next 30–60 days on the priority areas below.',
+        ? `You’re not starting from zero. Sharpen ${topRiskName} and the other focus areas over the next 30–90 days so growth doesn’t outrun your people systems.`
+        : 'You’re not starting from zero. Sharpen the focus areas below over the next 30–90 days so growth doesn’t outrun your people systems.',
     }
   }
   return {
-    headline: 'Strong foundations — keep them sharp',
-    body: 'Your self-assessment suggests healthy practices. Use DreamStoneHR to stress-test the edges and stay ahead of legislative change.',
+    headline: 'Strong foundations — stay ahead of change',
+    body: 'Your self-assessment suggests healthy practices. Use the roadmap to stress-test the edges, keep managers consistent, and stay ahead of legislative change as you grow.',
   }
 }
 

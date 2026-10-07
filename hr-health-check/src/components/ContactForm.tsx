@@ -11,6 +11,15 @@ interface ContactFormProps {
   onBack: () => void
 }
 
+const TEAM_SIZES = [
+  { value: '', label: 'Select team size (optional)' },
+  { value: '1-5', label: '1–5 people' },
+  { value: '6-19', label: '6–19 people' },
+  { value: '20-49', label: '20–49 people' },
+  { value: '50-99', label: '50–99 people' },
+  { value: '100+', label: '100+ people' },
+]
+
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
 }
@@ -23,7 +32,7 @@ export function ContactForm({
   onSubmit,
   onBack,
 }: ContactFormProps) {
-  const [form, setForm] = useState<ContactInfo>(initial)
+  const [form, setForm] = useState<ContactInfo>({ teamSize: '', ...initial })
   const [touched, setTouched] = useState(false)
 
   const errors = {
@@ -59,13 +68,14 @@ export function ContactForm({
       <button type="button" className="text-link" onClick={onBack}>
         ← Back
       </button>
-      <p className="eyebrow">Almost ready</p>
+      <p className="eyebrow">Personalise your report</p>
       <h1>
-        So we can build <span className="highlight-lime">your brief</span>
+        So your roadmap fits <span className="highlight-lime">your business</span>
       </h1>
       <p className="lead">
-        We’ll personalise your leadership brief with these details. Use the email connected with your HR Health
-        Check.
+        We use these details to personalise your leadership report and 30–90 day action plan — and so DreamStoneHR
+        can follow up with practical help if you want it. Answer the Health Check as things are today, not as you
+        wish they were.
       </p>
 
       <form className="contact-form" onSubmit={handleSubmit} noValidate>
@@ -93,7 +103,7 @@ export function ContactForm({
         </div>
 
         <label className="field">
-          <span>Email address</span>
+          <span>Work email</span>
           <input
             type="email"
             autoComplete="email"
@@ -106,14 +116,14 @@ export function ContactForm({
 
         <label className="field">
           <span>
-            Phone <small>(optional)</small>
+            Phone <small>(optional — helpful if you’d like a debrief)</small>
           </span>
           <input
             type="tel"
             autoComplete="tel"
             value={form.phone}
             onChange={(e) => update('phone', e.target.value)}
-            placeholder="Enter your phone number"
+            placeholder="Best number to reach you"
           />
         </label>
 
@@ -128,6 +138,19 @@ export function ContactForm({
           {touched && errors.company && <em className="field-error">{errors.company}</em>}
         </label>
 
+        <label className="field">
+          <span>
+            Team size <small>(optional)</small>
+          </span>
+          <select value={form.teamSize ?? ''} onChange={(e) => update('teamSize', e.target.value)}>
+            {TEAM_SIZES.map((opt) => (
+              <option key={opt.value || 'empty'} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
         <label className="checkbox-field">
           <input
             type="checkbox"
@@ -135,7 +158,8 @@ export function ContactForm({
             onChange={(e) => onPrivacyChange(e.target.checked)}
           />
           <span>
-            By requesting your assessment results, you agree to our{' '}
+            I agree to DreamStoneHR using these details to deliver my Health Check results and relevant follow-up,
+            as described in the{' '}
             <a href={privacyUrl} target="_blank" rel="noreferrer">
               privacy policy
             </a>
@@ -146,7 +170,7 @@ export function ContactForm({
 
         <div className="form-actions">
           <button type="submit" className="btn btn--lime">
-            Start the assessment
+            Continue to the assessment
             <span className="btn__arrow" aria-hidden>
               ↗
             </span>

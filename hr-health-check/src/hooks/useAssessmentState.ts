@@ -7,6 +7,8 @@ export interface ContactInfo {
   email: string
   phone: string
   company: string
+  /** Optional lead-qual / personalisation field */
+  teamSize?: string
 }
 
 export type Step = 'landing' | 'contact' | 'assessment' | 'results'
@@ -29,6 +31,7 @@ const emptyContact: ContactInfo = {
   email: '',
   phone: '',
   company: '',
+  teamSize: '',
 }
 
 const defaultState: PersistedState = {

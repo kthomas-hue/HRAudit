@@ -121,6 +121,17 @@ export const categoryGuidance: Record<string, CategoryGuidance> = {
       'Confirm you have a clear sexual harassment response pathway, EAP access, and trained managers for first response.',
     partnerAngle: 'Psychosocial risk and positive duty — practical compliance with a people-first lens.',
   },
+  ai: {
+    categoryId: 'ai',
+    stakes:
+      'AI is changing how hiring, admin and people decisions get done — quiet use without clear ownership creates both risk and wasted effort.',
+    riskIfWeak:
+      'Privacy leaks, unexplained people decisions, blurred human accountability, and tools that run ahead of how the work is actually designed.',
+    nextMove:
+      'Name who owns AI-at-work decisions, write where humans must stay in the loop, and pick one low-risk use case with a quality check.',
+    partnerAngle:
+      'Practical Human–AI guardrails for people work — clarity on judgment, ownership and privacy without needing an enterprise AI program.',
+  },
 }
 
 export function riskLevelForScore(score: number): RiskLevel {

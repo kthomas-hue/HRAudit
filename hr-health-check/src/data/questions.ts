@@ -5,6 +5,8 @@ export interface ScaleConfig {
   max: number
   minLabel: string
   maxLabel: string
+  /** Optional per-value descriptions shown so leaders know what each number means */
+  stepLabels?: string[]
 }
 
 export interface ChoiceOption {
@@ -123,6 +125,13 @@ export const categories: Category[] = [
     shortName: 'Psychosocial',
     description: 'Harassment, mental health, FDV leave and serious risk.',
     accent: '#E54771',
+  },
+  {
+    id: 'ai',
+    name: 'AI at Work',
+    shortName: 'AI',
+    description: 'Where AI shows up in people work — clarity, guardrails, and readiness.',
+    accent: '#1FC4B4',
   },
 ]
 
@@ -977,15 +986,153 @@ export const questions: Question[] = [
       maxLabel: 'Management are trained in Mental Health First Aid and staff have access to an EAP',
     },
   },
+
+  // —— AI at Work ——
+  {
+    id: 'ai-clarity',
+    categoryId: 'ai',
+    type: 'scale',
+    prompt:
+      'How clear is your business about where AI is (and isn’t) used in people-related work — hiring, performance, admin, or day-to-day tools?',
+    helpText:
+      'Applies whether you are a small team experimenting with ChatGPT or a larger business rolling out AI tools. Clarity matters more than sophistication.',
+    scale: {
+      min: 1,
+      max: 10,
+      minLabel: 'No shared view — people use whatever they find',
+      maxLabel: 'We have a clear view of approved uses and what’s off-limits',
+    },
+  },
+  {
+    id: 'ai-use-cases',
+    categoryId: 'ai',
+    type: 'multi',
+    prompt: 'Where is AI currently used (or being trialled) for people-related work in your business?',
+    helpText: 'Select all that apply. “Not yet” is a valid answer — many strong businesses are still early.',
+    options: [
+      { id: 'none', label: 'Not yet — little or no AI use in people work', score: 55, isGap: true },
+      { id: 'drafting', label: 'Drafting job ads, emails, policies or performance notes', score: 75 },
+      { id: 'screening', label: 'Screening CVs, shortlisting or interview support', score: 70 },
+      { id: 'scheduling', label: 'Rostering, scheduling or workforce planning tools', score: 80 },
+      { id: 'chat', label: 'Staff or candidate chatbots / HR helpdesks', score: 75 },
+      { id: 'analytics', label: 'People analytics, turnover or engagement insights', score: 80 },
+      { id: 'ad-hoc', label: 'Ad hoc personal use only — no business approach', score: 25, isGap: true },
+    ],
+  },
+  {
+    id: 'ai-policy',
+    categoryId: 'ai',
+    type: 'single',
+    prompt: 'Do you have any guidance for staff on acceptable AI use at work?',
+    options: [
+      {
+        id: 'a',
+        label: 'No — people use AI tools without any shared expectations',
+        score: 10,
+      },
+      {
+        id: 'b',
+        label: 'Informal — we’ve talked about it, but nothing is written down',
+        score: 40,
+      },
+      {
+        id: 'c',
+        label: 'Basic guidance exists (e.g. don’t paste confidential data) but it isn’t consistently applied',
+        score: 65,
+      },
+      {
+        id: 'd',
+        label: 'Yes — clear written guidance that staff know about and we can point to',
+        score: 100,
+      },
+    ],
+  },
+  {
+    id: 'ai-people-decisions',
+    categoryId: 'ai',
+    type: 'scale',
+    prompt:
+      'If AI informs hiring, performance, pay, or other people decisions — how confident are you that those uses are fair, explainable, and privacy-safe?',
+    helpText:
+      'If you are not using AI for people decisions yet, rate how ready you would be to do so responsibly.',
+    scale: {
+      min: 1,
+      max: 10,
+      minLabel: 'Not confident — we haven’t thought this through',
+      maxLabel: 'Confident — uses are deliberate, reviewable, and privacy-aware',
+    },
+  },
+  {
+    id: 'ai-data',
+    categoryId: 'ai',
+    type: 'yesno',
+    prompt:
+      'Have you considered privacy and confidentiality when staff use AI tools with employee, candidate, or customer information?',
+    yesScore: 100,
+    noScore: 15,
+  },
+  {
+    id: 'ai-capability',
+    categoryId: 'ai',
+    type: 'scale',
+    prompt:
+      'How ready are the people who hire and manage in your business to use AI tools responsibly — and to spot when AI output needs a human check?',
+    scale: {
+      min: 1,
+      max: 10,
+      minLabel: 'Not ready — no shared skills or expectations',
+      maxLabel: 'Ready — people know when to use AI and when to verify',
+    },
+  },
+  {
+    id: 'ai-human-judgment',
+    categoryId: 'ai',
+    type: 'single',
+    prompt:
+      'Have you agreed where human judgment must stay in the loop — versus where AI can draft, suggest or automate — for people-related work?',
+    helpText:
+      'Think hiring shortlists, performance notes, rostering, and anything that affects pay or progression. Clear boundaries matter more than fancy tools.',
+    options: [
+      {
+        id: 'a',
+        label: 'No — we haven’t talked about where humans must decide',
+        score: 15,
+      },
+      {
+        id: 'b',
+        label: 'Informally — a few of us have a view, but it isn’t shared',
+        score: 45,
+      },
+      {
+        id: 'c',
+        label: 'Partly — some rules exist (e.g. no AI-only hiring decisions), but gaps remain',
+        score: 70,
+      },
+      {
+        id: 'd',
+        label: 'Yes — we can name what AI may do and what must stay human / accountable',
+        score: 100,
+      },
+    ],
+  },
+  {
+    id: 'ai-work-owner',
+    categoryId: 'ai',
+    type: 'yesno',
+    prompt:
+      'Is there a named person accountable for how AI is used in people-related work (even if that is you as owner or founder)?',
+    yesScore: 100,
+    noScore: 20,
+  },
 ]
 
 export const feedbackQuestion: Question = {
   id: 'feedback',
-  categoryId: 'psychosocial',
+  categoryId: 'ai',
   type: 'text',
   required: false,
   prompt:
-    'You have completed your HR Health Check. Prior to submitting your results, please take a moment to let us know any feedback you have about this assessment, or if it made you consider any areas of your HR performance that you hadn’t previously. (Optional)',
+    'You have completed your HR Health Check. Prior to submitting your results, please take a moment to let us know any feedback you have about this assessment, or if it made you consider any areas of your people foundations that you hadn’t previously. (Optional)',
   placeholder: 'Share any thoughts or reflections…',
 }
 
