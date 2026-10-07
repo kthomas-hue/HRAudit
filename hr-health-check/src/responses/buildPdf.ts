@@ -204,42 +204,11 @@ function downloadFullReportPdf(options: {
   )
   y += 3
 
-  // Scorecard first
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(13)
-  doc.setTextColor(...COLOURS.ink)
-  doc.text('Full scorecard', margin, y)
-  y += 3
-  doc.setFont('helvetica', 'normal')
-  doc.setFontSize(9)
-  doc.setTextColor(...COLOURS.muted)
-  y = wrap(doc, 'Use this as your map. Category detail, actions and resources follow in the same order.', margin, y + 3, maxW, 4.2)
-  y += 2
-
-  const scorecard = [...results.categories]
-  for (const c of scorecard) {
-    y = ensureSpace(doc, y, 12, footer)
-    const risk = riskLevelForScore(c.score)
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(10)
-    doc.setTextColor(...COLOURS.ink)
-    doc.text(c.name, margin, y + 3.5)
-    doc.setTextColor(...riskColour(risk))
-    doc.setFontSize(8)
-    doc.text(riskLabel(risk), margin + maxW * 0.55, y + 3.5)
-    doc.setTextColor(...COLOURS.ink)
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(11)
-    doc.text(`${c.score}%`, pageW - margin, y + 3.5, { align: 'right' })
-    drawScoreBar(doc, margin, y + 5.5, maxW, c.score, COLOURS.blue)
-    y += 12
-  }
-  y += 4
-
-  // Focus first (high exposure / low confidence)
+  // Focus first (high exposure / low confidence) — lead with value
   y = ensureSpace(doc, y, 40, footer)
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(13)
+  doc.setTextColor(...COLOURS.ink)
   doc.text('Focus first', margin, y)
   y += 5
   doc.setFont('helvetica', 'normal')
@@ -247,7 +216,7 @@ function downloadFullReportPdf(options: {
   doc.setTextColor(...COLOURS.soft)
   y = wrap(
     doc,
-    'Start where exposure is highest and response confidence is lowest — up to three starting points.',
+    'Start where business exposure is highest and response confidence is lowest — up to three starting points.',
     margin,
     y,
     maxW,
@@ -272,10 +241,86 @@ function downloadFullReportPdf(options: {
     doc.setTextColor(...COLOURS.soft)
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(8.5)
-    wrap(doc, `Exposure: ${g?.riskIfWeak ?? ''}`, margin + 3, y + 11, maxW - 6, 3.6)
+    wrap(doc, `Business exposure: ${g?.riskIfWeak ?? ''}`, margin + 3, y + 11, maxW - 6, 3.6)
     wrap(doc, `Do next: ${g?.nextMove ?? ''}`, margin + 3, y + 17.5, maxW - 6, 3.6)
     y += 28
   })
+  y += 4
+
+  // 30-90 day roadmap from top 3 only
+  y = ensureSpace(doc, y, 30, footer)
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(13)
+  doc.setTextColor(...COLOURS.ink)
+  doc.text('Your 30–90 day roadmap', margin, y)
+  y += 5
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8.5)
+  doc.setTextColor(...COLOURS.soft)
+  y = wrap(
+    doc,
+    'Actions drawn only from your top 3 focus areas — so the plan stays runnable. Assign owners in the separate action plan PDF.',
+    margin,
+    y,
+    maxW,
+    4,
+  )
+  y += 3
+  const priorityNames = new Set(results.priorities.map((p) => p.name))
+  const topRoadmap = flattenActions(results.categories, guidance).filter((a) =>
+    priorityNames.has(a.categoryName),
+  )
+  for (const timeframe of ['This week', '30 days', '90 days'] as const) {
+    const items = topRoadmap.filter((a) => a.timeframe === timeframe)
+    if (!items.length) continue
+    y = ensureSpace(doc, y, 16, footer)
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(10)
+    doc.setTextColor(...COLOURS.tealDark)
+    doc.text(timeframe, margin, y)
+    y += 4
+    doc.setTextColor(...COLOURS.ink)
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(8.5)
+    for (const item of items) {
+      y = ensureSpace(doc, y, 10, footer)
+      y = wrap(doc, `• ${item.title} (${item.categoryName}) — ${item.detail}`, margin, y, maxW, 3.8)
+      y += 2
+    }
+    y += 2
+  }
+  y += 2
+
+  // Scorecard
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(13)
+  doc.setTextColor(...COLOURS.ink)
+  doc.text('Full scorecard', margin, y)
+  y += 3
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(9)
+  doc.setTextColor(...COLOURS.muted)
+  y = wrap(doc, 'Use this as your map. Category detail, actions and resources follow weakest-first.', margin, y + 3, maxW, 4.2)
+  y += 2
+
+  const scorecard = [...results.categories]
+  for (const c of scorecard) {
+    y = ensureSpace(doc, y, 12, footer)
+    const risk = riskLevelForScore(c.score)
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(10)
+    doc.setTextColor(...COLOURS.ink)
+    doc.text(c.name, margin, y + 3.5)
+    doc.setTextColor(...riskColour(risk))
+    doc.setFontSize(8)
+    doc.text(riskLabel(risk), margin + maxW * 0.55, y + 3.5)
+    doc.setTextColor(...COLOURS.ink)
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(11)
+    doc.text(`${c.score}%`, pageW - margin, y + 3.5, { align: 'right' })
+    drawScoreBar(doc, margin, y + 5.5, maxW, c.score, COLOURS.blue)
+    y += 12
+  }
   y += 4
 
   // Category detail with resources built in
@@ -511,7 +556,7 @@ function downloadActionPlanPdf(options: {
   doc.setTextColor(...COLOURS.soft)
   y = wrap(
     doc,
-    'This is your operating worksheet — not a summary. Assign an owner, set a due date, and tick status as you go. Priorities are ordered from highest exposure to strongest areas.',
+    'Your operating worksheet for the top 3 focus areas only — so it stays runnable. Assign an owner, set a due date, and tick status as you go. Bring DreamStoneHR in when capacity or templates are the blocker.',
     margin,
     y,
     maxW,
@@ -540,7 +585,10 @@ function downloadActionPlanPdf(options: {
   y += 3
 
   const timeframeOrder: ActionItem['timeframe'][] = ['This week', '30 days', '90 days']
-  const allActions = flattenActions(results.categories, guidance)
+  const priorityNames = new Set(results.priorities.map((p) => p.name))
+  const allActions = flattenActions(results.categories, guidance).filter((a) =>
+    priorityNames.has(a.categoryName),
+  )
 
   for (const timeframe of timeframeOrder) {
     const items = allActions.filter((a) => a.timeframe === timeframe)
@@ -603,9 +651,30 @@ function downloadActionPlanPdf(options: {
     y += 4
   }
 
-  y = ensureSpace(doc, y, 30, footer)
+  y = ensureSpace(doc, y, 36, footer)
+  doc.setFillColor(...COLOURS.purple)
+  doc.roundedRect(margin, y, maxW, 28, 2.5, 2.5, 'F')
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(11)
+  doc.setTextColor(...COLOURS.white)
+  doc.text('Want help turning this into a first-30-days plan?', margin + 3, y + 8)
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8.5)
+  doc.text(
+    `Book a free debrief with DreamStoneHR — ${settings.contactEmail} · ${settings.contactPhone}`,
+    margin + 3,
+    y + 15,
+  )
+  doc.text(
+    'Bring this worksheet. We’ll pressure-test priorities, assign owners, and flag where specialist support saves risk.',
+    margin + 3,
+    y + 21,
+  )
+  y += 32
+
+  y = ensureSpace(doc, y, 24, footer)
   doc.setFillColor(...COLOURS.paper)
-  doc.roundedRect(margin, y, maxW, 24, 2.5, 2.5, 'F')
+  doc.roundedRect(margin, y, maxW, 20, 2.5, 2.5, 'F')
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(10)
   doc.setTextColor(...COLOURS.purple)
@@ -613,9 +682,9 @@ function downloadActionPlanPdf(options: {
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(8.5)
   doc.setTextColor(...COLOURS.soft)
-  doc.text('Use this space in your printed copy, or bring DreamStoneHR in to facilitate the plan.', margin + 3, y + 12)
+  doc.text('Capture what is blocking progress — or bring DreamStoneHR in to facilitate the plan.', margin + 3, y + 12)
   doc.setDrawColor(...COLOURS.line)
-  doc.line(margin + 3, y + 17, pageW - margin - 3, y + 17)
+  doc.line(margin + 3, y + 16, pageW - margin - 3, y + 16)
 
   footer()
   doc.save(`dreamstone-hr-action-plan-${slugify(company)}-${day}.pdf`)

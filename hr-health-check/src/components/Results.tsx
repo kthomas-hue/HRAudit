@@ -151,24 +151,44 @@ export function Results({ contact, answers, completedAt, onRestart }: ResultsPro
     const lines = [
       `Hi DreamStoneHR,`,
       ``,
-      `I've completed the HR Health Check for ${contact.company || 'our business'}.`,
-      `Overall score: ${results.overall}% (${narrative.headline}).`,
+      `I've completed the HR Health Check for ${contact.company || 'our business'}${contact.teamSize ? ` (${contact.teamSize} people)` : ''}.`,
+      `Overall score: ${results.overall}% — ${narrative.headline}.`,
       ``,
-      `Priority areas:`,
+      `My top 3 focus areas:`,
       ...actions.map((a) => `- ${a.categoryName}: ${a.score}% — ${a.nextMove}`),
       ``,
-      `I'd like to discuss next steps.`,
+      `I'd like a free debrief on these priorities and a practical first-30-days plan.`,
       ``,
       `${contact.firstName} ${contact.lastName}`.trim(),
       contact.email,
       contact.phone,
     ]
     return `mailto:${settings.contactEmail}?subject=${encodeURIComponent(
-      `HR Health Check — ${contact.company || contact.firstName || 'results'}`,
+      `Debrief request — ${contact.company || contact.firstName || 'HR Health Check'} (${results.overall}%)`,
     )}&body=${encodeURIComponent(lines.filter(Boolean).join('\n'))}`
   }, [actions, contact, narrative.headline, results.overall, settings.contactEmail])
 
   const timeframeOrder = { 'This week': 0, '30 days': 1, '90 days': 2 } as const
+
+  const roadmap = useMemo(() => {
+    const buckets: Record<'This week' | '30 days' | '90 days', Array<{ id: string; title: string; detail: string; categoryName: string }>> = {
+      'This week': [],
+      '30 days': [],
+      '90 days': [],
+    }
+    for (const a of actions) {
+      const g = guidance[a.categoryId]
+      for (const item of g?.actions ?? []) {
+        buckets[item.timeframe].push({
+          id: `${a.categoryId}-${item.id}`,
+          title: item.title,
+          detail: item.detail,
+          categoryName: a.categoryName,
+        })
+      }
+    }
+    return buckets
+  }, [actions, guidance])
 
   const downloadReport = () => {
     downloadPdfReport({
@@ -216,8 +236,9 @@ export function Results({ contact, answers, completedAt, onRestart }: ResultsPro
           {contact.firstName ? `${contact.firstName}, here’s the picture` : 'Here’s the picture'}
         </h1>
         <p className="lead lead--light">
-          Your paid leadership report for {contact.company || 'your business'} — exposures, timed actions,
-          DreamStoneHR resources, and what to do next.
+          Personalised for {contact.company || 'your business'}
+          {contact.teamSize ? ` · ${contact.teamSize} people` : ''} — business exposures, a 30–90 day roadmap,
+          DreamStoneHR resources, and a clear next conversation.
         </p>
 
         <div className={`overall-score tone-${band.tone}`}>
@@ -246,6 +267,85 @@ export function Results({ contact, answers, completedAt, onRestart }: ResultsPro
       </div>
 
       <div className="results__body">
+        <section className="brief-block brief-block--priorities">
+          <div className="brief-block__head">
+            <h3>Focus first</h3>
+            <p>
+              These are the areas most likely to cost you — Fair Work exposure, claims, turnover, or leadership
+              distraction. Start here before you try to fix everything.
+            </p>
+          </div>
+          <div className="action-grid">
+            {actions.map((a, i) => (
+              <article key={a.categoryId} className={`action-card risk-${a.risk}`}>
+                <header>
+                  <span className="action-card__rank">0{i + 1}</span>
+                  <span className={`risk-pill risk-pill--${a.risk}`}>{a.riskLabel}</span>
+                </header>
+                <h4>
+                  <button type="button" className="text-link action-card__link" onClick={() => jumpToCategory(a.categoryId)}>
+                    {a.categoryName}
+                  </button>
+                </h4>
+                <p className="action-card__score" style={{ color: a.accent }}>
+                  {a.score}% · response confidence
+                </p>
+                <p className="action-card__risk">
+                  <strong>Business exposure:</strong> {a.riskIfWeak}
+                </p>
+                <p className="action-card__stakes">
+                  <strong>Why it matters:</strong> {a.stakes}
+                </p>
+                <p className="action-card__move">
+                  <strong>Do next:</strong> {a.nextMove}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="brief-block brief-block--roadmap" id="roadmap">
+          <div className="brief-block__head">
+            <h3>Your 30–90 day roadmap</h3>
+            <p>
+              Built only from your top 3 focus areas — so you leave with a plan you can actually run. Download the
+              action plan PDF to assign owners and due dates.
+            </p>
+          </div>
+          <div className="roadmap-grid">
+            {(['This week', '30 days', '90 days'] as const).map((tf) => (
+              <div key={tf} className="roadmap-col">
+                <h4>{tf}</h4>
+                {roadmap[tf].length === 0 ? (
+                  <p className="roadmap-col__empty">No actions in this window for your top 3.</p>
+                ) : (
+                  <ol>
+                    {roadmap[tf].map((item) => (
+                      <li key={item.id}>
+                        <strong>{item.title}</strong>
+                        <span className="roadmap-col__cat">{item.categoryName}</span>
+                        <p>{item.detail}</p>
+                      </li>
+                    ))}
+                  </ol>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="roadmap-foot">
+            <p>
+              Stuck on capacity, templates, or manager capability? That’s exactly when a DreamStoneHR debrief pays
+              for itself — we turn this roadmap into a facilitated first 30 days.
+            </p>
+            <a className="btn btn--lime" href={mailto}>
+              {settings.partnerCtaLabel}
+              <span className="btn__arrow" aria-hidden>
+                ↗
+              </span>
+            </a>
+          </div>
+        </section>
+
         <section className="brief-block brief-block--scorecard" id="scorecard">
           <div className="brief-block__head">
             <h3>Full scorecard</h3>
@@ -277,43 +377,6 @@ export function Results({ contact, answers, completedAt, onRestart }: ResultsPro
               )
             })}
           </ul>
-        </section>
-
-        <section className="brief-block brief-block--priorities">
-          <div className="brief-block__head">
-            <h3>Focus first</h3>
-            <p>
-              Shortlist where exposure is highest and your response confidence is lowest — then act on up to three
-              starting points. Click through for timed actions and resources.
-            </p>
-          </div>
-          <div className="action-grid">
-            {actions.map((a, i) => (
-              <article key={a.categoryId} className={`action-card risk-${a.risk}`}>
-                <header>
-                  <span className="action-card__rank">0{i + 1}</span>
-                  <span className={`risk-pill risk-pill--${a.risk}`}>{a.riskLabel}</span>
-                </header>
-                <h4>
-                  <button type="button" className="text-link action-card__link" onClick={() => jumpToCategory(a.categoryId)}>
-                    {a.categoryName}
-                  </button>
-                </h4>
-                <p className="action-card__score" style={{ color: a.accent }}>
-                  {a.score}% · response confidence
-                </p>
-                <p className="action-card__risk">
-                  <strong>Exposure if left alone:</strong> {a.riskIfWeak}
-                </p>
-                <p className="action-card__stakes">
-                  <strong>Why it matters:</strong> {a.stakes}
-                </p>
-                <p className="action-card__move">
-                  <strong>Do next:</strong> {a.nextMove}
-                </p>
-              </article>
-            ))}
-          </div>
         </section>
 
         <section className="brief-block report-deep">
@@ -457,9 +520,9 @@ export function Results({ contact, answers, completedAt, onRestart }: ResultsPro
             <div className="insight-card">
               <h3>How to use this report</h3>
               <ol className="brief-steps">
-                <li>Scan the scorecard, then click into your weakest categories.</li>
+                <li>Act on Focus first and the 30–90 day roadmap — that is where business value shows up fastest.</li>
                 <li>Download the PDF report for the full narrative, and the action plan PDF to assign owners and due dates.</li>
-                <li>Use DreamStoneHR and external resources in each section — then bring us in where capacity or exposure is the blocker.</li>
+                <li>Bring DreamStoneHR in where capacity, templates, or manager coaching is the blocker — use the debrief CTA with your top 3 already filled in.</li>
               </ol>
               <div className="download-pack">
                 <button type="button" className="btn btn--ghost" onClick={downloadHtmlCopy}>
@@ -472,10 +535,11 @@ export function Results({ contact, answers, completedAt, onRestart }: ResultsPro
 
         <div className="cta-banner">
           <div>
-            <h2>Partner with DreamStoneHR</h2>
+            <h2>Get a free debrief on your top 3</h2>
             <p>
-              This report shows where you’re exposed. We help you close it — practical systems, manager capability,
-              and compliance that sticks. Book a debrief on your top 3 moves and we’ll map the first 30 days with you.
+              You’ve done the hard part — diagnosing the business. In a short debrief we’ll pressure-test your
+              roadmap, name what to do this month, and flag where specialist support will save you time and risk.
+              No obligation — just a clearer next 30 days.
             </p>
           </div>
           <div className="cta-banner__actions">

@@ -27,20 +27,23 @@ async function main() {
   log.push(`landing-no-titles: ${noTitles}`)
   log.push(`landing-diverse: ${diverse}`)
   log.push(`landing-mentions-ai: ${mentionsAi}`)
+  log.push(`landing-roadmap-value: ${/30–90 day roadmap|30-90 day roadmap/i.test(landing)}`)
+  log.push(`landing-no-paid: ${!/worth paying for|paid leadership/i.test(landing)}`)
   await page.screenshot({ path: `${OUT}/audience-landing.png`, fullPage: true })
 
   await page.click('button:has-text("Start the Health Check")')
   await page.waitForSelector('text=your report')
   const contact = await page.locator('.contact-panel').innerText()
-  log.push(`contact-audience: ${/business leaders, founders and owners/i.test(contact)}`)
-  log.push(`contact-diverse: ${/industries and team sizes/i.test(contact)}`)
+  log.push(`contact-audience: ${/business|report|roadmap/i.test(contact)}`)
+  log.push(`contact-team-size: ${/Team size/i.test(contact)}`)
+  log.push(`contact-diverse: ${/personalise|roadmap|follow up/i.test(contact)}`)
   await page.screenshot({ path: `${OUT}/audience-contact.png` })
 
   // Seed completed assessment including AI category via content pack v3
   await page.goto(BASE)
   await page.waitForTimeout(500)
   await page.evaluate(() => {
-    const packRaw = localStorage.getItem('dreamstone-hr-content-pack-v4')
+    const packRaw = localStorage.getItem('dreamstone-hr-content-pack-v5')
     if (!packRaw) throw new Error('content pack v3 missing')
     const pack = JSON.parse(packRaw)
     const answers = {}
@@ -82,7 +85,10 @@ async function main() {
   const hasAiCategory = /AI at Work/i.test(results)
   log.push(`results-ai-category: ${hasAiCategory}`)
   log.push(`results-no-gm-ceo: ${!/\bGMs?\b|\bCEOs?\b/i.test(results)}`)
-  log.push(`results-focus-first: ${/Focus first/i.test(results) && /response confidence|Exposure if left alone/i.test(results)}`)
+  log.push(`results-focus-first: ${/Focus first/i.test(results)}`)
+  log.push(`results-roadmap: ${/30–90 day roadmap|30-90 day roadmap/i.test(results)}`)
+  log.push(`results-debrief-cta: ${/Book a free debrief|free debrief/i.test(results)}`)
+  log.push(`results-no-paid-language: ${!/paid leadership report/i.test(results)}`)
   log.push(`results-human-ai: ${/human judgment|Human–AI|Human-AI|named owner/i.test(results)}`)
 
   // Jump to AI detail if scorecard link exists

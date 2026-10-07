@@ -63,7 +63,7 @@ export function Landing({ onStart, hasProgress, hasResults = false, onResume, on
             )}
           </div>
           <p className="landing__privacy">
-            Takes 15–20 minutes · Instant leadership report ·{' '}
+            Takes 15–20 minutes · Instant personalised report ·{' '}
             <a href={settings.privacyUrl} target="_blank" rel="noreferrer">
               Privacy policy
             </a>
@@ -74,21 +74,25 @@ export function Landing({ onStart, hasProgress, hasResults = false, onResume, on
           <p className="landing__panel-tag">What you’ll walk away with</p>
           <ul>
             <li>
-              <strong>A clear risk map</strong>
+              <strong>A clear picture of business risk</strong>
               <span>
-                Where pay, contracts, safety, performance, culture and AI at work are actually exposed — ranked so
-                you know what to tackle first
+                Where pay, contracts, safety, performance, culture and AI at work create exposure — ranked so you
+                know what actually matters first
               </span>
             </li>
             <li>
-              <strong>A leadership report worth paying for</strong>
+              <strong>A 30–90 day roadmap you can run</strong>
               <span>
-                Timed actions, DreamStoneHR resources, and external links — a working plan, not a score dump
+                Timed actions with owners and due dates, plus DreamStoneHR and regulator resources — a working plan,
+                not a score dump
               </span>
             </li>
             <li>
-              <strong>A partner-ready next step</strong>
-              <span>Shareable PDF report and action plan so DreamStoneHR can help you close the gaps fast</span>
+              <strong>A sharper conversation with specialists</strong>
+              <span>
+                Shareable PDFs so you can brief DreamStoneHR (or your board) on exactly where help will move the
+                needle
+              </span>
             </li>
           </ul>
           <div className="landing__panel-foot">
@@ -109,7 +113,7 @@ export function Landing({ onStart, hasProgress, hasResults = false, onResume, on
           <p>
             DreamStoneHR partners with businesses of every size and sector to build practical, people-first
             foundations. This Health Check works whether you run a small team or multiple sites — and surfaces gaps
-            early, before they become costly.
+            early, before they become costly claims, underpayments, or leadership distraction.
           </p>
         </div>
       </div>

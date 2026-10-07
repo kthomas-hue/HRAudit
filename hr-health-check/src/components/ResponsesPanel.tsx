@@ -189,6 +189,8 @@ export function ResponsesPanel({ onStatus }: { onStatus: (msg: string) => void }
                 <div>
                   <dt>Company</dt>
                   <dd>{selected.contact.company || '—'}</dd>
+                  <dt>Team size</dt>
+                  <dd>{selected.contact.teamSize || '—'}</dd>
                 </div>
                 <div>
                   <dt>Email</dt>

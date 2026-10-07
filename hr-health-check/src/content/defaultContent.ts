@@ -65,7 +65,7 @@ const baseGuidance: Record<string, CategoryGuidance> = {
       'Commission a pay & award spot-check on your highest-risk roles (casuals, flat-rate, annualised salary).',
     partnerAngle: 'Award mapping, better-off-overall checks, and payroll controls that stick.',
     reportDetail:
-      'Leaders often assume “we pay above the Award” is enough. It isn’t. Classification errors, missing allowances, weak annualised-salary documentation, and payslip gaps are common sources of underpayment risk as teams grow.\n\nA paid leadership report should leave you with a clear map: which roles sit under which Award, whether flat rates and salaries are genuinely better off overall, and whether payroll controls would survive a Fair Work review. Treat this section as an audit of systems — not a gut feel score.',
+      'Leaders often assume “we pay above the Award” is enough. It isn’t. Classification errors, missing allowances, weak annualised-salary documentation, and payslip gaps are common sources of underpayment risk as teams grow.\n\nYour leadership report should leave you with a clear map: which roles sit under which Award, whether flat rates and salaries are genuinely better off overall, and whether payroll controls would survive a Fair Work review. Treat this section as an audit of systems — not a gut feel score.',
     actions: [
       { id: 'pay-1', title: 'Map roles to Awards', detail: 'List each role, confirm Modern Award + classification/level, and flag any “off Award” assumptions. Assign an owner for gaps.', timeframe: 'This week' },
       { id: 'pay-2', title: 'Run a better-off-overall check', detail: 'For flat-rate and salaried staff, compare Award entitlements vs what you actually pay — in writing — and keep the comparison on file.', timeframe: '30 days' },
@@ -363,19 +363,19 @@ const defaultSettings: SiteSettings = {
   tagline: 'A leadership self-audit for business leaders, founders & owners',
   landingHeadline: 'Know where your people foundations are exposed',
   landingLead:
-    'Built for growing businesses of every shape — retail, trade, professional services, hospitality, healthcare, tech and more. In about 20 minutes you’ll pressure-test pay, contracts, safety, culture, AI at work and the rest of your people foundations, then walk away with a leadership report, timed action plan, and resources worth acting on.',
+    'Built for growing businesses of every shape — retail, trade, professional services, hospitality, healthcare, tech and more. In about 20 minutes you’ll pressure-test pay, contracts, safety, culture, AI at work and the rest of your people foundations, then walk away with a personalised leadership report, a 30–90 day roadmap, and resources you can act on immediately.',
   reportTitle: 'Your leadership report',
   contactEmail: 'info@dreamstonehr.com.au',
   contactPhone: '(02) 8320 9320',
   websiteUrl: 'https://www.dreamstonehr.com.au',
   privacyUrl: 'https://www.dreamstonehr.com.au',
   adminPassword: 'dreamstone',
-  partnerCtaLabel: 'Email this report to DreamStoneHR',
+  partnerCtaLabel: 'Book a free debrief on my top 3',
 }
 
 export function createDefaultContentPack(): ContentPack {
   return {
-    version: 4,
+    version: 5,
     updatedAt: new Date().toISOString(),
     settings: defaultSettings,
     categories: structuredClone(categories),
