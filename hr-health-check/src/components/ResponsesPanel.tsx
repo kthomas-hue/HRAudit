@@ -52,7 +52,7 @@ export function ResponsesPanel({ onStatus }: { onStatus: (msg: string) => void }
   const selected = submissions.find((s) => s.id === selectedId) ?? null
 
   const downloadReport = (s: ClientSubmission) => {
-    downloadPdfReport({
+    void downloadPdfReport({
       kind: 'full',
       contact: s.contact,
       answers: s.answers,
@@ -152,7 +152,7 @@ export function ResponsesPanel({ onStatus }: { onStatus: (msg: string) => void }
                     type="button"
                     className="btn btn--teal"
                     onClick={() => {
-                      downloadPdfReport({
+                      void downloadPdfReport({
                         kind: 'actions',
                         contact: selected.contact,
                         answers: selected.answers,
@@ -266,7 +266,7 @@ export function ResponsesPanel({ onStatus }: { onStatus: (msg: string) => void }
                 type="button"
                 className="btn btn--lime"
                 onClick={() => {
-                  downloadPdfReport({
+                  void downloadPdfReport({
                     kind: 'full',
                     contact: selected.contact,
                     answers: selected.answers,
@@ -281,7 +281,7 @@ export function ResponsesPanel({ onStatus }: { onStatus: (msg: string) => void }
                 type="button"
                 className="btn btn--teal"
                 onClick={() => {
-                  downloadPdfReport({
+                  void downloadPdfReport({
                     kind: 'actions',
                     contact: selected.contact,
                     answers: selected.answers,

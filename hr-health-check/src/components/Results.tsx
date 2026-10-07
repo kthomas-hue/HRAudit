@@ -191,7 +191,7 @@ export function Results({ contact, answers, completedAt, onRestart }: ResultsPro
   }, [actions, guidance])
 
   const downloadReport = () => {
-    downloadPdfReport({
+    void downloadPdfReport({
       kind: 'full',
       contact,
       answers,
@@ -201,7 +201,7 @@ export function Results({ contact, answers, completedAt, onRestart }: ResultsPro
   }
 
   const downloadActions = () => {
-    downloadPdfReport({
+    void downloadPdfReport({
       kind: 'actions',
       contact,
       answers,
