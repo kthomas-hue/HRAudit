@@ -1,0 +1,11 @@
+Q_ID,Category,Question,Answer option,Points,Notes
+C1,Employment Contracts,Are all staff issued with an Employment Agreement / Contract?,Yes,10,EXAMPLE — replace with your full list
+C1,Employment Contracts,Are all staff issued with an Employment Agreement / Contract?,No,0,
+C2,Employment Contracts,Are variation letters issued when employment changes?,Yes,5,
+C2,Employment Contracts,Are variation letters issued when employment changes?,No,0,
+C3,Employment Contracts,Contract includes Relevant Modern Award and classification,Checked,2,Multi-select tick
+C3,Employment Contracts,Contract includes Hours of work,Checked,2,
+P1,Psychosocial Risk & Positive Duty,Would you know what to do in the event of a sexual harassment claim?,Yes,10,EXAMPLE — must live in Psychosocial not Policies
+P1,Psychosocial Risk & Positive Duty,Would you know what to do in the event of a sexual harassment claim?,No,0,
+P2,Psychosocial Risk & Positive Duty,Understanding of FDV leave and how to support staff,Scale 1-10,value,Use the slider number as points; max 10
+P3,Psychosocial Risk & Positive Duty,EAP access and mental health readiness,Scale 1-10,value,
