@@ -11,6 +11,8 @@ Lead-gen self-assessment hosted on Agolix Assessment Generator:
 | `HR Health Check.pdf` … `HR Health Check13.pdf` | Page captures of the live questionnaire |
 | `HR Health Checkresults.pdf` | Sample completed results (scores + Q&A) |
 | `docs/MARKET_READINESS_REVIEW.md` | Full market-readiness + scoring audit |
+| `docs/SCORING_PACK_EXAMPLE.md` | Worked example of the content pack to fill in |
+| `docs/scoring-pack/*.csv` | Blank-ish CSV templates (questions, bands, wording) |
 | `scoring/questions.json` | Exported live question/scoring model |
 | `scoring/validate_sample.py` | Replays sample answers; asserts category % |
 | `scoring/TYPE_REMAP.md` | Agolix admin remaps required before launch |
