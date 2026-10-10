@@ -12,7 +12,9 @@ Lead-gen self-assessment hosted on Agolix Assessment Generator:
 | `HR Health Checkresults.pdf` | Sample completed results (scores + Q&A) |
 | `docs/MARKET_READINESS_REVIEW.md` | Full market-readiness + scoring audit |
 | `docs/SCORING_PACK_EXAMPLE.md` | Worked example of the content pack to fill in |
-| `docs/scoring-pack/*.csv` | Blank-ish CSV templates (questions, bands, wording) |
+| `docs/scoring-pack/HR_Health_Check_Scoring_Pack.xlsx` | **Single Excel pack to edit** (questions, bands, wording) |
+| `docs/scoring-pack/*.csv` | CSV copies of the same structure |
+| `scoring/build_scoring_pack_xlsx.py` | Regenerates the Excel from `questions.json` |
 | `scoring/questions.json` | Exported live question/scoring model |
 | `scoring/validate_sample.py` | Replays sample answers; asserts category % |
 | `scoring/TYPE_REMAP.md` | Agolix admin remaps required before launch |

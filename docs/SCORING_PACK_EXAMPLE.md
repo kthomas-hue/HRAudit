@@ -2,7 +2,9 @@
 
 This is the format to fill. Below is a **mini pack** for two categories only, using real HR Health Check questions, so you can see the level of detail needed.
 
-When you’re ready for the full product, copy the blank templates in `docs/scoring-pack/` and complete **all 12 categories**.
+**Prefer the single Excel file:** [`docs/scoring-pack/HR_Health_Check_Scoring_Pack.xlsx`](scoring-pack/HR_Health_Check_Scoring_Pack.xlsx) — edit the green cells and add rows as needed.
+
+CSV copies also live in `docs/scoring-pack/` if you prefer sheets outside Excel.
 
 ---
 
