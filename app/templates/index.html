@@ -4,19 +4,20 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>HR Health Check | DreamStoneHR</title>
+  <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/css/app.css" />
 </head>
 <body>
   <div class="atmosphere" aria-hidden="true"></div>
 
   <header class="topbar">
-    <div class="brand-mark">
-      <span class="brand-dot" aria-hidden="true"></span>
-      <span class="brand-name">DreamStoneHR</span>
-    </div>
+    <a class="brand-link" href="https://www.dreamstonehr.com.au" target="_blank" rel="noreferrer">
+      <img src="/static/img/logo-full.png" alt="DreamStoneHR" width="180" height="45" />
+      <span class="brand-product">HR Health Check</span>
+    </a>
     <div class="progress-wrap" id="progressWrap" hidden>
       <div class="progress-meta">
         <span id="stepLabel">Getting started</span>
@@ -29,22 +30,47 @@
   <main id="app">
     <!-- LANDING -->
     <section class="panel panel-hero" data-step="landing" id="step-landing">
-      <p class="eyebrow">Self-assessment for business leaders</p>
-      <h1 class="hero-brand">DreamStone<span>HR</span></h1>
-      <h2 class="hero-title">HR Health Check</h2>
-      <p class="hero-lede">
-        A practical review of your reported HR foundations — pay, contracts, safety,
-        psychosocial risk and more — with a clear action plan when you finish.
-      </p>
-      <div class="cta-row">
-        <button class="btn btn-primary" type="button" id="btnStart">Begin assessment</button>
-        <button class="btn btn-ghost" type="button" id="btnPreview">Client Preview</button>
+      <div class="hero-copy">
+        <img
+          class="hero-logo"
+          src="/static/img/logo-landscape-white.png"
+          alt="DreamStoneHR"
+          width="280"
+          height="70"
+        />
+        <p class="eyebrow">Self-assessment for business leaders</p>
+        <h1 class="hero-title">HR Health <span class="accent">Check</span></h1>
+        <p class="hero-lede">
+          A practical review of your reported HR foundations — pay, contracts, safety,
+          psychosocial risk and more — with a clear action plan when you finish.
+        </p>
+        <div class="cta-row">
+          <button class="btn btn-primary" type="button" id="btnStart">Begin assessment →</button>
+          <button class="btn btn-ghost" type="button" id="btnPreview">Client Preview</button>
+        </div>
+        <p class="fineprint">
+          Ratings reflect what you report. This is not an independent audit or a finding that
+          your business has breached the law. Client Preview loads the pack’s fictional Score
+          Sandbox demo so you can review the report layout without answering every question.
+        </p>
       </div>
-      <p class="fineprint">
-        Ratings reflect what you report. This is not an independent audit or a finding that
-        your business has breached the law. Client Preview loads the pack’s fictional Score
-        Sandbox demo so you can review the report layout without answering every question.
-      </p>
+      <aside class="hero-aside" aria-label="What you’ll walk away with">
+        <p class="hero-aside-tag">What you’ll walk away with</p>
+        <ul>
+          <li>
+            <strong>Risk clarity</strong>
+            <span>Where Fair Work, contracts, safety, and culture may be exposed</span>
+          </li>
+          <li>
+            <strong>A leadership brief</strong>
+            <span>Timed actions and priorities — not just scores</span>
+          </li>
+          <li>
+            <strong>A partner path</strong>
+            <span>Clear next conversations with DreamStoneHR</span>
+          </li>
+        </ul>
+      </aside>
     </section>
 
     <!-- CONTACT -->
@@ -58,7 +84,7 @@
         <label>Phone<input name="phone" type="tel" autocomplete="tel" /></label>
         <label>Company<input name="company" required autocomplete="organization" /></label>
         <div class="cta-row span-2">
-          <button class="btn btn-primary" type="submit">Continue to profile</button>
+          <button class="btn btn-primary" type="submit">Continue to profile →</button>
         </div>
       </form>
     </section>
@@ -201,7 +227,7 @@
 
         <div class="cta-row">
           <button class="btn btn-ghost" type="button" id="btnBackContact">Back</button>
-          <button class="btn btn-primary" type="submit">Build my questionnaire</button>
+          <button class="btn btn-primary" type="submit">Build my questionnaire →</button>
         </div>
       </form>
     </section>
@@ -268,8 +294,23 @@
   </main>
 
   <footer class="site-footer">
-    <span>DreamStoneHR · HR Health Check v3</span>
-    <span>Self-reported practices · Not a compliance certificate</span>
+    <div class="site-footer__inner">
+      <img class="site-footer__brand" src="/static/img/logo-landscape-white.png" alt="DreamStoneHR" width="200" height="50" />
+      <div class="site-footer__grid">
+        <div>
+          <h3>We are your HR Partner</h3>
+          <p>
+            We work with you to solve people challenges, build stronger teams, and create a workplace that performs.
+          </p>
+        </div>
+        <div class="site-footer__contact">
+          <a href="tel:+61283209320">(02) 8320 9320</a>
+          <a href="mailto:info@dreamstonehr.com.au">info@dreamstonehr.com.au</a>
+          <a href="https://www.dreamstonehr.com.au" target="_blank" rel="noreferrer">www.dreamstonehr.com.au</a>
+        </div>
+      </div>
+      <p class="site-footer__copy">© 2026 DreamStoneHR. Self-reported practices · Not a compliance certificate.</p>
+    </div>
   </footer>
 
   <script src="/static/js/app.js" type="module"></script>
