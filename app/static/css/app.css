@@ -102,6 +102,18 @@ main {
 }
 .panel-hero .fineprint { color: rgba(250,246,241,0.72); }
 .panel-hero .eyebrow { color: rgba(250,246,241,0.78); }
+.panel-hero .hero-title,
+.panel-hero h2 {
+  color: #faf6f1;
+}
+.panel-hero .btn-ghost {
+  color: #faf6f1;
+  border-color: rgba(250, 246, 241, 0.45);
+  background: transparent;
+}
+.panel-hero .btn-ghost:hover {
+  background: rgba(250, 246, 241, 0.12);
+}
 
 @keyframes rise {
   from { opacity: 0; transform: translateY(12px); }
