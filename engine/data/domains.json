@@ -1,0 +1,110 @@
+[
+  {
+    "code": "PAY",
+    "name": "Pay & Entitlements",
+    "weight_pct": 18,
+    "core_count": 6,
+    "conditional_count": 10,
+    "core_maximum": 51,
+    "full_catalogue_maximum": 132
+  },
+  {
+    "code": "CON",
+    "name": "Employment Contracts",
+    "weight_pct": 8,
+    "core_count": 3,
+    "conditional_count": 4,
+    "core_maximum": 21,
+    "full_catalogue_maximum": 54
+  },
+  {
+    "code": "REC",
+    "name": "Recruitment & Talent",
+    "weight_pct": 6,
+    "core_count": 3,
+    "conditional_count": 0,
+    "core_maximum": 15,
+    "full_catalogue_maximum": 15
+  },
+  {
+    "code": "ONB",
+    "name": "New Hires & Onboarding",
+    "weight_pct": 6,
+    "core_count": 3,
+    "conditional_count": 2,
+    "core_maximum": 21,
+    "full_catalogue_maximum": 36
+  },
+  {
+    "code": "POL",
+    "name": "Policies & Procedures",
+    "weight_pct": 6,
+    "core_count": 3,
+    "conditional_count": 3,
+    "core_maximum": 18,
+    "full_catalogue_maximum": 39
+  },
+  {
+    "code": "WHS",
+    "name": "Workplace Health & Safety",
+    "weight_pct": 10,
+    "core_count": 4,
+    "conditional_count": 2,
+    "core_maximum": 33,
+    "full_catalogue_maximum": 48
+  },
+  {
+    "code": "PER",
+    "name": "Reviewing & Managing Performance",
+    "weight_pct": 8,
+    "core_count": 4,
+    "conditional_count": 1,
+    "core_maximum": 30,
+    "full_catalogue_maximum": 36
+  },
+  {
+    "code": "LND",
+    "name": "Training & Development",
+    "weight_pct": 5,
+    "core_count": 3,
+    "conditional_count": 0,
+    "core_maximum": 18,
+    "full_catalogue_maximum": 18
+  },
+  {
+    "code": "CUL",
+    "name": "Culture & Engagement",
+    "weight_pct": 7,
+    "core_count": 4,
+    "conditional_count": 1,
+    "core_maximum": 21,
+    "full_catalogue_maximum": 27
+  },
+  {
+    "code": "DAT",
+    "name": "Record Keeping",
+    "weight_pct": 7,
+    "core_count": 3,
+    "conditional_count": 1,
+    "core_maximum": 24,
+    "full_catalogue_maximum": 30
+  },
+  {
+    "code": "EXT",
+    "name": "Employee Exits",
+    "weight_pct": 7,
+    "core_count": 3,
+    "conditional_count": 1,
+    "core_maximum": 24,
+    "full_catalogue_maximum": 33
+  },
+  {
+    "code": "PSY",
+    "name": "Psychosocial Risk & Positive Duty",
+    "weight_pct": 12,
+    "core_count": 5,
+    "conditional_count": 0,
+    "core_maximum": 42,
+    "full_catalogue_maximum": 42
+  }
+]

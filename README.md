@@ -19,7 +19,18 @@ Lead-gen self-assessment hosted on Agolix Assessment Generator:
 | `scoring/validate_sample.py` | Replays sample answers; asserts category % |
 | `scoring/TYPE_REMAP.md` | Agolix admin remaps required before launch |
 
-## Scoring validation
+## v3 engine (build from the pack)
+
+```bash
+pip install -r engine/requirements.txt
+python3 engine/extract_pack.py
+python3 engine/cli.py --scenario sandbox --format markdown
+python3 -m unittest discover -s engine/tests -v
+```
+
+Source of truth: `docs/scoring-pack/DreamStoneHR_HR_Health_Check_Risk_and_Action_Build_Pack_v3.xlsx`
+
+## Legacy Agolix sample validation
 
 ```bash
 python3 scoring/validate_sample.py
@@ -27,10 +38,5 @@ python3 scoring/validate_sample.py
 
 ## Status
 
-**Not market-ready.** See `docs/MARKET_READINESS_REVIEW.md`.
-
-Headline risks:
-
-1. **Psychosocial Risk & Positive Duty always scores 0%** (no questions wired) → every PDF gets the low-band psychosocial report.
-2. Many questions are tagged to **Pay & Entitlements** while thematically belonging elsewhere.
-3. **No questions are required**, so incomplete submissions still produce a full report.
+- **Live Agolix assessment:** not market-ready (Psychosocial stuck at 0%, type misassigns). See `docs/MARKET_READINESS_REVIEW.md`.
+- **v3 pack + engine:** sandbox scoring matches the pack Client Preview (91.0, 4 high-priority alerts). App/pilot/legal release gates in the pack remain OPEN.
