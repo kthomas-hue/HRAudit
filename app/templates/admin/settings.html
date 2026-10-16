@@ -1,0 +1,61 @@
+{% extends "admin/base.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<section class="admin-page">
+  <div class="admin-page-head">
+    <div>
+      <p class="eyebrow">Admin</p>
+      <h1>Settings</h1>
+      <p class="lede">Signed in as {{ admin.email }}. Content pack: {{ pack.questions }} questions · updated {{ pack.updated_at }}.</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Change password</h2>
+    <form id="passwordForm" class="form-grid">
+      <label class="span-2">Current password
+        <input name="current_password" type="password" required autocomplete="current-password" />
+      </label>
+      <label class="span-2">New password (min 8 characters)
+        <input name="new_password" type="password" required minlength="8" autocomplete="new-password" />
+      </label>
+      <div class="cta-row span-2">
+        <button class="btn btn-primary" type="submit">Update password</button>
+        <span class="save-status" id="passwordStatus"></span>
+      </div>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h2>Product settings</h2>
+    <form id="settingsForm" class="form-grid">
+      <label>Product name
+        <input name="product_name" value="{{ settings.get('product_name', 'HR Health Check') }}" />
+      </label>
+      <label>Support email
+        <input name="support_email" value="{{ settings.get('support_email', 'info@dreamstonehr.com.au') }}" />
+      </label>
+      <label>Support phone
+        <input name="support_phone" value="{{ settings.get('support_phone', '(02) 8320 9320') }}" />
+      </label>
+      <label>Privacy URL
+        <input name="privacy_url" value="{{ settings.get('privacy_url', 'https://www.dreamstonehr.com.au') }}" />
+      </label>
+      <div class="cta-row span-2">
+        <button class="btn btn-primary" type="submit">Save settings</button>
+        <span class="save-status" id="settingsStatus"></span>
+      </div>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h2>Ownership &amp; hosting</h2>
+    <ul class="plain-list">
+      <li>No Agolix / third-party survey runtime — assessment and scoring run in this app.</li>
+      <li>SQLite database path: <code>data/hr_health_check.db</code> (override with <code>HRHC_DB</code>).</li>
+      <li>Set <code>HRHC_SECRET</code>, <code>ADMIN_EMAIL</code>, and <code>ADMIN_PASSWORD</code> before production use.</li>
+      <li>Bulk content refresh: edit the Excel pack, run <code>python3 engine/extract_pack.py</code>, then use “Reload from Excel extract” in Content.</li>
+    </ul>
+  </div>
+</section>
+{% endblock %}

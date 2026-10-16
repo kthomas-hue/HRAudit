@@ -1,0 +1,362 @@
+[
+  {
+    "Category": "Pay & Entitlements",
+    "Band": "Foundations need attention",
+    "Raw score condition": "0 <= score < 40",
+    "Customer-facing interpretation": "This section considers pay rules, actual-work checks, leave, superannuation and payslips. The most useful starting point is to establish which rules apply, then test how those rules reach payroll. A payslip that looks right is not enough on its own.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_PAY01;A_PAY02;A_PAY03;A_PAY04;A_PAY05;A_PAY06;A_B01;A_B06;A_B07;A_B08;A_B09;A_B10;A_B11;A_B20;A_B22;A_B23",
+    "Optional support": "Targeted payroll, award/classification or salary-arrangement review, scoped to the flagged population."
+  },
+  {
+    "Category": "Pay & Entitlements",
+    "Band": "Developing / inconsistent",
+    "Raw score condition": "40 <= score < 70",
+    "Customer-facing interpretation": "This section considers pay rules, actual-work checks, leave, superannuation and payslips. Some checks are operating, but the remaining gaps may sit between the employment arrangement, the work performed and the payroll settings. Use the specific findings to locate those gaps.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_PAY01;A_PAY02;A_PAY03;A_PAY04;A_PAY05;A_PAY06;A_B01;A_B06;A_B07;A_B08;A_B09;A_B10;A_B11;A_B20;A_B22;A_B23",
+    "Optional support": "Targeted payroll, award/classification or salary-arrangement review, scoped to the flagged population."
+  },
+  {
+    "Category": "Pay & Entitlements",
+    "Band": "Established reported practice",
+    "Raw score condition": "70 <= score <= 100",
+    "Customer-facing interpretation": "This section considers pay rules, actual-work checks, leave, superannuation and payslips. Your answers describe an established approach to checking pay. Preserve the checks when roles, hours, awards, agreements or payroll systems change. This result does not verify the underlying calculations.",
+    "What to do next": "Address any priority or verification findings even where this category score is high. Retain the practices described and test a recent example when work changes.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_PAY01;A_PAY02;A_PAY03;A_PAY04;A_PAY05;A_PAY06;A_B01;A_B06;A_B07;A_B08;A_B09;A_B10;A_B11;A_B20;A_B22;A_B23",
+    "Optional support": "Targeted payroll, award/classification or salary-arrangement review, scoped to the flagged population."
+  },
+  {
+    "Category": "Employment Contracts",
+    "Band": "Foundations need attention",
+    "Raw score condition": "0 <= score < 40",
+    "Customer-facing interpretation": "This section considers current employment terms, engagement types and changes. Start by making the arrangement clear: who is engaged, on what basis, and what has been agreed. A collection of signed documents can still contain outdated or unsuitable terms.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_CON01;A_CON02;A_CON03;A_B02;A_B04;A_B05;A_B12",
+    "Optional support": "Employment terms and engagement review, with legal referral for issues outside the agreed HR advisory scope."
+  },
+  {
+    "Category": "Employment Contracts",
+    "Band": "Developing / inconsistent",
+    "Raw score condition": "40 <= score < 70",
+    "Customer-facing interpretation": "This section considers current employment terms, engagement types and changes. There is a foundation of written terms, but some arrangements or changes need a closer check. Resolve the specific mismatch before adding more clauses or templates.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_CON01;A_CON02;A_CON03;A_B02;A_B04;A_B05;A_B12",
+    "Optional support": "Employment terms and engagement review, with legal referral for issues outside the agreed HR advisory scope."
+  },
+  {
+    "Category": "Employment Contracts",
+    "Band": "Established reported practice",
+    "Raw score condition": "70 <= score <= 100",
+    "Customer-facing interpretation": "This section considers current employment terms, engagement types and changes. Your answers describe current terms and deliberate checks of engagement arrangements. Keep that discipline at renewal, role change and new types of engagement; the documents themselves have not been legally reviewed here.",
+    "What to do next": "Address any priority or verification findings even where this category score is high. Retain the practices described and test a recent example when work changes.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_CON01;A_CON02;A_CON03;A_B02;A_B04;A_B05;A_B12",
+    "Optional support": "Employment terms and engagement review, with legal referral for issues outside the agreed HR advisory scope."
+  },
+  {
+    "Category": "Recruitment & Talent",
+    "Band": "Foundations need attention",
+    "Raw score condition": "0 <= score < 40",
+    "Customer-facing interpretation": "This section considers role definition, fair selection and realistic candidate information. The first improvement is to make the hiring decision explainable. Define what the role needs to achieve and decide what evidence will demonstrate that before interviews begin.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_REC01;A_REC02;A_REC03",
+    "Optional support": "Role definition, selection guide and hiring-manager coaching."
+  },
+  {
+    "Category": "Recruitment & Talent",
+    "Band": "Developing / inconsistent",
+    "Raw score condition": "40 <= score < 70",
+    "Customer-facing interpretation": "This section considers role definition, fair selection and realistic candidate information. Parts of the hiring process are structured, but candidates or managers may still receive an inconsistent experience. Focus on clear criteria and realistic expectations rather than extra recruitment steps.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_REC01;A_REC02;A_REC03",
+    "Optional support": "Role definition, selection guide and hiring-manager coaching."
+  },
+  {
+    "Category": "Recruitment & Talent",
+    "Band": "Established reported practice",
+    "Raw score condition": "70 <= score <= 100",
+    "Customer-facing interpretation": "This section considers role definition, fair selection and realistic candidate information. Your answers describe a clear and considered recruitment process. Check a recent decision from advert to offer to confirm that the criteria, recorded evidence and candidate information remain aligned.",
+    "What to do next": "Address any priority or verification findings even where this category score is high. Retain the practices described and test a recent example when work changes.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_REC01;A_REC02;A_REC03",
+    "Optional support": "Role definition, selection guide and hiring-manager coaching."
+  },
+  {
+    "Category": "New Hires & Onboarding",
+    "Band": "Foundations need attention",
+    "Raw score condition": "0 <= score < 40",
+    "Customer-facing interpretation": "This section considers pre-start checks, required information and supported induction. Prioritise what someone needs before they work independently: appropriate checks, required information and an understanding of the work. A long induction checklist is not the goal.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_ONB01;A_ONB02;A_ONB03;A_B03;A_B13",
+    "Optional support": "Practical onboarding workflow and required-information controls."
+  },
+  {
+    "Category": "New Hires & Onboarding",
+    "Band": "Developing / inconsistent",
+    "Raw score condition": "40 <= score < 70",
+    "Customer-facing interpretation": "This section considers pre-start checks, required information and supported induction. New starters receive some useful support, but delivery records, understanding or follow-up need attention. Assign responsibility for the gaps so that they do not fall between payroll and the manager.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_ONB01;A_ONB02;A_ONB03;A_B03;A_B13",
+    "Optional support": "Practical onboarding workflow and required-information controls."
+  },
+  {
+    "Category": "New Hires & Onboarding",
+    "Band": "Established reported practice",
+    "Raw score condition": "70 <= score <= 100",
+    "Customer-facing interpretation": "This section considers pre-start checks, required information and supported induction. Your answers describe a supported start with clear checks and follow-up. Test the experience with a recent starter, not only the person administering it, and maintain any recurring information-statement reminders.",
+    "What to do next": "Address any priority or verification findings even where this category score is high. Retain the practices described and test a recent example when work changes.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_ONB01;A_ONB02;A_ONB03;A_B03;A_B13",
+    "Optional support": "Practical onboarding workflow and required-information controls."
+  },
+  {
+    "Category": "Policies & Procedures",
+    "Band": "Foundations need attention",
+    "Raw score condition": "0 <= score < 40",
+    "Customer-facing interpretation": "This section considers usable policies, consistent application and individual requests. Start with the decisions people need help making. Concise, relevant rules that are explained and applied are more valuable than a handbook nobody can use.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_POL01;A_POL02;A_POL03;A_B19;A_B21;A_B24",
+    "Optional support": "Proportionate policy review and manager implementation support."
+  },
+  {
+    "Category": "Policies & Procedures",
+    "Band": "Developing / inconsistent",
+    "Raw score condition": "40 <= score < 70",
+    "Customer-facing interpretation": "This section considers usable policies, consistent application and individual requests. Policies provide a foundation, but the important test is what happens when a real issue arises. Review an example, including how exceptions or individual requests were considered.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_POL01;A_POL02;A_POL03;A_B19;A_B21;A_B24",
+    "Optional support": "Proportionate policy review and manager implementation support."
+  },
+  {
+    "Category": "Policies & Procedures",
+    "Band": "Established reported practice",
+    "Raw score condition": "70 <= score <= 100",
+    "Customer-facing interpretation": "This section considers usable policies, consistent application and individual requests. Your answers describe policies that are accessible and applied in practice. Continue checking understanding and consistency, particularly when a decision involves a senior person or an exception to the usual approach.",
+    "What to do next": "Address any priority or verification findings even where this category score is high. Retain the practices described and test a recent example when work changes.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_POL01;A_POL02;A_POL03;A_B19;A_B21;A_B24",
+    "Optional support": "Proportionate policy review and manager implementation support."
+  },
+  {
+    "Category": "Workplace Health & Safety",
+    "Band": "Foundations need attention",
+    "Raw score condition": "0 <= score < 40",
+    "Customer-facing interpretation": "This section considers physical hazards, emergency readiness, insurance and injury response. Focus first on ongoing exposure and essential response arrangements. Review the work with the people doing it, then confirm who will implement and check the necessary controls.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_WHS01;A_WHS02;A_WHS03;A_WHS04;A_B15;A_B25",
+    "Optional support": "HR/return-to-work coordination and referral to a competent WHS or insurance specialist where needed."
+  },
+  {
+    "Category": "Workplace Health & Safety",
+    "Band": "Developing / inconsistent",
+    "Raw score condition": "40 <= score < 70",
+    "Customer-facing interpretation": "This section considers physical hazards, emergency readiness, insurance and injury response. Some safety arrangements are operating, but gaps in coverage, testing or responsibility need attention. A policy, certificate or insurance renewal is not a substitute for checking the actual work.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_WHS01;A_WHS02;A_WHS03;A_WHS04;A_B15;A_B25",
+    "Optional support": "HR/return-to-work coordination and referral to a competent WHS or insurance specialist where needed."
+  },
+  {
+    "Category": "Workplace Health & Safety",
+    "Band": "Established reported practice",
+    "Raw score condition": "70 <= score <= 100",
+    "Customer-facing interpretation": "This section considers physical hazards, emergency readiness, insurance and injury response. Your answers describe active safety and injury-response arrangements. Continue testing controls and handovers as work changes. This section is not a workplace inspection or a determination of jurisdiction-specific compliance.",
+    "What to do next": "Address any priority or verification findings even where this category score is high. Retain the practices described and test a recent example when work changes.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_WHS01;A_WHS02;A_WHS03;A_WHS04;A_B15;A_B25",
+    "Optional support": "HR/return-to-work coordination and referral to a competent WHS or insurance specialist where needed."
+  },
+  {
+    "Category": "Reviewing & Managing Performance",
+    "Band": "Foundations need attention",
+    "Raw score condition": "0 <= score < 40",
+    "Customer-facing interpretation": "This section considers clear expectations, early feedback and fair responses to concerns. Start with the gap between expected and actual work, not with a warning or a form. Clear expectations, useful support and a fair opportunity to respond make the next decision more defensible.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_PER01;A_PER02;A_PER03;A_PER04;A_B18",
+    "Optional support": "Manager coaching and a fair performance or conduct process for the identified situation."
+  },
+  {
+    "Category": "Reviewing & Managing Performance",
+    "Band": "Developing / inconsistent",
+    "Raw score condition": "40 <= score < 70",
+    "Customer-facing interpretation": "This section considers clear expectations, early feedback and fair responses to concerns. Some performance practices are established, but follow-through or the handling of difficult issues is inconsistent. A short, well-run check-in can be more useful than another annual review document.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_PER01;A_PER02;A_PER03;A_PER04;A_B18",
+    "Optional support": "Manager coaching and a fair performance or conduct process for the identified situation."
+  },
+  {
+    "Category": "Reviewing & Managing Performance",
+    "Band": "Established reported practice",
+    "Raw score condition": "70 <= score <= 100",
+    "Customer-facing interpretation": "This section considers clear expectations, early feedback and fair responses to concerns. Your answers describe a considered approach to expectations and concerns. Keep checking that managers distinguish capability, conduct and other contributing circumstances before selecting a response.",
+    "What to do next": "Address any priority or verification findings even where this category score is high. Retain the practices described and test a recent example when work changes.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_PER01;A_PER02;A_PER03;A_PER04;A_B18",
+    "Optional support": "Manager coaching and a fair performance or conduct process for the identified situation."
+  },
+  {
+    "Category": "Training & Development",
+    "Band": "Foundations need attention",
+    "Raw score condition": "0 <= score < 40",
+    "Customer-facing interpretation": "This section considers future skills, learning applied at work and critical-person cover. Identify the work the business may struggle to deliver, then choose the smallest useful development response. Training activity alone will not show whether capability has improved.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_LND01;A_LND02;A_LND03",
+    "Optional support": "Focused capability planning, role development and critical-task cover."
+  },
+  {
+    "Category": "Training & Development",
+    "Band": "Developing / inconsistent",
+    "Raw score condition": "40 <= score < 70",
+    "Customer-facing interpretation": "This section considers future skills, learning applied at work and critical-person cover. Learning is occurring, but its connection to future needs, application or continuity could be stronger. Concentrate on one important capability gap and decide what better performance would look like.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_LND01;A_LND02;A_LND03",
+    "Optional support": "Focused capability planning, role development and critical-task cover."
+  },
+  {
+    "Category": "Training & Development",
+    "Band": "Established reported practice",
+    "Raw score condition": "70 <= score <= 100",
+    "Customer-facing interpretation": "This section considers future skills, learning applied at work and critical-person cover. Your answers describe purposeful development and attention to continuity. Review whether learning changes the work and whether another person can cover critical tasks, rather than counting courses completed.",
+    "What to do next": "Address any priority or verification findings even where this category score is high. Retain the practices described and test a recent example when work changes.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_LND01;A_LND02;A_LND03",
+    "Optional support": "Focused capability planning, role development and critical-task cover."
+  },
+  {
+    "Category": "Culture & Engagement",
+    "Band": "Foundations need attention",
+    "Raw score condition": "0 <= score < 40",
+    "Customer-facing interpretation": "This section considers employee voice, avoidable departures, fair opportunity and leadership. Start by finding out what employees experience and showing what happens to their feedback. Social events may be welcome, but they cannot establish whether people are treated fairly or concerns are heard.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_CUL01;A_CUL02;A_CUL03;A_CUL04;A_B16",
+    "Optional support": "Employee listening, retention diagnosis and accountable leadership practices."
+  },
+  {
+    "Category": "Culture & Engagement",
+    "Band": "Developing / inconsistent",
+    "Raw score condition": "40 <= score < 70",
+    "Customer-facing interpretation": "This section considers employee voice, avoidable departures, fair opportunity and leadership. There are ways to hear and support employees, but consistency or follow-through needs attention. Look for repeated themes in feedback and departures, and make one visible improvement.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_CUL01;A_CUL02;A_CUL03;A_CUL04;A_B16",
+    "Optional support": "Employee listening, retention diagnosis and accountable leadership practices."
+  },
+  {
+    "Category": "Culture & Engagement",
+    "Band": "Established reported practice",
+    "Raw score condition": "70 <= score <= 100",
+    "Customer-facing interpretation": "This section considers employee voice, avoidable departures, fair opportunity and leadership. Your answers describe deliberate attention to employee experience and leadership. Confirm that employees see the same pattern, including people in less visible roles. A leader self-assessment does not establish how employees actually feel.",
+    "What to do next": "Address any priority or verification findings even where this category score is high. Retain the practices described and test a recent example when work changes.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_CUL01;A_CUL02;A_CUL03;A_CUL04;A_B16",
+    "Optional support": "Employee listening, retention diagnosis and accountable leadership practices."
+  },
+  {
+    "Category": "Record Keeping",
+    "Band": "Foundations need attention",
+    "Raw score condition": "0 <= score < 40",
+    "Customer-facing interpretation": "This section considers reconstructable records, appropriate access and reliable retrieval. Prioritise the records needed to explain employment and pay, then protect and organise them. More retained information is not automatically better information management.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_DAT01;A_DAT02;A_DAT03;A_B14",
+    "Optional support": "Employment-record process review and coordination with privacy/cyber specialists where necessary."
+  },
+  {
+    "Category": "Record Keeping",
+    "Band": "Developing / inconsistent",
+    "Raw score condition": "40 <= score < 70",
+    "Customer-facing interpretation": "This section considers reconstructable records, appropriate access and reliable retrieval. Records are available, but accuracy, access, retention or recovery may depend too heavily on one person or system. Test a real retrieval and identify the weak handover.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_DAT01;A_DAT02;A_DAT03;A_B14",
+    "Optional support": "Employment-record process review and coordination with privacy/cyber specialists where necessary."
+  },
+  {
+    "Category": "Record Keeping",
+    "Band": "Established reported practice",
+    "Raw score condition": "70 <= score <= 100",
+    "Customer-facing interpretation": "This section considers reconstructable records, appropriate access and reliable retrieval. Your answers describe organised records and considered information handling. Continue checking access and recovery, especially when suppliers, administrators or technology change. This is not a security or privacy certification.",
+    "What to do next": "Address any priority or verification findings even where this category score is high. Retain the practices described and test a recent example when work changes.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_DAT01;A_DAT02;A_DAT03;A_B14",
+    "Optional support": "Employment-record process review and coordination with privacy/cyber specialists where necessary."
+  },
+  {
+    "Category": "Employee Exits",
+    "Band": "Foundations need attention",
+    "Raw score condition": "0 <= score < 40",
+    "Customer-facing interpretation": "This section considers pre-decision checks, final pay and continuity at departure. Review the decision before it is communicated. Correct notice or a completed exit checklist cannot repair every problem with the reason or process used to end employment.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_EXT01;A_EXT02;A_EXT03;A_B17",
+    "Optional support": "Pre-decision HR review, final-pay coordination and legal referral where the matter requires it."
+  },
+  {
+    "Category": "Employee Exits",
+    "Band": "Developing / inconsistent",
+    "Raw score condition": "40 <= score < 70",
+    "Customer-facing interpretation": "This section considers pre-decision checks, final pay and continuity at departure. Some exit steps are established, but the decision, payment and handover may not connect consistently. Allocate the checks before the next departure rather than relying on memory.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_EXT01;A_EXT02;A_EXT03;A_B17",
+    "Optional support": "Pre-decision HR review, final-pay coordination and legal referral where the matter requires it."
+  },
+  {
+    "Category": "Employee Exits",
+    "Band": "Established reported practice",
+    "Raw score condition": "70 <= score <= 100",
+    "Customer-facing interpretation": "This section considers pre-decision checks, final pay and continuity at departure. Your answers describe a considered exit process. Retain the pre-decision checks even for short service, probation or a familiar situation. Live dismissals or restructures may still require individual advice.",
+    "What to do next": "Address any priority or verification findings even where this category score is high. Retain the practices described and test a recent example when work changes.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_EXT01;A_EXT02;A_EXT03;A_B17",
+    "Optional support": "Pre-decision HR review, final-pay coordination and legal referral where the matter requires it."
+  },
+  {
+    "Category": "Psychosocial Risk & Positive Duty",
+    "Band": "Foundations need attention",
+    "Raw score condition": "0 <= score < 40",
+    "Customer-facing interpretation": "This section considers work-related psychosocial hazards, prevention, safe reporting and support. Begin with the work and behaviour that could cause harm, and take proportionate preventative action. Support services and awareness activities are useful, but do not replace controls at the source.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_PSY01;A_PSY02;A_PSY03;A_PSY04;A_PSY05",
+    "Optional support": "Psychosocial/positive-duty assessment and prevention planning, with specialist WHS/legal input where appropriate."
+  },
+  {
+    "Category": "Psychosocial Risk & Positive Duty",
+    "Band": "Developing / inconsistent",
+    "Raw score condition": "40 <= score < 70",
+    "Customer-facing interpretation": "This section considers work-related psychosocial hazards, prevention, safe reporting and support. There are preventative or supportive measures in place, but their consistency, coverage or review needs strengthening. Check whether employees can raise concerns when the usual manager is part of the problem.",
+    "What to do next": "Start with the priority findings below. Confirm the evidence, allocate the first action and decide how completion will be checked.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_PSY01;A_PSY02;A_PSY03;A_PSY04;A_PSY05",
+    "Optional support": "Psychosocial/positive-duty assessment and prevention planning, with specialist WHS/legal input where appropriate."
+  },
+  {
+    "Category": "Psychosocial Risk & Positive Duty",
+    "Band": "Established reported practice",
+    "Raw score condition": "70 <= score <= 100",
+    "Customer-facing interpretation": "This section considers work-related psychosocial hazards, prevention, safe reporting and support. Your answers describe deliberate prevention, reporting and support arrangements. Confirm that controls work in practice and that employees can use reporting pathways safely. This result does not establish that harm is absent or that every legal duty is met.",
+    "What to do next": "Address any priority or verification findings even where this category score is high. Retain the practices described and test a recent example when work changes.",
+    "Mandatory limitation / display rule": "Self-reported result only. Apply Risk Register overlays and show every High/Critical action. A practice score is not a risk percentage or a compliance opinion. High uncertainty suppresses a reassuring number.",
+    "Specific actions": "A_PSY01;A_PSY02;A_PSY03;A_PSY04;A_PSY05",
+    "Optional support": "Psychosocial/positive-duty assessment and prevention planning, with specialist WHS/legal input where appropriate."
+  }
+]

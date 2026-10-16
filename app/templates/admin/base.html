@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Admin{% endblock %} | DreamStoneHR</title>
+  <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/app.css" />
+  <link rel="stylesheet" href="/static/css/admin.css" />
+</head>
+<body class="admin-body">
+  {% if admin %}
+  <header class="admin-topbar">
+    <a class="brand-link" href="/admin/dashboard">
+      <img src="/static/img/logo-full.png" alt="DreamStoneHR" width="160" height="40" />
+      <span class="brand-product">Admin</span>
+    </a>
+    <nav class="admin-nav">
+      <a href="/admin/dashboard" class="{% if request.url.path.startswith('/admin/dashboard') or request.url.path.startswith('/admin/submissions') %}active{% endif %}">Submissions</a>
+      <a href="/admin/content" class="{% if request.url.path.startswith('/admin/content') %}active{% endif %}">Content</a>
+      <a href="/admin/settings" class="{% if request.url.path.startswith('/admin/settings') %}active{% endif %}">Settings</a>
+      <a href="/" target="_blank" rel="noreferrer">Open assessment</a>
+    </nav>
+    <form method="post" action="/admin/logout" class="admin-logout">
+      <span class="admin-email">{{ admin.email }}</span>
+      <button class="btn btn-ghost" type="submit">Log out</button>
+    </form>
+  </header>
+  {% endif %}
+  <main class="admin-main">
+    {% block content %}{% endblock %}
+  </main>
+  <script src="/static/js/admin.js" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

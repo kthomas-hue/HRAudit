@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HR Health Check | DreamStoneHR</title>
+  <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/app.css" />
+</head>
+<body>
+  <div class="atmosphere" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand-link" href="https://www.dreamstonehr.com.au" target="_blank" rel="noreferrer">
+      <img src="/static/img/logo-full.png" alt="DreamStoneHR" width="180" height="45" />
+      <span class="brand-product">HR Health Check</span>
+    </a>
+    <div class="progress-wrap" id="progressWrap" hidden>
+      <div class="progress-meta">
+        <span id="stepLabel">Getting started</span>
+        <span id="progressCount"></span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+  </header>
+
+  <main id="app">
+    <!-- LANDING -->
+    <section class="panel panel-hero" data-step="landing" id="step-landing">
+      <div class="hero-copy">
+        <img
+          class="hero-logo"
+          src="/static/img/logo-landscape-white.png"
+          alt="DreamStoneHR"
+          width="280"
+          height="70"
+        />
+        <p class="eyebrow">Self-assessment for business leaders</p>
+        <h1 class="hero-title">HR Health <span class="accent">Check</span></h1>
+        <p class="hero-lede">
+          A practical review of your reported HR foundations — pay, contracts, safety,
+          psychosocial risk and more — with a clear action plan when you finish.
+        </p>
+        <div class="cta-row">
+          <button class="btn btn-primary" type="button" id="btnStart">Begin assessment →</button>
+          <button class="btn btn-ghost" type="button" id="btnPreview">Client Preview</button>
+        </div>
+        <p class="fineprint">
+          Ratings reflect what you report. This is not an independent audit or a finding that
+          your business has breached the law. Client Preview loads the pack’s fictional Score
+          Sandbox demo so you can review the report layout without answering every question.
+        </p>
+      </div>
+      <aside class="hero-aside" aria-label="What you’ll walk away with">
+        <p class="hero-aside-tag">What you’ll walk away with</p>
+        <ul>
+          <li>
+            <strong>Risk clarity</strong>
+            <span>Where Fair Work, contracts, safety, and culture may be exposed</span>
+          </li>
+          <li>
+            <strong>A leadership brief</strong>
+            <span>Timed actions and priorities — not just scores</span>
+          </li>
+          <li>
+            <strong>A partner path</strong>
+            <span>Clear next conversations with DreamStoneHR</span>
+          </li>
+        </ul>
+      </aside>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="panel" data-step="contact" id="step-contact" hidden>
+      <h2>Your details</h2>
+      <p class="lede">We’ll use these to save your session and return your results.</p>
+      <form id="contactForm" class="form-grid">
+        <label>First name<input name="first_name" required autocomplete="given-name" /></label>
+        <label>Last name<input name="last_name" required autocomplete="family-name" /></label>
+        <label class="span-2">Email<input name="email" type="email" required autocomplete="email" /></label>
+        <label>Phone<input name="phone" type="tel" autocomplete="tel" /></label>
+        <label>Company<input name="company" required autocomplete="organization" /></label>
+        <div class="cta-row span-2">
+          <button class="btn btn-primary" type="submit">Continue to profile →</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- PROFILE -->
+    <section class="panel" data-step="profile" id="step-profile" hidden>
+      <h2>About your business</h2>
+      <p class="lede">
+        These questions are unscored. They only decide which follow-up questions to show.
+        Choose “Need to confirm” rather than guessing “no”.
+      </p>
+
+      <form id="profileForm" class="profile-form">
+        <fieldset>
+          <legend>Employment arrangements used or planned (next 6 months)</legend>
+          <div class="chips" data-multi="arrangements">
+            <label><input type="checkbox" name="arrangements" value="part_time" /> Part-time</label>
+            <label><input type="checkbox" name="arrangements" value="casual" /> Casual</label>
+            <label><input type="checkbox" name="arrangements" value="fixed" /> Fixed-term</label>
+            <label><input type="checkbox" name="arrangements" value="contractor" /> Contractors</label>
+            <label><input type="checkbox" name="arrangements" value="junior" /> Juniors / apprentices / trainees</label>
+            <label><input type="checkbox" name="arrangements" value="none" data-exclusive /> None of these</label>
+            <label><input type="checkbox" name="arrangements" value="need_to_confirm" data-exclusive /> Need to confirm</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Pay arrangements that apply</legend>
+          <div class="chips" data-multi="pay_rules">
+            <label><input type="checkbox" name="pay_rules" value="awards" /> Modern awards</label>
+            <label><input type="checkbox" name="pay_rules" value="enterprise_agreement" /> Enterprise agreement</label>
+            <label><input type="checkbox" name="pay_rules" value="salary_flat_rate" /> Salary / flat rate covering entitlements</label>
+            <label><input type="checkbox" name="pay_rules" value="need_to_confirm" data-exclusive /> Need to confirm</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Specific arrangements used or planned</legend>
+          <div class="chips" data-multi="specific">
+            <label><input type="checkbox" name="specific" value="deductions" /> Payroll deductions / repayments</label>
+            <label><input type="checkbox" name="specific" value="shutdown" /> Shutdowns with leave</label>
+            <label><input type="checkbox" name="specific" value="cashout" /> Annual leave cash-outs</label>
+            <label><input type="checkbox" name="specific" value="ifa" /> Individual flexibility arrangements</label>
+            <label><input type="checkbox" name="specific" value="none" data-exclusive /> None</label>
+            <label><input type="checkbox" name="specific" value="need_to_confirm" data-exclusive /> Need to confirm</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>How work is performed</legend>
+          <div class="chips" data-multi="work">
+            <label><input type="checkbox" name="work" value="credentials" /> Regulated licences / checks</label>
+            <label><input type="checkbox" name="work" value="remote" /> Remote, alone, multi-site or client premises</label>
+            <label><input type="checkbox" name="work" value="portable" /> Possible portable long service leave</label>
+            <label><input type="checkbox" name="work" value="need_to_confirm" data-exclusive /> Need to confirm</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Who makes day-to-day people decisions?</legend>
+          <div class="chips chips-single">
+            <label><input type="radio" name="managers" value="owner" /> Owner alone</label>
+            <label><input type="radio" name="managers" value="one_leader" /> One designated leader</label>
+            <label><input type="radio" name="managers" value="several" /> Several managers / sites</label>
+            <label><input type="radio" name="managers" value="need_to_confirm" /> Need to confirm</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Technology &amp; after-hours contact</legend>
+          <div class="tri-grid">
+            <div>
+              <p class="field-label">AI / automated people tools?</p>
+              <div class="chips chips-single">
+                <label><input type="radio" name="ai_tools" value="yes" /> Yes</label>
+                <label><input type="radio" name="ai_tools" value="no" /> No</label>
+                <label><input type="radio" name="ai_tools" value="unsure" /> Unsure</label>
+              </div>
+            </div>
+            <div>
+              <p class="field-label">After-hours contact / on-call expectations?</p>
+              <div class="chips chips-single">
+                <label><input type="radio" name="after_hours" value="yes" /> Yes</label>
+                <label><input type="radio" name="after_hours" value="no" /> No</label>
+                <label><input type="radio" name="after_hours" value="unsure" /> Unsure</label>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Near-term change</legend>
+          <div class="chips chips-single">
+            <label><input type="radio" name="change" value="no_change" /> No material change planned</label>
+            <label><input type="radio" name="change" value="change_no_job_loss" /> Change without identified job loss</label>
+            <label><input type="radio" name="change" value="redundancy" /> Possible redundancy / restructure</label>
+            <label><input type="radio" name="change" value="need_to_confirm" /> Need to confirm</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Immediate matters</legend>
+          <p class="hint">If yes, we’ll show a safety notice before the plan. Don’t enter names or incident details.</p>
+          <div class="chips chips-single">
+            <label><input type="radio" name="live_matter" value="yes" /> Yes — something needs attention now</label>
+            <label><input type="radio" name="live_matter" value="no" /> No</label>
+            <label><input type="radio" name="live_matter" value="need_to_confirm" /> Need to confirm</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Targeted situations (yes / no / unsure)</legend>
+          <div class="tri-rows">
+            <div class="tri-row">
+              <span>Suspected or known pay shortfall</span>
+              <div class="chips chips-single">
+                <label><input type="radio" name="pay_error" value="yes" /> Yes</label>
+                <label><input type="radio" name="pay_error" value="no" /> No</label>
+                <label><input type="radio" name="pay_error" value="unsure" /> Unsure</label>
+              </div>
+            </div>
+            <div class="tri-row">
+              <span>Workplace adjustment requested or identified</span>
+              <div class="chips chips-single">
+                <label><input type="radio" name="adjustment" value="yes" /> Yes</label>
+                <label><input type="radio" name="adjustment" value="no" /> No</label>
+                <label><input type="radio" name="adjustment" value="unsure" /> Unsure</label>
+              </div>
+            </div>
+            <div class="tri-row">
+              <span>Labour-hire / shared-work safety duties</span>
+              <div class="chips chips-single">
+                <label><input type="radio" name="shared_work" value="yes" /> Yes</label>
+                <label><input type="radio" name="shared_work" value="no" /> No</label>
+                <label><input type="radio" name="shared_work" value="unsure" /> Unsure</label>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <div class="cta-row">
+          <button class="btn btn-ghost" type="button" id="btnBackContact">Back</button>
+          <button class="btn btn-primary" type="submit">Build my questionnaire →</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- QUESTIONS -->
+    <section class="panel" data-step="questions" id="step-questions" hidden>
+      <div id="liveMatterBanner" class="banner banner-urgent" hidden>
+        <strong>Immediate attention</strong>
+        <p>
+          You indicated a live safety, pay, termination or deadline matter. Protect people and meet
+          existing duties first — don’t wait for this assessment plan.
+        </p>
+      </div>
+      <div class="questions-header">
+        <div>
+          <h2 id="categoryTitle">Assessment</h2>
+          <p class="lede" id="categoryMeta"></p>
+        </div>
+        <div class="cat-nav" id="catNav"></div>
+      </div>
+      <div id="questionList" class="question-list"></div>
+      <div class="cta-row sticky-actions">
+        <button class="btn btn-ghost" type="button" id="btnPrevCat">Previous</button>
+        <button class="btn btn-primary" type="button" id="btnNextCat">Next category</button>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="panel panel-results" data-step="results" id="step-results" hidden>
+      <div id="previewBanner" class="banner banner-preview" hidden>
+        <strong>Client Preview</strong>
+        <p id="previewBannerText">Fictional Score Sandbox demo inputs from the v3 build pack.</p>
+      </div>
+      <p class="eyebrow">Your results</p>
+      <h2 id="resultPosition">—</h2>
+      <p class="score-line" id="resultScore"></p>
+      <p class="lede" id="resultSummary"></p>
+
+      <div id="alertBlock" class="result-block" hidden>
+        <h3>Critical and high-priority alerts</h3>
+        <ol id="alertList"></ol>
+      </div>
+
+      <div id="workstreamBlock" class="result-block" hidden>
+        <h3>Start with these workstreams</h3>
+        <div id="workstreamList"></div>
+      </div>
+
+      <div class="result-block">
+        <h3>Category scores</h3>
+        <div id="domainBars" class="domain-bars"></div>
+      </div>
+
+      <details class="result-block">
+        <summary>Full written report</summary>
+        <pre id="markdownReport" class="report-pre"></pre>
+      </details>
+
+      <div class="cta-row">
+        <button class="btn btn-ghost" type="button" id="btnBrowseDemo" hidden>Browse demo answers</button>
+        <button class="btn btn-ghost" type="button" id="btnRestart">Start over</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <img class="site-footer__brand" src="/static/img/logo-landscape-white.png" alt="DreamStoneHR" width="200" height="50" />
+      <div class="site-footer__grid">
+        <div>
+          <h3>We are your HR Partner</h3>
+          <p>
+            We work with you to solve people challenges, build stronger teams, and create a workplace that performs.
+          </p>
+        </div>
+        <div class="site-footer__contact">
+          <a href="tel:+61283209320">(02) 8320 9320</a>
+          <a href="mailto:info@dreamstonehr.com.au">info@dreamstonehr.com.au</a>
+          <a href="https://www.dreamstonehr.com.au" target="_blank" rel="noreferrer">www.dreamstonehr.com.au</a>
+        </div>
+      </div>
+      <p class="site-footer__copy">
+        © 2026 DreamStoneHR. Self-reported practices · Not a compliance certificate.
+        · <a href="/admin/" style="color: inherit; text-decoration: underline;">Admin</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="/static/js/app.js" type="module"></script>
+</body>
+</html>

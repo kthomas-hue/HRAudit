@@ -1,0 +1,9 @@
+{
+  "max_answer_points": 3,
+  "lower_band": 40,
+  "upper_band": 70,
+  "critical_trigger_maximum": 1,
+  "uncertainty_threshold": 0.25,
+  "unknown_scoring_treatment": "Zero demonstrated points; eligible denominator retained",
+  "band_labels": "Foundations need attention | Developing / inconsistent | Established reported practice"
+}
