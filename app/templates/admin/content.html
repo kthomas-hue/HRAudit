@@ -1,0 +1,130 @@
+{% extends "admin/base.html" %}
+{% block title %}Content{% endblock %}
+{% block content %}
+<section class="admin-page">
+  <div class="admin-page-head">
+    <div>
+      <p class="eyebrow">Content pack</p>
+      <h1>Questions &amp; report wording</h1>
+      <p class="lede">
+        Edits save to your database immediately and apply to new assessments.
+        Pack last updated {{ pack.updated_at }} · {{ pack.questions }} questions · {{ pack.answers }} answers.
+      </p>
+    </div>
+    <div class="cta-row">
+      <a class="btn btn-ghost" href="/admin/api/content/export">Export JSON</a>
+      <button class="btn btn-ghost" type="button" id="btnReloadEngine">Reload from Excel extract</button>
+    </div>
+  </div>
+
+  <div class="content-layout">
+    <aside class="panel content-list">
+      <h2>Questions</h2>
+      <input type="search" id="questionFilter" placeholder="Filter by ID or text…" />
+      <ul id="questionNav">
+        {% for q in questions %}
+        <li>
+          <a
+            class="{% if qid == q['Question ID'] %}active{% endif %}"
+            href="/admin/content?qid={{ q['Question ID'] }}"
+            data-filter="{{ q['Question ID'] }} {{ q['Question'] }} {{ q['Category'] }}"
+          >
+            <code>{{ q['Question ID'] }}</code>
+            <span>{{ q['Category'] }}</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </aside>
+
+    <div class="content-editor">
+      {% if selected %}
+      <form class="panel" id="questionForm" data-qid="{{ selected['Question ID'] }}">
+        <h2>Question {{ selected['Question ID'] }}</h2>
+        <label>Category
+          <input name="Category" value="{{ selected['Category'] }}" />
+        </label>
+        <label>Domain
+          <input name="Domain" value="{{ selected['Domain'] }}" />
+        </label>
+        <label>Route
+          <input name="Route" value="{{ selected['Route'] }}" />
+        </label>
+        <label>Weight
+          <input name="Weight" type="number" step="0.1" value="{{ selected['Weight'] }}" />
+        </label>
+        <label>Critical flag
+          <select name="Critical flag">
+            <option value="Yes" {% if selected['Critical flag'] == 'Yes' %}selected{% endif %}>Yes</option>
+            <option value="No" {% if selected['Critical flag'] != 'Yes' %}selected{% endif %}>No</option>
+          </select>
+        </label>
+        <label>Question text
+          <textarea name="Question" rows="4">{{ selected['Question'] }}</textarea>
+        </label>
+        <label>Optional help
+          <textarea name="Optional help / interpretation" rows="3">{{ selected['Optional help / interpretation'] or '' }}</textarea>
+        </label>
+        <div class="cta-row">
+          <button class="btn btn-primary" type="submit">Save question</button>
+          <span class="save-status" id="questionStatus"></span>
+        </div>
+      </form>
+
+      <div class="panel">
+        <h2>Response options</h2>
+        {% for a in answers %}
+        <form class="answer-form" data-qid="{{ selected['Question ID'] }}" data-code="{{ a['Response code'] }}">
+          <h3>Code {{ a['Response code'] }} · {{ a['Scoring points'] }} pts</h3>
+          <label>Customer-facing answer
+            <textarea name="Customer-facing answer" rows="2">{{ a['Customer-facing answer'] }}</textarea>
+          </label>
+          <label>Help choosing this answer
+            <textarea name="Help choosing this answer" rows="2">{{ a['Help choosing this answer'] or '' }}</textarea>
+          </label>
+          <label>Meaning
+            <textarea name="Meaning" rows="2">{{ a['Meaning'] or '' }}</textarea>
+          </label>
+          <label>Scoring points
+            <input name="Scoring points" type="number" step="0.1" value="{{ a['Scoring points'] }}" />
+          </label>
+          <div class="cta-row">
+            <button class="btn btn-primary" type="submit">Save answer {{ a['Response code'] }}</button>
+            <span class="save-status"></span>
+          </div>
+        </form>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="panel">
+        <h2>Select a question</h2>
+        <p class="lede">Choose a question on the left to edit wording and response options.</p>
+      </div>
+      {% endif %}
+
+      <div class="panel">
+        <h2>Report band copy</h2>
+        <p class="lede">Category score-band interpretations shown in written reports.</p>
+        {% for row in report_copy %}
+        <form class="report-form" data-index="{{ loop.index0 }}">
+          <h3>{{ row['Category'] }} · {{ row['Band'] }}</h3>
+          <label>Interpretation
+            <textarea name="Customer-facing interpretation" rows="3">{{ row['Customer-facing interpretation'] }}</textarea>
+          </label>
+          <label>What to do next
+            <textarea name="What to do next" rows="2">{{ row['What to do next'] }}</textarea>
+          </label>
+          <label>Optional support
+            <textarea name="Optional support" rows="2">{{ row['Optional support'] or '' }}</textarea>
+          </label>
+          <div class="cta-row">
+            <button class="btn btn-primary" type="submit">Save band copy</button>
+            <span class="save-status"></span>
+          </div>
+        </form>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

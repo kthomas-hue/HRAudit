@@ -1,0 +1,74 @@
+{% extends "admin/base.html" %}
+{% block title %}Submissions{% endblock %}
+{% block content %}
+<section class="admin-page">
+  <div class="admin-page-head">
+    <div>
+      <p class="eyebrow">Owned product</p>
+      <h1>Submissions</h1>
+      <p class="lede">Who started or completed the HR Health Check — scores and reports stay in your database.</p>
+    </div>
+    <div class="stat-grid">
+      <div class="stat"><strong>{{ stats.completed }}</strong><span>Completed</span></div>
+      <div class="stat"><strong>{{ stats.in_progress }}</strong><span>In progress</span></div>
+      <div class="stat"><strong>{{ stats.total }}</strong><span>Total (ex. preview)</span></div>
+      <div class="stat"><strong>{{ pack.questions }}</strong><span>Live questions</span></div>
+    </div>
+  </div>
+
+  <form class="admin-filters" method="get" action="/admin/dashboard">
+    <label>Search
+      <input name="q" value="{{ q }}" placeholder="Company, email, name" />
+    </label>
+    <label>Status
+      <select name="status">
+        <option value="" {% if not status %}selected{% endif %}>All</option>
+        <option value="completed" {% if status == 'completed' %}selected{% endif %}>Completed</option>
+        <option value="in_progress" {% if status == 'in_progress' %}selected{% endif %}>In progress</option>
+        <option value="preview" {% if status == 'preview' %}selected{% endif %}>Preview</option>
+      </select>
+    </label>
+    <label class="check">
+      <input type="checkbox" name="include_preview" value="1" {% if include_preview %}checked{% endif %} />
+      Include Client Preview demos
+    </label>
+    <button class="btn btn-primary" type="submit">Filter</button>
+  </form>
+
+  <div class="panel admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Updated</th>
+          <th>Contact</th>
+          <th>Company</th>
+          <th>Status</th>
+          <th>Score</th>
+          <th>Position</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if not items %}
+        <tr><td colspan="7" class="empty">No submissions yet. Share the assessment link or run Client Preview, then refresh.</td></tr>
+        {% endif %}
+        {% for item in items %}
+        <tr>
+          <td>{{ item.updated_at.replace('T', ' ')[:16] }} UTC</td>
+          <td>
+            <strong>{{ item.first_name }} {{ item.last_name }}</strong><br />
+            <span class="muted">{{ item.email }}</span>
+          </td>
+          <td>{{ item.company }}</td>
+          <td><span class="pill status-{{ item.status }}">{{ item.status }}{% if item.is_preview %} · preview{% endif %}</span></td>
+          <td>{% if item.score is not none %}{{ '%.1f'|format(item.score) }}{% else %}—{% endif %}</td>
+          <td>{{ item.position or '—' }}</td>
+          <td><a class="text-link" href="/admin/submissions/{{ item.id }}">Open →</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p class="table-foot">Showing {{ items|length }} of {{ total }}</p>
+  </div>
+</section>
+{% endblock %}

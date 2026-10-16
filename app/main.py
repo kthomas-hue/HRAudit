@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""DreamStoneHR Health Check assessment UI (v3 engine)."""
+"""DreamStoneHR HR Health Check — owned product (assessment + admin)."""
 
 from __future__ import annotations
 
-import json
 import sys
-import uuid
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
@@ -24,25 +23,50 @@ sys.path.insert(0, str(ENGINE))
 from report import render_markdown, result_to_dict  # noqa: E402
 from score import responses_from_sandbox, score_assessment  # noqa: E402
 
+import auth  # noqa: E402
+import pack_store  # noqa: E402
+import submissions as sub_store  # noqa: E402
+from admin import router as admin_router  # noqa: E402
+from db import init_db  # noqa: E402
+
 try:
     from .routing import (  # noqa: E402
         eligibility_for_questions,
         resolve_routes,
         visible_questions,
     )
-except ImportError:  # running as script / tests with app/ on sys.path
+except ImportError:
     from routing import (  # noqa: E402
         eligibility_for_questions,
         resolve_routes,
         visible_questions,
     )
 
-PACK = json.loads((ENGINE / "data" / "pack.json").read_text())
-SESSIONS: dict[str, dict[str, Any]] = {}
 
-app = FastAPI(title="DreamStoneHR Health Check", version="3.0")
+def bootstrap() -> None:
+    """Create DB, default admin, and seed content pack if needed."""
+    init_db()
+    auth.ensure_default_admin()
+    pack_store.seed_pack_if_needed()
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    bootstrap()
+    yield
+
+
+# Eager bootstrap so tests / one-off imports have a ready database.
+bootstrap()
+
+app = FastAPI(
+    title="DreamStoneHR Health Check",
+    version="4.0",
+    lifespan=lifespan,
+)
 app.mount("/static", StaticFiles(directory=str(ROOT / "static")), name="static")
 templates = Jinja2Templates(directory=str(ROOT / "templates"))
+app.include_router(admin_router)
 
 
 class ContactIn(BaseModel):
@@ -72,16 +96,20 @@ class ProfileIn(BaseModel):
 
 class AnswerIn(BaseModel):
     question_id: str
-    response: str  # 0,1,2,3,DK
+    response: str
 
 
 class SubmitIn(BaseModel):
     answers: dict[str, str]
 
 
-def _answers_by_question() -> dict[str, list[dict[str, Any]]]:
+def _pack() -> dict[str, Any]:
+    return pack_store.get_pack()
+
+
+def _answers_by_question(pack: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
     out: dict[str, list[dict[str, Any]]] = {}
-    for a in PACK["answers"]:
+    for a in pack["answers"]:
         out.setdefault(a["Question ID"], []).append(
             {
                 "code": str(a["Response code"]),
@@ -90,17 +118,13 @@ def _answers_by_question() -> dict[str, list[dict[str, Any]]]:
                 "points": a.get("Scoring points"),
             }
         )
-    # stable order 0,1,2,3,DK
     order = {"0": 0, "1": 1, "2": 2, "3": 3, "DK": 4}
     for qid in out:
         out[qid].sort(key=lambda x: order.get(x["code"], 99))
     return out
 
 
-ANSWERS_BY_Q = _answers_by_question()
-
-
-def _public_question(q: dict[str, Any]) -> dict[str, Any]:
+def _public_question(q: dict[str, Any], answers_by_q: dict[str, list]) -> dict[str, Any]:
     return {
         "id": q["Question ID"],
         "domain": q["Domain"],
@@ -110,46 +134,41 @@ def _public_question(q: dict[str, Any]) -> dict[str, Any]:
         "weight": q["Weight"],
         "critical": str(q.get("Critical flag", "")).lower() == "yes",
         "route": q.get("Route"),
-        "answers": ANSWERS_BY_Q.get(q["Question ID"], []),
+        "answers": answers_by_q.get(q["Question ID"], []),
     }
+
+
+def _require_session(sid: str) -> dict[str, Any]:
+    session = sub_store.get_submission(sid)
+    if not session:
+        raise HTTPException(404, "Session not found")
+    return session
 
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    # Starlette 1.x: TemplateResponse(request, name, context)
     return templates.TemplateResponse(request, "index.html")
 
 
 @app.post("/api/session")
 async def create_session(contact: ContactIn):
-    sid = uuid.uuid4().hex
-    SESSIONS[sid] = {
-        "contact": contact.model_dump(),
-        "profile": {},
-        "routes": {},
-        "eligibility": {},
-        "answers": {},
-        "result": None,
-    }
+    sid = sub_store.create_submission(contact.model_dump())
     return {"session_id": sid}
 
 
 @app.post("/api/session/{sid}/profile")
 async def save_profile(sid: str, profile: ProfileIn):
-    session = SESSIONS.get(sid)
-    if not session:
-        raise HTTPException(404, "Session not found")
+    _require_session(sid)
+    pack = _pack()
     data = profile.model_dump()
     routes = resolve_routes(data)
-    eligibility = eligibility_for_questions(PACK["questions"], routes)
-    session["profile"] = data
-    session["routes"] = routes
-    session["eligibility"] = eligibility
-    visible = visible_questions(PACK["questions"], eligibility)
-    # group by category for UI
+    eligibility = eligibility_for_questions(pack["questions"], routes)
+    sub_store.save_profile(sid, data, eligibility)
+    answers_by_q = _answers_by_question(pack)
+    visible = visible_questions(pack["questions"], eligibility)
     groups: dict[str, list] = {}
     for q in visible:
-        groups.setdefault(q["Category"], []).append(_public_question(q))
+        groups.setdefault(q["Category"], []).append(_public_question(q, answers_by_q))
     return {
         "routes": routes,
         "eligible_count": sum(eligibility.values()),
@@ -162,15 +181,15 @@ async def save_profile(sid: str, profile: ProfileIn):
 
 @app.get("/api/session/{sid}/questions")
 async def get_questions(sid: str):
-    session = SESSIONS.get(sid)
-    if not session:
-        raise HTTPException(404, "Session not found")
+    session = _require_session(sid)
     if not session.get("eligibility"):
         raise HTTPException(400, "Profile not saved")
-    visible = visible_questions(PACK["questions"], session["eligibility"])
+    pack = _pack()
+    answers_by_q = _answers_by_question(pack)
+    visible = visible_questions(pack["questions"], session["eligibility"])
     groups: dict[str, list] = {}
     for q in visible:
-        groups.setdefault(q["Category"], []).append(_public_question(q))
+        groups.setdefault(q["Category"], []).append(_public_question(q, answers_by_q))
     return {
         "eligible_count": len(visible),
         "answered_count": len(session["answers"]),
@@ -178,38 +197,35 @@ async def get_questions(sid: str):
             {"name": name, "questions": qs} for name, qs in groups.items()
         ],
         "answers": session["answers"],
-        "live_matter": session["profile"].get("live_matter"),
+        "live_matter": (session.get("profile") or {}).get("live_matter"),
     }
 
 
 @app.put("/api/session/{sid}/answer")
 async def save_answer(sid: str, body: AnswerIn):
-    session = SESSIONS.get(sid)
-    if not session:
-        raise HTTPException(404, "Session not found")
+    session = _require_session(sid)
     if body.response not in {"0", "1", "2", "3", "DK"}:
         raise HTTPException(400, "Response must be 0,1,2,3 or DK")
     if session["eligibility"].get(body.question_id, 0) != 1:
         raise HTTPException(400, "Question not eligible for this profile")
-    session["answers"][body.question_id] = body.response
-    return {"ok": True, "answered_count": len(session["answers"])}
+    answers = sub_store.save_answer(sid, body.question_id, body.response)
+    return {"ok": True, "answered_count": len(answers)}
 
 
 @app.post("/api/session/{sid}/submit")
 async def submit(sid: str, body: SubmitIn | None = None):
-    session = SESSIONS.get(sid)
-    if not session:
-        raise HTTPException(404, "Session not found")
+    session = _require_session(sid)
+    answers = dict(session["answers"] or {})
     if body and body.answers:
         for qid, resp in body.answers.items():
             if resp in {"0", "1", "2", "3", "DK"} and session["eligibility"].get(qid) == 1:
-                session["answers"][qid] = resp
+                answers[qid] = resp
+        sub_store.save_answers(sid, answers)
 
-    # Ensure all eligible answered
     missing = [
         qid
         for qid, elig in session["eligibility"].items()
-        if elig == 1 and qid not in session["answers"]
+        if elig == 1 and qid not in answers
     ]
     if missing:
         raise HTTPException(
@@ -221,20 +237,19 @@ async def submit(sid: str, body: SubmitIn | None = None):
             },
         )
 
-    result = score_assessment(PACK, session["answers"], session["eligibility"])
+    pack = _pack()
+    result = score_assessment(pack, answers, session["eligibility"])
     payload = result_to_dict(result)
     payload["markdown"] = render_markdown(result)
     payload["contact"] = session["contact"]
-    payload["live_matter"] = session["profile"].get("live_matter")
-    session["result"] = payload
+    payload["live_matter"] = (session.get("profile") or {}).get("live_matter")
+    sub_store.save_result(sid, payload, is_preview=False)
     return payload
 
 
 @app.get("/api/session/{sid}/result")
 async def get_result(sid: str):
-    session = SESSIONS.get(sid)
-    if not session:
-        raise HTTPException(404, "Session not found")
+    session = _require_session(sid)
     if not session.get("result"):
         raise HTTPException(400, "Assessment not submitted")
     return session["result"]
@@ -242,49 +257,51 @@ async def get_result(sid: str):
 
 @app.get("/api/health")
 async def health():
+    pack = _pack()
     return {
         "ok": True,
-        "questions": len(PACK["questions"]),
-        "domains": len(PACK["domains"]),
+        "product": "owned",
+        "questions": len(pack["questions"]),
+        "domains": len(pack["domains"]),
+        "pack": pack_store.pack_meta(),
+        "stats": sub_store.stats(),
     }
 
 
 @app.post("/api/preview/sandbox")
 async def client_preview_sandbox():
     """Load the pack Score Sandbox demo and return a Client Preview report."""
-    responses, eligibility = responses_from_sandbox(PACK)
-    # Normalise response codes to strings for the UI
+    pack = _pack()
+    responses, eligibility = responses_from_sandbox(pack)
     answers = {qid: str(resp) for qid, resp in responses.items() if eligibility.get(qid) == 1}
     elig_int = {qid: int(v) for qid, v in eligibility.items()}
 
-    sid = uuid.uuid4().hex
-    result = score_assessment(PACK, answers, elig_int)
-    payload = result_to_dict(result)
-    payload["markdown"] = render_markdown(result)
-    payload["contact"] = {
+    contact = {
         "first_name": "Sandbox",
         "last_name": "Demo",
         "email": "preview@dreamstonehr.example",
+        "phone": "",
         "company": "Client Preview Co",
     }
+    sid = sub_store.create_submission(contact, is_preview=True)
+    sub_store.save_profile(sid, {"live_matter": "no"}, elig_int)
+    sub_store.save_answers(sid, answers)
+
+    result = score_assessment(pack, answers, elig_int)
+    payload = result_to_dict(result)
+    payload["markdown"] = render_markdown(result)
+    payload["contact"] = contact
     payload["live_matter"] = "no"
     payload["preview"] = True
     payload["preview_label"] = "Client Preview · Score Sandbox demo (fictional inputs)"
+    sub_store.save_result(sid, payload, is_preview=True)
 
-    visible = visible_questions(PACK["questions"], elig_int)
+    answers_by_q = _answers_by_question(pack)
+    visible = visible_questions(pack["questions"], elig_int)
     groups: dict[str, list] = {}
     for q in visible:
-        groups.setdefault(q["Category"], []).append(_public_question(q))
+        groups.setdefault(q["Category"], []).append(_public_question(q, answers_by_q))
 
-    SESSIONS[sid] = {
-        "contact": payload["contact"],
-        "profile": {"live_matter": "no"},
-        "routes": {},
-        "eligibility": elig_int,
-        "answers": answers,
-        "result": payload,
-        "preview": True,
-    }
     return {
         "session_id": sid,
         "eligible_count": sum(elig_int.values()),

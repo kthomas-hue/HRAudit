@@ -1,0 +1,24 @@
+{% extends "admin/base.html" %}
+{% block title %}Admin login{% endblock %}
+{% block content %}
+<section class="admin-login panel">
+  <img src="/static/img/logo-full.png" alt="DreamStoneHR" class="admin-login-logo" />
+  <h1>Health Check admin</h1>
+  <p class="lede">Sign in to manage submissions, download reports, and edit questions.</p>
+  {% if error %}
+  <div class="banner banner-urgent"><strong>{{ error }}</strong></div>
+  {% endif %}
+  <form method="post" action="/admin/login" class="form-grid admin-login-form">
+    <label class="span-2">Email
+      <input name="email" type="email" required autocomplete="username" value="admin@dreamstonehr.com.au" />
+    </label>
+    <label class="span-2">Password
+      <input name="password" type="password" required autocomplete="current-password" />
+    </label>
+    <div class="cta-row span-2">
+      <button class="btn btn-primary" type="submit">Enter admin →</button>
+    </div>
+  </form>
+  <p class="fineprint">Default: <code>admin@dreamstonehr.com.au</code> / <code>dreamstone</code> — change in Settings after first login. Set <code>ADMIN_EMAIL</code>, <code>ADMIN_PASSWORD</code>, and <code>HRHC_SECRET</code> in production.</p>
+</section>
+{% endblock %}
